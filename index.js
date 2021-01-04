@@ -28,21 +28,30 @@ const commands = [".k", ".kyuu", ".kyuute", ".kyuutechan"]
 
 client.on('ready', async () => {
     try {
-        mangaDexLogin();
+        await mangadexLogin();
     } catch (ex) {
-        console.log(ex)
+        await retryMangadexLogin();
     }
 });
 
 client.on('message', async (msg) => {
     let [command, chapterCommand] = msg.content.split(" ");
     if (commands.includes(command.toLowerCase())) {
-        // todo: retry logic for login. Seems like you don't need to auth atm, but if needed, implement retry function if getMangaChapters fails
-        const {
-            chapters
-        } = await mangadex.manga.getMangaChapters(23279); // 23279 -> kyuu chan
+        let chapterList = [];
+        try {
+            const {
+                chapters
+            } = await mangadex.manga.getMangaChapters(23279); // 23279 -> kyuu chan
+            chapterList = chapters;
+        } catch (ex) {
+            console.log(ex);
+            msg.channel.send("Mangadex is down\n", {
+                files: ["https://cdn.discordapp.com/emojis/576754188172787743.png?v=1"]
+            });
+            return;
+        }
 
-        const chapterNumber = getChapterNumber(chapters, chapterCommand);
+        const chapterNumber = getChapterNumber(chapterList, chapterCommand);
         if (!chapterNumber) {
             msg.channel.send("Usage: .k followed by a chapter number. No letters allowed!\n", {
                 files: ["https://cdn.discordapp.com/emojis/659321777297817630.png?v=1"]
@@ -50,7 +59,7 @@ client.on('message', async (msg) => {
             return;
         }
 
-        const allMatchedChapters = chapters.filter(chapterInfo => chapterInfo.chapter === chapterNumber);
+        const allMatchedChapters = chapterList.filter(chapterInfo => chapterInfo.chapter === chapterNumber);
         if (allMatchedChapters.length === 0) {
             msg.channel.send("Kyuute Comic not found\n", {
                 files: ["https://cdn.discordapp.com/emojis/674281264181805086.png?v=1"]
@@ -91,16 +100,50 @@ const getPreferredChapter = async (chapters) => {
     return await mangadex.chapter.getChapter(preferredGroupChapter.id);
 };
 
-const mangaDexLogin = async () => {
+const mangadexLogin = async () => {
     try {
+        console.log("authing")
         await mangadex.agent.login(process.env.mangadexUser, process.env.mangadexPassword);
+        console.log("success")
     } catch (ex) {
         throw new Error(ex);
     }
 }
 
-const retryMangaDexLogin = async () => {
+const retryMangadexLogin = async () => {
+    const maxAttempts = 3;
+    const timeoutLength = 25000;
+    const retry = async () => {
+        return new Promise((resolve, reject) => {
+            return setTimeout(async () => {
+                try {
+                    await mangadexLogin();
+                    resolve({
+                        success: true
+                    });
+                } catch (ex) {
+                    reject({
+                        success: false,
+                        message: ex
+                    })
+                }
+            }, timeoutLength)
+        });
+    }
 
+    for (let i = 0; i <= maxAttempts; i++) {
+        try {
+            const loginAttempt = await retry();
+            if (loginAttempt.success) {
+                return Promise.resolve({
+                    success: true,
+                    message: "Authenticated"
+                });
+            }
+        } catch {}
+    }
+
+    return Promise.reject(new Error("Unable to authenticate, or Mangadex is down"));
 }
 
 client.login(process.env.token);
