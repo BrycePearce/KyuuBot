@@ -102,9 +102,7 @@ const getPreferredChapter = async (chapters) => {
 
 const mangadexLogin = async () => {
     try {
-        console.log("authing")
         await mangadex.agent.login(process.env.mangadexUser, process.env.mangadexPassword);
-        console.log("success")
     } catch (ex) {
         throw new Error(ex);
     }
