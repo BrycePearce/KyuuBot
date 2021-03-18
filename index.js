@@ -75,6 +75,9 @@ client.on('message', async (msg) => {
 });
 
 const getChapterNumber = (chapters, chapterCommand) => {
+    chapters = chapters.filter((chapter) => {
+        return preferredLanguages.includes(chapter.language.toLowerCase());
+    })
     // .k => get latest chapter
     if (!chapterCommand) {
         return chapters[0].chapter;
@@ -96,7 +99,6 @@ const getPreferredChapter = async (chapters) => {
     if (!preferredGroupChapter) {
         preferredGroupChapter = chapters.find(chapter => preferredLanguages.includes(chapter.language.toLowerCase()));
     }
-
     return await mangadex.chapter.getChapter(preferredGroupChapter.id);
 };
 
