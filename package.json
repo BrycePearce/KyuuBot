@@ -2,17 +2,20 @@
   "name": "node-nodebot",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "8ball": "^1.0.6",
-    "discord.js": "^12.5.1",
+    "discord.js": "^12.5.3",
     "dotenv": "^8.2.0",
-    "got": "^11.8.2",
-    "mangadex-api": "^4.4.0"
+    "mangadex-full-api": "^5.4.0",
+    "ts-node": "^10.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^16.7.5",
+    "typescript": "^4.4.2"
   }
 }
