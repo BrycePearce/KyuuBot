@@ -1,12 +1,12 @@
 import { Message } from 'discord.js';
 
 export interface Command {
-    name: string;
+    name: string; // vanity name
     description: string;
-    aliases?: string[];
+    invocations?: string[]; // ways to invoke the command
     cooldown?: number;
-    args?: boolean;
-    usage?: string,
+    args?: boolean; // argument params
+    usage?: string, // example usage
 
     execute: (message: Message, args: string[]) => void;
 }

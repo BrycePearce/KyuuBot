@@ -8,7 +8,7 @@ export function findCommand(query: string): Command {
     let command = commands.get(query.toLowerCase());
     if (!command) {
         const cmdArray = commands.array();
-        command = cmdArray.find(cmd => cmd.aliases.find(alias => alias.toLowerCase() === query.toLowerCase()));
+        command = cmdArray.find(cmd => cmd.invocations.find(alias => alias.toLowerCase() === query.toLowerCase()));
     }
     return command;
 }
