@@ -1,12 +1,18 @@
 import { Command } from "../../types/Command";
-import { Manga } from 'mangadex-full-api';
+import { Chapter, Manga } from 'mangadex-full-api';
 import Jimp from 'jimp';
-import { GifUtil, GifFrame, GifCodec } from 'gifwrap';
+import { MessageAttachment } from "discord.js";
+import ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg';
 import got from 'got';
+import { createWriteStream } from 'fs';
+import path from 'path';
+import { imageSize } from 'image-size';
 
-import { Message, MessageAttachment } from "discord.js";
 
-
+interface ResolvedChapter {
+    chapter: Chapter;
+    pages: string[];
+};
 /*
     command todos:
     1.) Get specified manga & specified chapter # from argument
@@ -17,61 +23,98 @@ export const command: Command = {
     description: 'Returns the the kyuu comic number specified by the user',
     invocations: ['k', 'kyuute', 'kyuuchan', 'kyuu'],
     args: true,
-    usage: '[chapterNumber]',
+    usage: '[invocation] [chapterNumber]',
     async execute(message, args) {
         const manga = await Manga.getByQuery({ ids: ['5b2c7a03-ca53-43f0-abc8-031c0c136ae6'] }); // todo: save and store this on init, then pass it here so don't have to fetch on every query
-        const chapterList = await manga.getFeed({ translatedLanguage: ['en'], offset: Math.max(Number(args[0]) - 5, 0), limit: 50, order: { chapter: 'asc', volume: 'asc' } } as any, false);
-        const foundChap = chapterList.find((chapter) => chapter.chapter === args[0]);
-        const textToWrite = `Vol. ${foundChap.volume} Ch. ${foundChap.chapter}`;
-        const chapters = await foundChap.getReadablePages();
-        for (const chapter of chapters) {
-            const [_, fileExtension] = chapter.split(/\.(?=[^\.]+$)/);
-            if (fileExtension.toLowerCase().includes('gif')) {
-                getGifFramesWithChapterText(message, chapter, textToWrite);
-                return;
-            }
-            try {
-                const loadedChapter = await Jimp.read(chapter);
-                const mimeType = loadedChapter.getMIME();
-                await writeTextOnJimpImage(loadedChapter, textToWrite);
-                const buffer = await loadedChapter.getBufferAsync(mimeType);
-                sendBufferAsAttachment(message, buffer);
-            } catch (error) {
-                console.log('error!', error)
-            }
+        const chapterList = await manga.getFeed({ translatedLanguage: ['en'], offset: Math.max(Number(args[0]) - 5, 0), limit: 25, order: { chapter: 'asc', volume: 'asc' } } as any, false);
+        const matchingChapters = chapterList.filter((chapter) => chapter.chapter === args[0]);
+        const preferredChapter = await getPreferredChapter(matchingChapters);
+        for (const chapter of preferredChapter.pages) {
+            const chapterBuffer = await getChapterBufferWithChapterText(preferredChapter.chapter, chapter);
+            message.channel.send({ files: [path.normalize('C:/Users/Bryce/Documents/KyuuBot/tmp/xddddddd.gif')] });
+
+
+
+
+            // const attachment = new MessageAttachment(chapterBuffer);
+            // message.channel.send(attachment);
+            // // message.channel.send({ files: [chapter] });
         }
     }
-}
+};
 
-const getGifFramesWithChapterText = async (message: Message, chapterUrl: string, chapterText: string) => {
-    try {
-        const { body: buffer } = await got(chapterUrl, { responseType: 'buffer' });
-        const gif = await GifUtil.read(buffer);
-        const promises = gif.frames.map(async (frame) => {
-            const jimpImage: Jimp = GifUtil.copyAsJimp(Jimp, frame);
-            await writeTextOnJimpImage(jimpImage, chapterText);
-            return new GifFrame(jimpImage.bitmap, {
-                disposalMethod: frame.disposalMethod,
-                delayCentisecs: frame.delayCentisecs,
-            });
-        });
-
-        const frames = await Promise.all(promises);
-        GifUtil.quantizeDekker(frames, 1200); // needed for images with over 256 color indexes
-        const codec = new GifCodec();
-        const updatedGifBuffer = await codec.encodeGif(frames, { loops: 15 });
-        sendBufferAsAttachment(message, updatedGifBuffer.buffer)
-    } catch (ex) {
-        console.log('e... error!?', ex)
+/**
+ * @param chapterList
+ * @description Filters duplicate chapters, will prefer gif chapter if available.
+ */
+const getPreferredChapter = async (chapters: Chapter[]): Promise<ResolvedChapter> => {
+    let preferredChapter: ResolvedChapter;
+    for (let i = 0; i < chapters.length; i++) {
+        const chapterList = await chapters[i].getReadablePages();
+        if (chapterPagesIncludeGif(chapterList)) {
+            preferredChapter = { chapter: chapters[i], pages: chapterList };
+            break;
+        }
+        preferredChapter = { chapter: chapters[i], pages: chapterList };
     }
-}
+    return preferredChapter;
+};
 
-const writeTextOnJimpImage = async (jimpImage: Jimp, text: string) => {
-    const font = await Jimp.loadFont(Jimp.FONT_SANS_16_BLACK);
-    jimpImage.print(font, 10, 10, text);
-}
+const chapterPagesIncludeGif = (chapterPages: string[]): boolean => {
+    return !!chapterPages.find((chapter) => {
+        const fileExtension = chapter.split(/[#?]/)[0].split('.').pop().trim();
+        if (fileExtension === 'gif') {
+            return true;
+        }
+    });
+};
 
-const sendBufferAsAttachment = (message: Message, buffer: Buffer) => {
-    const attachment = new MessageAttachment(buffer);
-    message.channel.send(attachment);
-}
+const getChapterBufferWithChapterText = async (chapter: Chapter, chapterUrl: string): Promise<Buffer> => {
+    return new Promise((resolve, reject) => {
+        const textToWrite = `Vol. ${chapter.volume} Ch. ${chapter.chapter}`;
+        if (chapterPagesIncludeGif([chapterUrl])) { // todo: probably a better way to do this, instead of setting it in an array & without code dupe
+            const writePath = path.normalize(path.join(__dirname, '../../tmp', `${Date.now()}.gif`));
+
+            // const tmpFolder = path.normalize(path.join(__dirname, '/tmp'));
+
+            // download gif from url so we can process (add text) it
+            got.stream(chapterUrl).pipe(createWriteStream(writePath)).on('finish', () => {  // todo: make a database and cache all chapters instead of getting them per request
+                const { width, height } = imageSize(writePath);
+                const gifToMp4 = ffmpeg(writePath).videoFilters(
+                    [{
+                        filter: 'drawtext',
+                        options: {
+                            fontfile: Jimp.FONT_SANS_10_BLACK, // todo: compare to 'OpenSans.ttf'
+                            text: textToWrite,
+                            fontsize: 10,
+                            fontcolor: 'black',
+                            x: width - 80,
+                            y: height - 20,
+
+                        }
+                    }]
+                ).output(path.normalize('C:/Users/Bryce/Documents/KyuuBot/tmp/xd.mp4'));
+                gifToMp4.on('end', () => {
+                    // ffmpeg -i test.gif -filter_complex 
+                    // 'fps=10,scale=100:-1:flags=lanczos,split [o1] [o2];[o1] palettegen [p]; [o2] fifo [o3];[o3] [p] paletteuse' - vf "drawtext=fontfile=OpenSans.ttf:text='Stack Overflow':fontcolor=black:fontsize=24" finalxd.gif
+                    const mp4ToGif = ffmpeg(path.normalize('C:/Users/Bryce/Documents/KyuuBot/tmp/xd.mp4')).fpsOutput(10).complexFilter(['fps=10,scale=500:-1:flags=lanczos,split [o1] [o2];[o1] palettegen [p]; [o2] fifo [o3];[o3] [p] paletteuse']).output(path.normalize('C:/Users/Bryce/Documents/KyuuBot/tmp/xddddddd.gif'));
+                    mp4ToGif.on('end', () => {
+                        resolve(new Buffer('asd'));
+                    })
+                    mp4ToGif.run();
+                });
+                gifToMp4.run();
+            });
+        }
+    });
+    // const loadedChapter = await Jimp.read(chapterUrl);
+    // const mimeType = loadedChapter.getMIME();
+    // const font = await Jimp.loadFont(Jimp.FONT_SANS_10_BLACK);
+    // const offset = {
+    //     width: loadedChapter.getWidth() - 70,
+    //     height: loadedChapter.getHeight() - 15
+    // };
+    // loadedChapter.print(font, offset.width, offset.height, textToWrite);
+    // const updatedBuffer = await loadedChapter.getBufferAsync(mimeType);
+    // return updatedBuffer;
+};

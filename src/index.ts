@@ -5,12 +5,12 @@ import Mangadex from 'mangadex-full-api';
 
 require('dotenv').config();
 
-const client = new Client()
+const client = new Client();
 
 async function init() {
 	// todo: error handling, do not run if cannot connect
-	await Promise.all([client.login(process.env.token), Mangadex.login(process.env.mangadexUser, process.env.mangadexPassword, process.env.token)]);
-}
+	await Promise.all([client.login(process.env.token), Mangadex.login(process.env.mangadexUser, process.env.mangadexPassword, '../cache')]);
+};
 
 client.on('ready', async () => {
 	initCommands();
@@ -29,6 +29,6 @@ client.on('message', async message => {
 
 	if (!command) return;
 	command.execute(message, commandArguments);
-})
+});
 
 init();
