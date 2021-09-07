@@ -1,22 +1,28 @@
-import { Command } from "../../types/Command";
 import { Chapter, Manga } from 'mangadex-full-api';
-import Jimp from 'jimp';
-import { MessageAttachment } from "discord.js";
-import ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg';
-import got from 'got';
+import { Command } from "../../types/Command";
 import { createWriteStream } from 'fs';
-import path from 'path';
 import { imageSize } from 'image-size';
-
+import ffmpeg from 'fluent-ffmpeg';
+import path from 'path';
+import Jimp from 'jimp';
+import got from 'got';
 
 interface ResolvedChapter {
     chapter: Chapter;
     pages: string[];
 };
+
+interface PromiseResolver {
+    success: boolean;
+    message?: string;
+}
 /*
     command todos:
     1.) Get specified manga & specified chapter # from argument
     2.) Allow r for random manga & chapter
+    3.) Cleanup tmp files
+    4.) re-implement static files textwrite with ffmpeg
+    5.) Maybe abstract ffmpeg logic to helper/ffmpeg
 */
 export const command: Command = {
     name: 'Retrieve Chapter',
@@ -30,15 +36,8 @@ export const command: Command = {
         const matchingChapters = chapterList.filter((chapter) => chapter.chapter === args[0]);
         const preferredChapter = await getPreferredChapter(matchingChapters);
         for (const chapter of preferredChapter.pages) {
-            const chapterBuffer = await getChapterBufferWithChapterText(preferredChapter.chapter, chapter);
-            message.channel.send({ files: [path.normalize('C:/Users/Bryce/Documents/KyuuBot/tmp/xddddddd.gif')] });
-
-
-
-
-            // const attachment = new MessageAttachment(chapterBuffer);
-            // message.channel.send(attachment);
-            // // message.channel.send({ files: [chapter] });
+            const { localGifPath } = await getChapterWithChapterInfo(preferredChapter.chapter, chapter);
+            message.channel.send({ files: [localGifPath] });
         }
     }
 };
@@ -69,42 +68,28 @@ const chapterPagesIncludeGif = (chapterPages: string[]): boolean => {
     });
 };
 
-const getChapterBufferWithChapterText = async (chapter: Chapter, chapterUrl: string): Promise<Buffer> => {
-    return new Promise((resolve, reject) => {
+const getChapterWithChapterInfo = async (chapter: Chapter, chapterUrl: string): Promise<PromiseResolver & { localGifPath: string }> => {
+    return new Promise(async (resolve, reject) => {
         const textToWrite = `Vol. ${chapter.volume} Ch. ${chapter.chapter}`;
         if (chapterPagesIncludeGif([chapterUrl])) { // todo: probably a better way to do this, instead of setting it in an array & without code dupe
-            const writePath = path.normalize(path.join(__dirname, '../../tmp', `${Date.now()}.gif`));
+            const timestamp = Date.now();
+            const savedGifPath = getTmpPathWithFilename(`${timestamp}.gif`);
+            const savedMp4Path = getTmpPathWithFilename(`${timestamp}.mp4`);
+            const gifWithTextOutputPath = getTmpPathWithFilename(`${timestamp}-finished.gif`);
 
-            // const tmpFolder = path.normalize(path.join(__dirname, '/tmp'));
+            try {
+                // download gif from url so we can process (add text) it
+                await saveImageToTmp(chapterUrl, savedGifPath);
+                // convert gif to mp4 and write vol/chapter text. Then write output to /tmp
+                await writeMp4WithTextFromGif(textToWrite, savedGifPath, savedMp4Path);
 
-            // download gif from url so we can process (add text) it
-            got.stream(chapterUrl).pipe(createWriteStream(writePath)).on('finish', () => {  // todo: make a database and cache all chapters instead of getting them per request
-                const { width, height } = imageSize(writePath);
-                const gifToMp4 = ffmpeg(writePath).videoFilters(
-                    [{
-                        filter: 'drawtext',
-                        options: {
-                            fontfile: Jimp.FONT_SANS_10_BLACK, // todo: compare to 'OpenSans.ttf'
-                            text: textToWrite,
-                            fontsize: 10,
-                            fontcolor: 'black',
-                            x: width - 80,
-                            y: height - 20,
+                // convert back to gif (now with text)
+                await writeMp4ToGif(savedMp4Path, gifWithTextOutputPath);
 
-                        }
-                    }]
-                ).output(path.normalize('C:/Users/Bryce/Documents/KyuuBot/tmp/xd.mp4'));
-                gifToMp4.on('end', () => {
-                    // ffmpeg -i test.gif -filter_complex 
-                    // 'fps=10,scale=100:-1:flags=lanczos,split [o1] [o2];[o1] palettegen [p]; [o2] fifo [o3];[o3] [p] paletteuse' - vf "drawtext=fontfile=OpenSans.ttf:text='Stack Overflow':fontcolor=black:fontsize=24" finalxd.gif
-                    const mp4ToGif = ffmpeg(path.normalize('C:/Users/Bryce/Documents/KyuuBot/tmp/xd.mp4')).fpsOutput(10).complexFilter(['fps=10,scale=500:-1:flags=lanczos,split [o1] [o2];[o1] palettegen [p]; [o2] fifo [o3];[o3] [p] paletteuse']).output(path.normalize('C:/Users/Bryce/Documents/KyuuBot/tmp/xddddddd.gif'));
-                    mp4ToGif.on('end', () => {
-                        resolve(new Buffer('asd'));
-                    })
-                    mp4ToGif.run();
-                });
-                gifToMp4.run();
-            });
+                resolve({ success: true, localGifPath: gifWithTextOutputPath });
+            } catch (ex) {
+                reject({ success: false, message: ex })
+            }
         }
     });
     // const loadedChapter = await Jimp.read(chapterUrl);
@@ -117,4 +102,61 @@ const getChapterBufferWithChapterText = async (chapter: Chapter, chapterUrl: str
     // loadedChapter.print(font, offset.width, offset.height, textToWrite);
     // const updatedBuffer = await loadedChapter.getBufferAsync(mimeType);
     // return updatedBuffer;
+};
+
+const saveImageToTmp = async (url: string, writePath: string): Promise<PromiseResolver> => {
+    // todo: make a database and cache all chapters instead of getting them per request
+    return new Promise((resolve, reject) => {
+        const fetchStream = got.stream(url);
+
+        fetchStream.pipe(createWriteStream(writePath));
+
+        fetchStream.on('error', () => {
+            reject({ success: false, message: 'Failed to download image' });
+        });
+
+        fetchStream.on('end', () => {
+            resolve({ success: true });
+        });
+    });
+};
+
+const writeMp4WithTextFromGif = async (textToWrite: string, gifInputPath: string, mp4OutputPath: string): Promise<PromiseResolver> => {
+    const { width, height } = imageSize(gifInputPath);
+    return new Promise((resolve, reject) => {
+        const gifToMp4 = ffmpeg(gifInputPath).videoFilters(
+            [{
+                filter: 'drawtext',
+                options: {
+                    fontfile: Jimp.FONT_SANS_10_BLACK, // todo: compare to 'OpenSans.ttf'
+                    text: textToWrite,
+                    fontsize: 10,
+                    fontcolor: 'black',
+                    x: width - 80,
+                    y: height - 20,
+                }
+            }]
+        );
+        gifToMp4.output(mp4OutputPath);
+        gifToMp4.on('error', () => reject({ success: false, message: 'Failed to convert gif to mp4' }));
+        gifToMp4.on('end', () => {
+            resolve({ success: true });
+        });
+        gifToMp4.run();
+    });
+};
+
+const writeMp4ToGif = async (mp4InputPath: string, gifOutputPath: string): Promise<PromiseResolver> => {
+    return new Promise((resolve, reject) => {
+        const mp4ToGif = ffmpeg(path.normalize(mp4InputPath)).fpsOutput(10).complexFilter(['fps=10,scale=500:-1:flags=lanczos,split [o1] [o2];[o1] palettegen [p]; [o2] fifo [o3];[o3] [p] paletteuse']).output(path.normalize(gifOutputPath));
+        mp4ToGif.on('error', () => reject('Failed to convert mp4 to gif'))
+        mp4ToGif.on('end', () => {
+            resolve({ success: true });
+        });
+        mp4ToGif.run();
+    });
+};
+
+const getTmpPathWithFilename = (filename: string) => {
+    return path.normalize(path.join(__dirname, '../../../tmp', filename));
 };
