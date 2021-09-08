@@ -4,7 +4,6 @@ import { createWriteStream } from 'fs';
 import { imageSize } from 'image-size';
 import ffmpeg from 'fluent-ffmpeg';
 import path from 'path';
-import Jimp from 'jimp';
 import got from 'got';
 
 interface ResolvedChapter {
@@ -27,7 +26,7 @@ interface PromiseResolver {
 export const command: Command = {
     name: 'Retrieve Chapter',
     description: 'Returns the the kyuu comic number specified by the user',
-    invocations: ['k', 'kyuute', 'kyuuchan', 'kyuu'],
+    invocations: ['k', 'kyute', 'kyuute', 'kyuuchan', 'kyuu'],
     args: true,
     usage: '[invocation] [chapterNumber]',
     async execute(message, args) {
@@ -37,8 +36,8 @@ export const command: Command = {
         const preferredChapter = await getPreferredChapter(matchingChapters);
         for (const chapter of preferredChapter.pages) {
             try {
-                const { localGifPath } = await getChapterWithChapterInfo(preferredChapter.chapter, chapter);
-                message.channel.send({ files: [localGifPath] });
+                const { localChapterPath } = await getChapterWithChapterInfo(preferredChapter.chapter, chapter);
+                message.channel.send({ files: [localChapterPath] });
             } catch (ex) {
                 console.error(ex)
                 message.channel.send(ex['message'] || 'Something went really wrong!');
@@ -74,24 +73,22 @@ const chapterPagesIncludeGif = (chapterPages: string[]): boolean => {
     });
 };
 
-const getChapterWithChapterInfo = async (chapter: Chapter, chapterUrl: string): Promise<PromiseResolver & { localGifPath?: string }> => {
+const getChapterWithChapterInfo = async (chapter: Chapter, chapterUrl: string): Promise<PromiseResolver & { localChapterPath?: string }> => {
     return new Promise(async (resolve, reject) => {
         const textToWrite = `Vol. ${chapter.volume} Ch. ${chapter.chapter}`;
+
+        // handle gifs
         if (chapterPagesIncludeGif([chapterUrl])) { // todo: probably a better way to do this, instead of setting it in an array & without code dupe
             const timestamp = Date.now();
             const savedGifPath = getTmpPathWithFilename(`${timestamp}.gif`);
-            const savedMp4Path = getTmpPathWithFilename(`${timestamp}.mp4`);
             const gifWithTextOutputPath = getTmpPathWithFilename(`${timestamp}-finished.gif`);
 
             try {
                 // download gif from url so we can process (add text) it
                 await saveImageToTmp(chapterUrl, savedGifPath);
 
-                // convert gif to mp4 and write vol/chapter text. Then write output to /tmp
-                await writeMp4WithTextFromGif(textToWrite, savedGifPath, savedMp4Path);
-
-                // convert back to gif (now with text)
-                await writeMp4ToGif(savedMp4Path, gifWithTextOutputPath);
+                // write text to the gif and write the resulting file to gifWithTextOutputPath
+                await writeTextToGif(textToWrite, savedGifPath, gifWithTextOutputPath);
             }
             catch (ex) { // todo: probably a better way to handle this, either with chained catches or typeguard
                 let errorMessage = 'There was an error fetching the chapter';
@@ -100,20 +97,17 @@ const getChapterWithChapterInfo = async (chapter: Chapter, chapterUrl: string): 
                 }
                 reject(new Error(errorMessage));
             }
-            resolve({ success: true, localGifPath: gifWithTextOutputPath });
+            resolve({ success: true, localChapterPath: gifWithTextOutputPath });
         }
-    });
 
-    // const loadedChapter = await Jimp.read(chapterUrl);
-    // const mimeType = loadedChapter.getMIME();
-    // const font = await Jimp.loadFont(Jimp.FONT_SANS_10_BLACK);
-    // const offset = {
-    //     width: loadedChapter.getWidth() - 70,
-    //     height: loadedChapter.getHeight() - 15
-    // };
-    // loadedChapter.print(font, offset.width, offset.height, textToWrite);
-    // const updatedBuffer = await loadedChapter.getBufferAsync(mimeType);
-    // return updatedBuffer;
+        // handle static image types (todo: al oooooooooot of reused code here but I'm tired, cleanup) also not handling errors
+        const timestamp = Date.now();
+        const savedStaticImagePath = getTmpPathWithFilename(`${timestamp}.png`); // todo: wont always be png, set/get actual filetype
+        const staticImageWithTextOutputPath = getTmpPathWithFilename(`${timestamp}-finished.png`);
+        await saveImageToTmp(chapterUrl, savedStaticImagePath);
+        await writeTextToStaticFiletype(textToWrite, savedStaticImagePath, staticImageWithTextOutputPath);
+        resolve({ success: true, localChapterPath: staticImageWithTextOutputPath });
+    });
 };
 
 const saveImageToTmp = async (url: string, writePath: string): Promise<PromiseResolver> => {
@@ -133,39 +127,29 @@ const saveImageToTmp = async (url: string, writePath: string): Promise<PromiseRe
     });
 };
 
-const writeMp4WithTextFromGif = async (textToWrite: string, gifInputPath: string, mp4OutputPath: string): Promise<PromiseResolver> => {
+const writeTextToGif = async (textToWrite: string, gifInputPath: string, gifOutputPath: string): Promise<PromiseResolver> => {
     const { width, height } = imageSize(gifInputPath);
     return new Promise((resolve, reject) => {
-        const gifToMp4 = ffmpeg(gifInputPath).videoFilters(
-            [{
-                filter: 'drawtext',
-                options: {
-                    fontfile: Jimp.FONT_SANS_10_BLACK, // todo: compare to 'OpenSans.ttf'
-                    text: textToWrite,
-                    fontsize: 10,
-                    fontcolor: 'black',
-                    x: width - 80,
-                    y: height - 20,
-                }
-            }]
-        );
-        gifToMp4.output(mp4OutputPath);
-        gifToMp4.on('error', () => reject(new Error('Failed to convert gif to mp4')));
-        gifToMp4.on('end', () => {
-            resolve({ success: true });
-        });
-        gifToMp4.run();
+        const writeTextToGif = ffmpeg(gifInputPath);
+        writeTextToGif.complexFilter([`drawtext=fontfile=OpenSans.ttf:text=${textToWrite}:fontcolor=black:fontsize=10:x=${width - 80}:y=${height - 20},split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse`]); // todo: make it correct font
+        writeTextToGif.on('error', () => reject(new Error('Failed to write text to gif')));
+        writeTextToGif.on('end', () => resolve({ success: true }));
+        writeTextToGif.output(gifOutputPath);
+        writeTextToGif.run();
     });
 };
 
-const writeMp4ToGif = async (mp4InputPath: string, gifOutputPath: string): Promise<PromiseResolver> => {
+// todo: de-dupe this code, basically the same function as writeTextToGif
+const writeTextToStaticFiletype = async (textToWrite: string, staticFileInputPath: string, staticFileOutputPath: string): Promise<PromiseResolver> => {
+    const { width, height } = imageSize(staticFileInputPath);
+
     return new Promise((resolve, reject) => {
-        const mp4ToGif = ffmpeg(path.normalize(mp4InputPath)).fpsOutput(10).complexFilter(['fps=10,scale=500:-1:flags=lanczos,split [o1] [o2];[o1] palettegen [p]; [o2] fifo [o3];[o3] [p] paletteuse']).output(path.normalize(gifOutputPath));
-        mp4ToGif.on('error', () => reject(new Error('Failed to convert mp4 to gif')))
-        mp4ToGif.on('end', () => {
-            resolve({ success: true });
-        });
-        mp4ToGif.run();
+        const writeTextToStaticFile = ffmpeg(staticFileInputPath);
+        writeTextToStaticFile.complexFilter([`drawtext=text=${textToWrite}':fontcolor=black:fontsize=10:x=${width - 80}:y=${height - 20}`]); // todo: add font type
+        writeTextToStaticFile.on('error', () => reject(new Error('Failed to write text to static file')));
+        writeTextToStaticFile.on('end', () => resolve({ success: true }));
+        writeTextToStaticFile.output(staticFileOutputPath);
+        writeTextToStaticFile.run();
     });
 };
 
