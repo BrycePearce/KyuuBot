@@ -1,27 +1,20 @@
+import { getFileExtension, isUrlExtensionStatic, saveImageToTmp } from '../../utils/files';
+import { PromiseResolver } from '../../types/PromiseResolver';
+import { writeTextOnMedia } from '../../utils/ffmpeg';
 import { Chapter, Manga } from 'mangadex-full-api';
 import { Command } from "../../types/Command";
-import { createWriteStream } from 'fs';
-import { imageSize } from 'image-size';
-import ffmpeg from 'fluent-ffmpeg';
 import path from 'path';
-import got from 'got';
 
 interface ResolvedChapter {
     chapter: Chapter;
     pages: string[];
 };
 
-interface PromiseResolver {
-    success: boolean;
-    message?: string;
-}
 /*
     command todos:
     1.) Get specified manga & specified chapter # from argument
     2.) Allow r for random manga & chapter
     3.) Cleanup tmp files
-    4.) re-implement static files textwrite with ffmpeg
-    5.) Maybe abstract ffmpeg logic to helpers(or utils)/ffmpeg
 */
 export const command: Command = {
     name: 'Retrieve Chapter',
@@ -66,15 +59,6 @@ const getPreferredChapter = async (chapters: Chapter[]): Promise<ResolvedChapter
     return preferredChapter;
 };
 
-const getFileExtension = (url: string): string => { // todo: probably make this a util
-    const fileExtension = url.split(/[#?]/)[0].split('.').pop().trim();
-    return fileExtension;
-};
-
-const isUrlExtensionStatic = (url: string): boolean => {
-    return ['jpg', 'jpeg', 'jfif', 'pjpeg', 'pjp'].includes(getFileExtension(url));
-};
-
 const getChapterWithChapterInfo = async (chapter: Chapter, chapterUrl: string, outputFileName: number): Promise<PromiseResolver & { localChapterPath?: string }> => {
     return new Promise(async (resolve, reject) => {
         const textToWrite = `Vol. ${chapter.volume} Ch. ${chapter.chapter}`;
@@ -96,38 +80,6 @@ const getChapterWithChapterInfo = async (chapter: Chapter, chapterUrl: string, o
             reject(new Error(errorMessage));
         }
         resolve({ success: true, localChapterPath: mediaOutputPath });
-    });
-};
-
-const saveImageToTmp = async (url: string, writePath: string): Promise<PromiseResolver> => {
-    // todo: make a database and cache all chapters instead of getting them per request
-    return new Promise((resolve, reject) => {
-        const fetchStream = got.stream(url);
-
-        fetchStream.pipe(createWriteStream(writePath));
-
-        fetchStream.on('error', () => {
-            reject(new Error('Failed to download image'));
-        });
-
-        fetchStream.on('end', () => {
-            resolve({ success: true });
-        });
-    });
-};
-
-const writeTextOnMedia = async (textToWrite: string, mediaInputPath: string, mediaOutputPath: string): Promise<PromiseResolver> => {
-    const { width, height } = imageSize(mediaInputPath);
-    const gifFilter = [`drawtext=fontfile=OpenSans.ttf:text=${textToWrite}:fontcolor=black:fontsize=10:x=${width - 80}:y=${height - 20},split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse`];
-    const staticFilter = [`drawtext=text=${textToWrite}':fontcolor=black:fontsize=10:x=${width - 80}:y=${height - 20}`];
-    const filter = isUrlExtensionStatic(mediaInputPath) ? staticFilter : gifFilter;
-    return new Promise((resolve, reject) => {
-        const writeTextToMedia = ffmpeg(mediaInputPath);
-        writeTextToMedia.complexFilter(filter); // todo: make it correct font
-        writeTextToMedia.on('error', () => reject(new Error('Failed to write text to gif')));
-        writeTextToMedia.on('end', () => resolve({ success: true }));
-        writeTextToMedia.output(mediaOutputPath);
-        writeTextToMedia.run();
     });
 };
 
