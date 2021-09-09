@@ -34,9 +34,10 @@ export const command: Command = {
         const chapterList = await manga.getFeed({ translatedLanguage: ['en'], offset: Math.max(Number(args[0]) - 5, 0), limit: 25, order: { chapter: 'asc', volume: 'asc' } } as any, false);
         const matchingChapters = chapterList.filter((chapter) => chapter.chapter === args[0]);
         const preferredChapter = await getPreferredChapter(matchingChapters);
+        const outputFileName = Date.now();
         for (const chapter of preferredChapter.pages) {
             try {
-                const { localChapterPath } = await getChapterWithChapterInfo(preferredChapter.chapter, chapter);
+                const { localChapterPath } = await getChapterWithChapterInfo(preferredChapter.chapter, chapter, outputFileName);
                 message.channel.send({ files: [localChapterPath] });
             } catch (ex) {
                 console.error(ex)
@@ -55,7 +56,8 @@ const getPreferredChapter = async (chapters: Chapter[]): Promise<ResolvedChapter
     let preferredChapter: ResolvedChapter;
     for (let i = 0; i < chapters.length; i++) {
         const chapterList = await chapters[i].getReadablePages();
-        if (chapterPagesIncludeGif(chapterList)) {
+        const doPagesIncludeGif = chapterList.some(page => !isUrlExtensionStatic(page));
+        if (doPagesIncludeGif) {
             preferredChapter = { chapter: chapters[i], pages: chapterList };
             break;
         }
@@ -64,49 +66,36 @@ const getPreferredChapter = async (chapters: Chapter[]): Promise<ResolvedChapter
     return preferredChapter;
 };
 
-const chapterPagesIncludeGif = (chapterPages: string[]): boolean => {
-    return !!chapterPages.find((chapter) => {
-        const fileExtension = chapter.split(/[#?]/)[0].split('.').pop().trim();
-        if (fileExtension === 'gif') {
-            return true;
-        }
-    });
+const getFileExtension = (url: string): string => { // todo: probably make this a util
+    const fileExtension = url.split(/[#?]/)[0].split('.').pop().trim();
+    return fileExtension;
 };
 
-const getChapterWithChapterInfo = async (chapter: Chapter, chapterUrl: string): Promise<PromiseResolver & { localChapterPath?: string }> => {
+const isUrlExtensionStatic = (url: string): boolean => {
+    return ['jpg', 'jpeg', 'jfif', 'pjpeg', 'pjp'].includes(getFileExtension(url));
+};
+
+const getChapterWithChapterInfo = async (chapter: Chapter, chapterUrl: string, outputFileName: number): Promise<PromiseResolver & { localChapterPath?: string }> => {
     return new Promise(async (resolve, reject) => {
         const textToWrite = `Vol. ${chapter.volume} Ch. ${chapter.chapter}`;
+        const fileExtension = getFileExtension(chapterUrl);
+        const savedImage = getTmpPathWithFilename(`${outputFileName}.${fileExtension}`);
+        const mediaOutputPath = getTmpPathWithFilename(`${outputFileName}-finished.${fileExtension}`);
 
-        // handle gifs
-        if (chapterPagesIncludeGif([chapterUrl])) { // todo: probably a better way to do this, instead of setting it in an array & without code dupe
-            const timestamp = Date.now();
-            const savedGifPath = getTmpPathWithFilename(`${timestamp}.gif`);
-            const gifWithTextOutputPath = getTmpPathWithFilename(`${timestamp}-finished.gif`);
+        try {
+            // download url so we can process (add text) it
+            await saveImageToTmp(chapterUrl, savedImage);
 
-            try {
-                // download gif from url so we can process (add text) it
-                await saveImageToTmp(chapterUrl, savedGifPath);
-
-                // write text to the gif and write the resulting file to gifWithTextOutputPath
-                await writeTextToGif(textToWrite, savedGifPath, gifWithTextOutputPath);
+            // write text to the file and write the resulting file to mediaOutputPath
+            await writeTextOnMedia(textToWrite, savedImage, mediaOutputPath);
+        } catch (ex) { // todo: probably a better way to handle this, either with chained catches or typeguard
+            let errorMessage = 'There was an error fetching the chapter';
+            if (ex instanceof Error) {
+                errorMessage = ex.message;
             }
-            catch (ex) { // todo: probably a better way to handle this, either with chained catches or typeguard
-                let errorMessage = 'There was an error fetching the chapter';
-                if (ex instanceof Error) {
-                    errorMessage = ex.message;
-                }
-                reject(new Error(errorMessage));
-            }
-            resolve({ success: true, localChapterPath: gifWithTextOutputPath });
+            reject(new Error(errorMessage));
         }
-
-        // handle static image types (todo: al oooooooooot of reused code here but I'm tired, cleanup) also not handling errors
-        const timestamp = Date.now();
-        const savedStaticImagePath = getTmpPathWithFilename(`${timestamp}.png`); // todo: wont always be png, set/get actual filetype
-        const staticImageWithTextOutputPath = getTmpPathWithFilename(`${timestamp}-finished.png`);
-        await saveImageToTmp(chapterUrl, savedStaticImagePath);
-        await writeTextToStaticFiletype(textToWrite, savedStaticImagePath, staticImageWithTextOutputPath);
-        resolve({ success: true, localChapterPath: staticImageWithTextOutputPath });
+        resolve({ success: true, localChapterPath: mediaOutputPath });
     });
 };
 
@@ -127,29 +116,18 @@ const saveImageToTmp = async (url: string, writePath: string): Promise<PromiseRe
     });
 };
 
-const writeTextToGif = async (textToWrite: string, gifInputPath: string, gifOutputPath: string): Promise<PromiseResolver> => {
-    const { width, height } = imageSize(gifInputPath);
+const writeTextOnMedia = async (textToWrite: string, mediaInputPath: string, mediaOutputPath: string): Promise<PromiseResolver> => {
+    const { width, height } = imageSize(mediaInputPath);
+    const gifFilter = [`drawtext=fontfile=OpenSans.ttf:text=${textToWrite}:fontcolor=black:fontsize=10:x=${width - 80}:y=${height - 20},split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse`];
+    const staticFilter = [`drawtext=text=${textToWrite}':fontcolor=black:fontsize=10:x=${width - 80}:y=${height - 20}`];
+    const filter = isUrlExtensionStatic(mediaInputPath) ? staticFilter : gifFilter;
     return new Promise((resolve, reject) => {
-        const writeTextToGif = ffmpeg(gifInputPath);
-        writeTextToGif.complexFilter([`drawtext=fontfile=OpenSans.ttf:text=${textToWrite}:fontcolor=black:fontsize=10:x=${width - 80}:y=${height - 20},split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse`]); // todo: make it correct font
-        writeTextToGif.on('error', () => reject(new Error('Failed to write text to gif')));
-        writeTextToGif.on('end', () => resolve({ success: true }));
-        writeTextToGif.output(gifOutputPath);
-        writeTextToGif.run();
-    });
-};
-
-// todo: de-dupe this code, basically the same function as writeTextToGif
-const writeTextToStaticFiletype = async (textToWrite: string, staticFileInputPath: string, staticFileOutputPath: string): Promise<PromiseResolver> => {
-    const { width, height } = imageSize(staticFileInputPath);
-
-    return new Promise((resolve, reject) => {
-        const writeTextToStaticFile = ffmpeg(staticFileInputPath);
-        writeTextToStaticFile.complexFilter([`drawtext=text=${textToWrite}':fontcolor=black:fontsize=10:x=${width - 80}:y=${height - 20}`]); // todo: add font type
-        writeTextToStaticFile.on('error', () => reject(new Error('Failed to write text to static file')));
-        writeTextToStaticFile.on('end', () => resolve({ success: true }));
-        writeTextToStaticFile.output(staticFileOutputPath);
-        writeTextToStaticFile.run();
+        const writeTextToMedia = ffmpeg(mediaInputPath);
+        writeTextToMedia.complexFilter(filter); // todo: make it correct font
+        writeTextToMedia.on('error', () => reject(new Error('Failed to write text to gif')));
+        writeTextToMedia.on('end', () => resolve({ success: true }));
+        writeTextToMedia.output(mediaOutputPath);
+        writeTextToMedia.run();
     });
 };
 
