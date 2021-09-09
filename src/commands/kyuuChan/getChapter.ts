@@ -43,7 +43,7 @@ export const command: Command = {
 
 /**
  * @param chapterList
- * @description Filters duplicate chapters, will prefer gif chapter if available.
+ * @description Filters duplicate chapters, prefers gif chapters when available.
  */
 const getPreferredChapter = async (chapters: Chapter[]): Promise<ResolvedChapter> => {
     let preferredChapter: ResolvedChapter;
@@ -79,6 +79,7 @@ const getChapterWithChapterInfo = async (chapter: Chapter, chapterUrl: string, o
             }
             reject(new Error(errorMessage));
         }
+
         resolve({ success: true, localChapterPath: mediaOutputPath });
     });
 };

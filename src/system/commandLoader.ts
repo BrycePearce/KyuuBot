@@ -13,7 +13,7 @@ export function initCommands() {
     readdirSync(path.join(__dirname, '..', 'commands')).map(commandFolder => {
         readdirSync(path.join(__dirname, '..', 'commands', commandFolder)).map(file => {
             const { command }: { command: Command } = require(path.normalize(path.join(__dirname, '..', 'commands', commandFolder, file)));
-            commands.set(command.name, command) // todo: instead of command name, maybe do command key?
+            commands.set(command.name, command) // todo: instead of command name, maybe do command key or identifier? To make findCommand more intuitive, this currently sets entire name as key
         });
     });
 }
