@@ -1,9 +1,8 @@
-import { getFileExtension, isUrlExtensionStatic, saveImageToTmp } from '../../utils/files';
+import { deleteFilesFromTmp, getFileExtension, isUrlExtensionStatic, saveImageToTmp } from '../../utils/files';
 import { PromiseResolver } from '../../types/PromiseResolver';
 import { writeTextOnMedia } from '../../utils/ffmpeg';
 import { Chapter, Manga } from 'mangadex-full-api';
 import { Command } from "../../types/Command";
-import { unlink } from 'fs';
 import path from 'path';
 
 interface ResolvedChapter {
@@ -43,7 +42,7 @@ export const command: Command = {
                 message.channel.send(ex['message'] || 'Something went really wrong!');
                 return;
             } finally {
-                cleanupTmpFiles([savedMediaPath, mediaOutputPath]);
+                deleteFilesFromTmp([savedMediaPath, mediaOutputPath]);
             }
         }
     }
@@ -87,12 +86,6 @@ const getChapterWithChapterInfo = async (chapter: Chapter, chapterUrl: string, r
 
         resolve({ success: true, localChapterPath: processedMediaPath });
     });
-};
-
-const cleanupTmpFiles = (fileList: string[] = []) => {
-    fileList.forEach((file) => unlink(file, (err) => {
-        if (err) console.error(err);
-    }));
 };
 
 const getTmpPathWithFilename = (filename: string) => {

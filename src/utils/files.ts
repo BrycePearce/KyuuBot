@@ -1,5 +1,5 @@
 import { PromiseResolver } from './../types/PromiseResolver';
-import { createWriteStream } from 'fs';
+import { createWriteStream, unlink } from 'fs';
 import got from 'got';
 
 export const saveImageToTmp = async (url: string, writePath: string): Promise<PromiseResolver> => {
@@ -17,6 +17,12 @@ export const saveImageToTmp = async (url: string, writePath: string): Promise<Pr
             resolve({ success: true });
         });
     });
+};
+
+export const deleteFilesFromTmp = (fileList: string[] = []) => {
+    fileList.forEach((file) => unlink(file, (err) => {
+        if (err) console.error(err);
+    }));
 };
 
 export const isUrlExtensionStatic = (url: string): boolean => {
