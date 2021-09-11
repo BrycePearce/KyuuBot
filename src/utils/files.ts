@@ -1,5 +1,7 @@
 import { PromiseResolver } from './../types/PromiseResolver';
-import { createWriteStream, unlink } from 'fs';
+import { createWriteStream, unlink, readdir } from 'fs';
+import { promisify } from 'util';
+import path from 'path';
 import got from 'got';
 
 export const saveImageToTmp = async (url: string, writePath: string): Promise<PromiseResolver> => {
@@ -32,4 +34,13 @@ export const isUrlExtensionStatic = (url: string): boolean => {
 export const getFileExtension = (url: string): string => { // todo: probably make this a util
     const fileExtension = url.split(/[#?]/)[0].split('.').pop().trim();
     return fileExtension;
+};
+
+export const getRandomEmotePath = async () => {
+    const emoteDir = path.normalize(path.join(__dirname, '../../emotes'));
+    return await promisify(readdir)(emoteDir).then(async (filenames) => {
+        const randomIndex = Math.floor(Math.random() * filenames.length);
+        const randomImageName = filenames[randomIndex];
+        return path.normalize(path.join(emoteDir, '/', randomImageName));
+    });
 };

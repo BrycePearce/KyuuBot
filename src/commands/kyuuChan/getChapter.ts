@@ -1,4 +1,4 @@
-import { deleteFilesFromTmp, getFileExtension, isUrlExtensionStatic, saveImageToTmp } from '../../utils/files';
+import { deleteFilesFromTmp, getFileExtension, getRandomEmotePath, isUrlExtensionStatic, saveImageToTmp } from '../../utils/files';
 import { PromiseResolver } from '../../types/PromiseResolver';
 import { writeTextOnMedia } from '../../utils/ffmpeg';
 import { Chapter, Manga } from 'mangadex-full-api';
@@ -22,20 +22,30 @@ export const command: Command = {
     args: true,
     usage: '[invocation] [chapterNumber]',
     async execute(message, args) {
+        if (!isValidArgs(args)) return;
+
+        // todo: error handling for this block
         const manga = await Manga.getByQuery({ ids: ['5b2c7a03-ca53-43f0-abc8-031c0c136ae6'] }); // todo: save and store this on init, then pass it here so don't have to fetch on every query
-        const chapterList = await manga.getFeed({ translatedLanguage: ['en'], offset: Math.max(Number(args[0]) - 5, 0), limit: 25, order: { chapter: 'asc', volume: 'asc' } } as any, false);
-        const matchingChapters = chapterList.filter((chapter) => chapter.chapter === args[0]);
-        const preferredChapter = await getPreferredChapter(matchingChapters);
+        const requestedChapter = await getRequestedChapter(manga, args);
+        const chapterList = await manga.getFeed({ translatedLanguage: ['en'], offset: Math.max(Number(requestedChapter) - 5, 0), limit: 25, order: { chapter: 'asc', volume: 'asc' } } as any, false);
+        const matchingChapters = chapterList.filter((chapter) => chapter.chapter === requestedChapter);
+
+        if (matchingChapters.length === 0) {
+            message.channel.send('No chapter was found', { files: [await getRandomEmotePath()] });
+            return;
+        }
+
+        const preferredChapter = await getPreferredChapterPages(matchingChapters);
         const outputFileName = Date.now();
-        for (const chapter of preferredChapter.pages) {
-            // create paths to save the media (chapter) for processing
-            const fileExtension = getFileExtension(chapter);
+        for (const page of preferredChapter.pages) {
+            // create paths to save the media (page) for processing
+            const fileExtension = getFileExtension(page);
             const savedMediaPath = getTmpPathWithFilename(`${outputFileName}.${fileExtension}`);
             const mediaOutputPath = getTmpPathWithFilename(`${outputFileName}-finished.${fileExtension}`);
 
-            // get and output processed chapter
+            // get and output processed page
             try {
-                const { localChapterPath } = await getChapterWithChapterInfo(preferredChapter.chapter, chapter, savedMediaPath, mediaOutputPath);
+                const { localChapterPath } = await getChapterWithChapterInfo(preferredChapter.chapter, page, savedMediaPath, mediaOutputPath);
                 await message.channel.send({ files: [localChapterPath] });
             } catch (ex) {
                 console.error(ex)
@@ -48,11 +58,31 @@ export const command: Command = {
     }
 };
 
+async function getRequestedChapter(manga: Manga, args: string[]): Promise<string> {
+    if (args[0] && args[0].toLowerCase() !== 'r') return args[0];
+
+    const latestChapter = (await manga.getFeed({ translatedLanguage: ['en'], limit: 1, order: { chapter: 'desc', volume: 'desc' } } as any, false))[0].chapter;
+
+    // if there are no arguments then fetch the latest chapter
+    if (!args[0]) {
+        return latestChapter;
+    } else { // otherwise they requested a random chapter
+        const randomChapter = Math.floor(Math.random() * (Number(latestChapter) - 1 + 1)) + 1;
+        return randomChapter.toString();
+    }
+};
+
+const isValidArgs = (args: string[]): boolean => {
+    if (!args[0]) return true;
+    // accepts a string integer, or the letter r case insenitive
+    return new RegExp('^[0-9]+$', 'i').test(args[0]) || args[0].trim().toLowerCase() === 'r';
+};
+
 /**
  * @param chapterList
  * @description Filters duplicate chapters, prefers gif chapters when available.
  */
-const getPreferredChapter = async (chapters: Chapter[]): Promise<ResolvedChapter> => {
+const getPreferredChapterPages = async (chapters: Chapter[]): Promise<ResolvedChapter> => {
     let preferredChapter: ResolvedChapter;
     for (let i = 0; i < chapters.length; i++) {
         const chapterList = await chapters[i].getReadablePages();
@@ -66,13 +96,13 @@ const getPreferredChapter = async (chapters: Chapter[]): Promise<ResolvedChapter
     return preferredChapter;
 };
 
-const getChapterWithChapterInfo = async (chapter: Chapter, chapterUrl: string, rawMediaPath: string, processedMediaPath: string): Promise<PromiseResolver & { localChapterPath?: string }> => {
+const getChapterWithChapterInfo = async (chapter: Chapter, pageUrl: string, rawMediaPath: string, processedMediaPath: string): Promise<PromiseResolver & { localChapterPath?: string }> => {
     return new Promise(async (resolve, reject) => {
         const textToWrite = `Vol. ${chapter.volume} Ch. ${chapter.chapter}`;
 
         try {
             // download url so we can process (add text) it
-            await saveImageToTmp(chapterUrl, rawMediaPath);
+            await saveImageToTmp(pageUrl, rawMediaPath);
 
             // write text to the saved file, then write the file with changes to processedMediaPath
             await writeTextOnMedia(textToWrite, rawMediaPath, processedMediaPath);
