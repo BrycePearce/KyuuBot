@@ -3,6 +3,7 @@ import { PromiseResolver } from '../../types/PromiseResolver';
 import { writeTextOnMedia } from '../../utils/ffmpeg';
 import { Chapter, Manga } from 'mangadex-full-api';
 import { Command } from "../../types/Command";
+import { unlink } from 'fs';
 import path from 'path';
 
 interface ResolvedChapter {
@@ -14,7 +15,6 @@ interface ResolvedChapter {
     command todos:
     1.) Get specified manga & specified chapter # from argument
     2.) Allow r for random manga & chapter
-    3.) Cleanup tmp files
 */
 export const command: Command = {
     name: 'Retrieve Chapter',
@@ -29,13 +29,21 @@ export const command: Command = {
         const preferredChapter = await getPreferredChapter(matchingChapters);
         const outputFileName = Date.now();
         for (const chapter of preferredChapter.pages) {
+            // create paths to save the media (chapter) for processing
+            const fileExtension = getFileExtension(chapter);
+            const savedMediaPath = getTmpPathWithFilename(`${outputFileName}.${fileExtension}`);
+            const mediaOutputPath = getTmpPathWithFilename(`${outputFileName}-finished.${fileExtension}`);
+
+            // get and output processed chapter
             try {
-                const { localChapterPath } = await getChapterWithChapterInfo(preferredChapter.chapter, chapter, outputFileName);
-                message.channel.send({ files: [localChapterPath] });
+                const { localChapterPath } = await getChapterWithChapterInfo(preferredChapter.chapter, chapter, savedMediaPath, mediaOutputPath);
+                await message.channel.send({ files: [localChapterPath] });
             } catch (ex) {
                 console.error(ex)
                 message.channel.send(ex['message'] || 'Something went really wrong!');
                 return;
+            } finally {
+                cleanupTmpFiles([savedMediaPath, mediaOutputPath]);
             }
         }
     }
@@ -59,19 +67,16 @@ const getPreferredChapter = async (chapters: Chapter[]): Promise<ResolvedChapter
     return preferredChapter;
 };
 
-const getChapterWithChapterInfo = async (chapter: Chapter, chapterUrl: string, outputFileName: number): Promise<PromiseResolver & { localChapterPath?: string }> => {
+const getChapterWithChapterInfo = async (chapter: Chapter, chapterUrl: string, rawMediaPath: string, processedMediaPath: string): Promise<PromiseResolver & { localChapterPath?: string }> => {
     return new Promise(async (resolve, reject) => {
         const textToWrite = `Vol. ${chapter.volume} Ch. ${chapter.chapter}`;
-        const fileExtension = getFileExtension(chapterUrl);
-        const savedImage = getTmpPathWithFilename(`${outputFileName}.${fileExtension}`);
-        const mediaOutputPath = getTmpPathWithFilename(`${outputFileName}-finished.${fileExtension}`);
 
         try {
             // download url so we can process (add text) it
-            await saveImageToTmp(chapterUrl, savedImage);
+            await saveImageToTmp(chapterUrl, rawMediaPath);
 
-            // write text to the file and write the resulting file to mediaOutputPath
-            await writeTextOnMedia(textToWrite, savedImage, mediaOutputPath);
+            // write text to the saved file, then write the file with changes to processedMediaPath
+            await writeTextOnMedia(textToWrite, rawMediaPath, processedMediaPath);
         } catch (ex) { // todo: probably a better way to handle this, either with chained catches or typeguard
             let errorMessage = 'There was an error fetching the chapter';
             if (ex instanceof Error) {
@@ -80,8 +85,14 @@ const getChapterWithChapterInfo = async (chapter: Chapter, chapterUrl: string, o
             reject(new Error(errorMessage));
         }
 
-        resolve({ success: true, localChapterPath: mediaOutputPath });
+        resolve({ success: true, localChapterPath: processedMediaPath });
     });
+};
+
+const cleanupTmpFiles = (fileList: string[] = []) => {
+    fileList.forEach((file) => unlink(file, (err) => {
+        if (err) console.error(err);
+    }));
 };
 
 const getTmpPathWithFilename = (filename: string) => {
