@@ -10,11 +10,6 @@ interface ResolvedChapter {
     pages: string[];
 };
 
-/*
-    command todos:
-    1.) Get specified manga & specified chapter # from argument
-    2.) Allow r for random manga & chapter
-*/
 export const command: Command = {
     name: 'Retrieve Chapter',
     description: 'Returns the the kyuu comic number specified by the user',
