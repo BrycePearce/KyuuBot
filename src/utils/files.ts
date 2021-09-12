@@ -1,5 +1,6 @@
 import { PromiseResolver } from './../types/PromiseResolver';
-import { createWriteStream, unlink, readdir } from 'fs';
+import { createWriteStream, readdir } from 'fs';
+import { unlink } from 'fs/promises';
 import { promisify } from 'util';
 import path from 'path';
 import got from 'got';
@@ -21,10 +22,15 @@ export const saveImageToTmp = async (url: string, writePath: string): Promise<Pr
     });
 };
 
-export const deleteFilesFromTmp = (fileList: string[] = []) => {
-    fileList.forEach((file) => unlink(file, (err) => {
-        if (err) console.error(err);
-    }));
+export const deleteFileFromTmp = async (filePath: string): Promise<PromiseResolver> => {
+    return new Promise(async (resolve) => {
+        try {
+            await unlink(filePath);
+            return resolve({ success: true })
+        } catch (error) {
+            return resolve({ success: false, message: `Attempt to delete ${filePath} failed. Filename does not exist.` });
+        }
+    });
 };
 
 export const isUrlExtensionStatic = (url: string): boolean => {

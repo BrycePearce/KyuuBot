@@ -1,4 +1,4 @@
-import { deleteFilesFromTmp, getFileExtension, getRandomEmotePath, isUrlExtensionStatic, saveImageToTmp } from '../../utils/files';
+import { deleteFileFromTmp, getFileExtension, getRandomEmotePath, isUrlExtensionStatic, saveImageToTmp } from '../../utils/files';
 import { PromiseResolver } from '../../types/PromiseResolver';
 import { writeTextOnMedia } from '../../utils/ffmpeg';
 import { Chapter, Manga } from 'mangadex-full-api';
@@ -18,36 +18,42 @@ export const command: Command = {
     usage: '[invocation] [chapterNumber]',
     async execute(message, args) {
         if (!isValidArgs(args)) return;
+        let createdEntities: string[] = [];
 
-        // todo: error handling for this block
-        const manga = await Manga.getByQuery({ ids: ['5b2c7a03-ca53-43f0-abc8-031c0c136ae6'] }); // todo: save and store this on init, then pass it here so don't have to fetch on every query
-        const requestedChapter = await getRequestedChapter(manga, args);
-        const chapterList = await manga.getFeed({ translatedLanguage: ['en'], offset: Math.max(Number(requestedChapter) - 5, 0), limit: 25, order: { chapter: 'asc', volume: 'asc' } } as any, false);
-        const matchingChapters = chapterList.filter((chapter) => chapter.chapter === requestedChapter);
+        try {
+            const manga = await Manga.getByQuery({ ids: ['5b2c7a03-ca53-43f0-abc8-031c0c136ae6'] }); // todo: save and store this on init, then pass it here so don't have to fetch on every query
+            const requestedChapter = await getRequestedChapter(manga, args);
+            const chapterList = await manga.getFeed({ translatedLanguage: ['en'], offset: Math.max(Number(requestedChapter) - 5, 0), limit: 25, order: { chapter: 'asc', volume: 'asc' } } as any, false);
+            const matchingChapters = chapterList.filter((chapter) => chapter.chapter === requestedChapter);
+            if (matchingChapters.length === 0) {
+                message.channel.send('No chapter was found', { files: [await getRandomEmotePath()] });
+                return;
+            }
 
-        if (matchingChapters.length === 0) {
-            message.channel.send('No chapter was found', { files: [await getRandomEmotePath()] });
-            return;
-        }
+            const preferredChapter = await getPreferredChapterPages(matchingChapters);
+            const outputFileName = Date.now();
+            for (const page of preferredChapter.pages) {
+                // create paths to save the media (page) for processing
+                const fileExtension = getFileExtension(page);
+                const savedMediaPath = getTmpPathWithFilename(`${outputFileName}.${fileExtension}`);
+                const mediaOutputPath = getTmpPathWithFilename(`${outputFileName}-finished.${fileExtension}`);
+                createdEntities = [savedMediaPath, mediaOutputPath];
 
-        const preferredChapter = await getPreferredChapterPages(matchingChapters);
-        const outputFileName = Date.now();
-        for (const page of preferredChapter.pages) {
-            // create paths to save the media (page) for processing
-            const fileExtension = getFileExtension(page);
-            const savedMediaPath = getTmpPathWithFilename(`${outputFileName}.${fileExtension}`);
-            const mediaOutputPath = getTmpPathWithFilename(`${outputFileName}-finished.${fileExtension}`);
-
-            // get and output processed page
-            try {
+                // get and output processed page
                 const { localChapterPath } = await getChapterWithChapterInfo(preferredChapter.chapter, page, savedMediaPath, mediaOutputPath);
                 await message.channel.send({ files: [localChapterPath] });
-            } catch (ex) {
-                console.error(ex)
-                message.channel.send(ex['message'] || 'Something went really wrong!');
-                return;
-            } finally {
-                deleteFilesFromTmp([savedMediaPath, mediaOutputPath]);
+            }
+        } catch (ex) {
+            console.error(ex)
+            message.channel.send(ex['message'] || 'Something went really wrong!');
+            return;
+        } finally {
+            // delete tmp files
+            for (const entity of createdEntities) {
+                const a = await deleteFileFromTmp(entity);
+                if (!a.success) {
+                    console.warn(a.message);
+                }
             }
         }
     }
