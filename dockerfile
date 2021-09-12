@@ -1,13 +1,17 @@
-FROM node:14.15.1-alpine
+# Pull base image.
+FROM node:16
 
-RUN apk add --no-cache ffmpeg
+RUN apt-get update -y
+RUN apt-get install ffmpeg -y
 
 WORKDIR /app
+
+COPY package.json .
 # copy source to container
 
 # install dependencies
 RUN npm install
 
-COPY . .
+COPY . ./
 
 CMD ["npm", "start"]
