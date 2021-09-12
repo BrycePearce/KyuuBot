@@ -1,3 +1,6 @@
+# Build/Run Instructions
+# docker build . -t [image_name]
+# docker run -it [image_name]
 # Pull base image.
 FROM node:16
 
