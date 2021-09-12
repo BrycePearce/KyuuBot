@@ -29,9 +29,9 @@ export const command: Command = {
     invocations: ['8', '8ball'],
     args: false,
     usage: '[invocation]',
-    async execute(message) {
+    async execute(message, _, client) {
         const eightballResponse = responses[Math.floor(responses.length * Math.random())];
-        const channelEmotes = message.guild.emojis.cache; // todo: get emojis globally instead of just from channel
+        const channelEmotes = client.emojis.cache; // todo: get emojis globally instead of just from channel
         const keys = Array.from(channelEmotes.keys());
         const randomEmojiKey = getRandomItemFromList(keys);
         const emote = channelEmotes.get(randomEmojiKey);

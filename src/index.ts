@@ -28,7 +28,7 @@ client.on('message', async message => {
 	const command = findCommand(commandName); // todo: probably do a validate command & arguments method
 
 	if (!command) return;
-	command.execute(message, commandArguments);
+	command.execute(message, commandArguments, client); // todo: do not pass client, use class instead for emotes
 });
 
 init();

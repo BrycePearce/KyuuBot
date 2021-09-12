@@ -1,3 +1,4 @@
+import { Client } from 'discord.js';
 import { Message } from 'discord.js';
 
 export interface Command {
@@ -8,5 +9,5 @@ export interface Command {
     args?: boolean; // argument params
     usage?: string, // example usage
 
-    execute: (message: Message, args: string[]) => void;
+    execute: (message: Message, args: string[], client: Client) => void; // todo: don't pass client here, I'm just being lazy and using it to get emotes from all servers. Use a class instead.
 }

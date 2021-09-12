@@ -14,7 +14,10 @@ export const writeTextOnMedia = async (textToWrite: string, mediaInputPath: stri
     return new Promise((resolve, reject) => {
         const writeTextToMedia = ffmpeg(mediaInputPath);
         writeTextToMedia.complexFilter(filter); // todo: make it correct font
-        writeTextToMedia.on('error', () => reject(new Error('Failed to write text to gif')));
+        writeTextToMedia.on("error", (err) => {
+            console.log(err); // todo: add better error handling here
+            reject(new Error("Failed to write text to gif"));
+        });
         writeTextToMedia.on('end', () => resolve({ success: true }));
         writeTextToMedia.output(mediaOutputPath);
         writeTextToMedia.run();
