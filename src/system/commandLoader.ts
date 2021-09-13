@@ -1,19 +1,31 @@
 import { Command } from './../types/Command';
-import { readdirSync, existsSync, mkdirSync } from 'fs';
+import { existsSync, mkdirSync } from 'fs';
+import { readdir } from "fs/promises"
 import path from 'path';
 import { commands } from '../utils/commandUtils';
 
-export function initCommands() {
+export async function initCommands() {
     // create a tmp directory for short lived files
     if (!existsSync('tmp')) {
         mkdirSync('tmp');
     }
 
     // load commands
-    readdirSync(path.join(__dirname, '..', 'commands')).map(commandFolder => {
-        readdirSync(path.join(__dirname, '..', 'commands', commandFolder)).map(file => {
-            const { command }: { command: Command } = require(path.normalize(path.join(__dirname, '..', 'commands', commandFolder, file)));
-            commands.set(command.name, command) // todo: instead of command name, maybe do command key or identifier? To make findCommand more intuitive, this currently sets entire name as key
-        });
-    });
-}
+    for await (const file of getFiles(path.normalize(path.join(__dirname, '..', 'commands', '/')))) {
+        console.log(`loading ${file.name}`);
+        const { command }: { command: Command } = require(file.path);
+        commands.set(command.name, command);
+    }
+};
+
+async function* getFiles(rootDirectory) {
+    const entries = await readdir(rootDirectory, { withFileTypes: true })
+
+    for (let file of entries) {
+        if (file.isDirectory()) {
+            yield* getFiles(path.normalize(`${rootDirectory}${file.name}/`));
+        } else {
+            yield { ...file, path: rootDirectory + file.name }
+        }
+    }
+};

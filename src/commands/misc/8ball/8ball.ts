@@ -1,4 +1,4 @@
-import { Command } from './../../types/Command';
+import { Command } from '../../../types/Command';
 
 const responses = [
     'it is certain',
@@ -36,7 +36,6 @@ export const command: Command = {
         const randomEmojiKey = getRandomItemFromList(keys);
         const emote = channelEmotes.get(randomEmojiKey);
         message.channel.send(`${emote} ${eightballResponse}`);
-
     }
 };
 
