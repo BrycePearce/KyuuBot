@@ -12,20 +12,19 @@ export async function initCommands() {
 
     // load commands
     for await (const file of getFiles(path.normalize(path.join(__dirname, '..', 'commands', '/')))) {
-        console.log(`loading ${file.name}`);
         const { command }: { command: Command } = require(file.path);
         commands.set(command.name, command);
     }
 };
 
-async function* getFiles(rootDirectory) {
+async function* getFiles(rootDirectory: string) {
     const entries = await readdir(rootDirectory, { withFileTypes: true })
 
-    for (let file of entries) {
+    for (const file of entries) {
         if (file.isDirectory()) {
             yield* getFiles(path.normalize(`${rootDirectory}${file.name}/`));
         } else {
-            yield { ...file, path: rootDirectory + file.name }
+            yield { ...file, path: rootDirectory + file.name };
         }
     }
 };
