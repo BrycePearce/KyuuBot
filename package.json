@@ -15,11 +15,12 @@
     "fluent-ffmpeg": "^2.1.2",
     "got": "^11.8.2",
     "image-size": "^1.0.0",
-    "mangadex-full-api": "^5.5.0",
+    "mangadex-full-api": "^5.5.1",
     "ts-node": "^10.2.1"
   },
   "devDependencies": {
     "@types/fluent-ffmpeg": "^2.1.18",
+    "@types/google.maps": "^3.45.6",
     "@types/node": "^16.7.5",
     "typescript": "^4.4.2"
   }

@@ -12,8 +12,12 @@ export async function initCommands() {
 
     // load commands
     for await (const file of getFiles(path.normalize(path.join(__dirname, '..', 'commands', '/')))) {
+        // only load commands
+        if (file.name !== 'command.ts') return;
+
         const { command }: { command: Command } = require(file.path);
         commands.set(command.name, command);
+        console.log('initialized', command.name)
     }
 };
 
