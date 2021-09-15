@@ -28,6 +28,7 @@ export const command: Command = {
     description: 'Generates an answer to a question',
     invocations: ['8', '8ball'],
     args: false,
+    enabled: true,
     usage: '[invocation]',
     async execute(message, _, client) {
         const eightballResponse = responses[Math.floor(responses.length * Math.random())];

@@ -16,8 +16,10 @@ export async function initCommands() {
         if (file.name !== 'command.ts') return;
 
         const { command }: { command: Command } = require(file.path);
-        commands.set(command.name, command);
-        console.log('initialized', command.name)
+        if (command.enabled) {
+            console.log('initialized', command.name)
+            commands.set(command.name, command);
+        }
     }
 };
 

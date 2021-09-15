@@ -7,6 +7,7 @@ export const command: Command = {
     description: 'Rolls dice',
     invocations: ['r', 'roll', 'd', 'dice'],
     args: true,
+    enabled: true,
     usage: '[invocation] [dice_roll]',
     async execute(message) {
         message.channel.send('Not yet implemented');

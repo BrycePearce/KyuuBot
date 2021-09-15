@@ -25,6 +25,7 @@ export const command: Command = {
     description: 'Gets the weather',
     invocations: ['weather', 'we', 'w'],
     args: true,
+    enabled: false,
     usage: '[invocation] [city | state | zip | etc]',
     async execute(message, args) {
         const userLocation = await getUserLocation(message.author.username, args);

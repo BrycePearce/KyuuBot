@@ -14,6 +14,7 @@ export const command: Command = {
     name: 'Retrieve Chapter',
     description: 'Returns the the kyuu comic number specified by the user',
     invocations: ['k', 'kyute', 'kyuute', 'kyuuchan', 'kyuu'],
+    enabled: true,
     args: true,
     usage: '[invocation] [chapterNumber]',
     async execute(message, args) {
