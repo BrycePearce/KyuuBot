@@ -2,6 +2,8 @@ import { DarkSkyResponse } from '../../types/DarkSkyResponse';
 import { ColorResolvable, MessageEmbed } from 'discord.js';
 import { getRandomEmotePath } from '../../utils/files';
 import { Command } from './../../types/Command';
+import { readFile } from 'fs/promises';
+import path from 'path';
 import got from 'got';
 
 const weatherIcons = {
@@ -25,7 +27,11 @@ export const command: Command = {
     args: true,
     usage: '[invocation] [city | state | zip | etc]',
     async execute(message, args) {
-        const userLocation = args.join(' ');
+        const userLocation = await getUserLocation(message.author.username, args);
+        if (!userLocation) {
+            message.channel.send('Set your default location with .weather set YOUR_LOCATION')
+        }
+
         try {
             const geoData = await getGeoLocation(userLocation);
             if (!geoData) {
@@ -41,6 +47,19 @@ export const command: Command = {
             message.channel.send(ex && ex['message'] || 'Something really went wrong');
         }
     }
+};
+
+const getUserLocation = async (username: string, args: string[]): Promise<string> => {
+    if (args.length === 0) {
+        const pathToDb = path.normalize(path.join(path.join(__dirname, '../../../', 'db', 'DataStorage.json')));
+        const storedUsers = JSON.parse(await readFile(pathToDb, "utf8"));
+        const storedLocation = storedUsers[username];
+        return storedLocation || '';
+    }
+    if (args[1].toLowerCase() === 'set') {
+        // todo: implement
+    }
+    return args.join(' ');
 };
 
 const getGeoLocation = async (userLocation: string): Promise<google.maps.GeocoderResult> => {
@@ -84,12 +103,14 @@ const generateOutputEmbed = (weather: DarkSkyResponse, formattedAddress: string)
         **Forecast**: ${weather.daily.summary}
     `);
 
-    let embedColor: ColorResolvable = 'DARK_NAVY';
-    if (currentTemp < Number.MAX_SAFE_INTEGER) embedColor = 'RED';
-    else if (currentTemp <= 85) embedColor = 'ORANGE';
-    else if (currentTemp <= 75) embedColor = 'GREEN';
+    let embedColor: ColorResolvable = '';
+    if (currentTemp <= 20) embedColor = 'DARK_BLUE';
     else if (currentTemp <= 60) embedColor = 'AQUA';
-    else if (currentTemp <= 20) embedColor = 'DARK_BLUE';
+    else if (currentTemp <= 75) embedColor = 'GREEN';
+    else if (currentTemp <= 85) embedColor = 'ORANGE';
+    else if (currentTemp <= 150) embedColor = 'RED';
+    else embedColor = 'DARK_NAVY';
+
     embed.setColor(embedColor);
     return embed;
 };
