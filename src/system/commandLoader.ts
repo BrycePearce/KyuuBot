@@ -1,8 +1,8 @@
+import { commands } from '../utils/commandUtils';
 import { Command } from './../types/Command';
 import { existsSync, mkdirSync } from 'fs';
 import { readdir } from "fs/promises"
 import path from 'path';
-import { commands } from '../utils/commandUtils';
 
 export async function initCommands() {
     // create a tmp directory for short lived files

@@ -1,21 +1,21 @@
 import { DarkSkyResponse } from '../../types/DarkSkyResponse';
+import { ColorResolvable, MessageEmbed } from 'discord.js';
 import { getRandomEmotePath } from '../../utils/files';
 import { Command } from './../../types/Command';
-import { MessageEmbed } from 'discord.js';
 import got from 'got';
 
-const emojis = {
+const weatherIcons = {
     "clear-night": "🌙",
     "rain": "☔️",
     "snow": "❄️",
-    "sleet": "❄️",
+    "sleet": "❄️🌨️",
     "wind": "💨",
-    "fog": "🌫",
+    "fog": "🌫️",
     "cloudy": "☁️",
     "partly-cloudy-day": "⛅️",
     "partly-cloudy-night": "☁️",
-    "thunderstorm": "⛈",
-    "tornado": "🌪"
+    "thunderstorm": "⚡",
+    "tornado": "🌪️"
 };
 
 export const command: Command = {
@@ -27,22 +27,23 @@ export const command: Command = {
     async execute(message, args) {
         const userLocation = args.join(' ');
         try {
-            const coords = await getGeoLocation(userLocation);
-            if (!coords) {
+            const geoData = await getGeoLocation(userLocation);
+            if (!geoData) {
                 message.channel.send('Location was not found!', { files: [await getRandomEmotePath()] });
                 return;
             }
-            getWeather(coords);
 
-            const exampleEmbed = new MessageEmbed()
+            const weather = await getWeather(geoData.geometry.location);
+            const weatherEmbed = generateOutputEmbed(weather, geoData.formatted_address);
+            message.channel.send(weatherEmbed);
         } catch (ex) {
-            console.error(ex && ex['message'] || 'Something really went wrong');
+            console.error(ex);
+            message.channel.send(ex && ex['message'] || 'Something really went wrong');
         }
-        // message.channel.send(`${lat} ${lng}`)
     }
 };
 
-const getGeoLocation = async (userLocation: string): Promise<google.maps.LatLng> => {
+const getGeoLocation = async (userLocation: string): Promise<google.maps.GeocoderResult> => {
     return new Promise(async (resolve, reject) => {
         try {
             const geoCodeUri = encodeURI(`https://maps.googleapis.com/maps/api/geocode/json?address=${userLocation}&key=${process.env.googleGeoToken}`);
@@ -51,22 +52,48 @@ const getGeoLocation = async (userLocation: string): Promise<google.maps.LatLng>
             if (results?.length === 0) {
                 resolve(null);
             };
-
-            resolve(results[0].geometry.location);
+            resolve(results[0]);
         } catch (ex) {
-            reject(new Error(`Failed to fetch coordinates. ${ex}`))
+            console.error(ex);
+            reject(new Error('Failed to fetch coordinates'))
         }
     });
 };
 
-const getWeather = async ({ lat, lng }: google.maps.LatLng) => {
-    console.log('wew', `https://api.darksky.net/forecast/${process.env.darkSkyToken}/${lat}/${lng}`)
-    const darkskyApi = await got(`https://api.darksky.net/forecast/${process.env.darkSkyToken}/${lat},${lng}`).json() as DarkSkyResponse;
-    console.log(darkskyApi.currently.apparentTemperature)
+const getWeather = async ({ lat, lng }: google.maps.LatLng): Promise<DarkSkyResponse> => {
+    try {
+        return await got(`https://api.darksky.net/forecast/${process.env.darkSkyToken}/${lat},${lng}`).json() as DarkSkyResponse;
+    } catch (ex) {
+        console.error(ex);
+        throw new Error('DarkSky is down');
+    }
 };
 
-const generateOutputEmbed = (): MessageEmbed => {
-    const exampleEmbed = new MessageEmbed()
+const generateOutputEmbed = (weather: DarkSkyResponse, formattedAddress: string): MessageEmbed => {
+    const currentWeather = weather.currently;
+    const currentTemp = Number(currentWeather.temperature.toFixed(2));
+    const chanceRainToday = weather.daily.data.reduce((accum, curr) => accum + curr.precipProbability, 0) / weather.daily.data.length;
+    const embed = new MessageEmbed();
+    embed.title = `${weatherIcons[currentWeather.icon]} ${formattedAddress}`;
+    embed.setDescription(`
+        ${currentTemp}F / ${((currentTemp - 32) * 5 / 9).toFixed(2)}C
+        **Cloud Cover**: ${convertDecimalToPercent(currentWeather.cloudCover)}%
+        **Windspeed**: ${currentWeather.windSpeed}mph
+        **Humidity**: ${convertDecimalToPercent(currentWeather.humidity)}%
+        **Chance of Rain**: ${convertDecimalToPercent(chanceRainToday)}%
+        **Forecast**: ${weather.daily.summary}
+    `);
 
-    return exampleEmbed;
+    let embedColor: ColorResolvable = 'DARK_NAVY';
+    if (currentTemp < Number.MAX_SAFE_INTEGER) embedColor = 'RED';
+    else if (currentTemp <= 85) embedColor = 'ORANGE';
+    else if (currentTemp <= 75) embedColor = 'GREEN';
+    else if (currentTemp <= 60) embedColor = 'AQUA';
+    else if (currentTemp <= 20) embedColor = 'DARK_BLUE';
+    embed.setColor(embedColor);
+    return embed;
+};
+
+const convertDecimalToPercent = (decimal: number, fixed: number = 2): number => {
+    return Number(decimal.toFixed(fixed)) * 100;
 };
