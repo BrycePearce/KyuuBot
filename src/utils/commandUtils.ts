@@ -1,5 +1,5 @@
-import { Collection } from "discord.js";
 import { Command } from "../types/Command";
+import { Collection } from "discord.js";
 
 // this should really probably be handled by a class, todo: make it so
 export const commands: Collection<string, Command> = new Collection(); // https://discordjs.guide/additional-info/collections.html#collections (Map with neato helper functions)

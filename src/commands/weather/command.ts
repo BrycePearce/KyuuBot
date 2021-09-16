@@ -1,23 +1,23 @@
+import { ColorResolvable, Message, MessageEmbed } from 'discord.js';
 import { DarkSkyResponse } from '../../types/DarkSkyResponse';
-import { ColorResolvable, MessageEmbed } from 'discord.js';
 import { getRandomEmotePath } from '../../utils/files';
+import { readFile, writeFile } from 'fs/promises';
 import { Command } from './../../types/Command';
-import { readFile } from 'fs/promises';
 import path from 'path';
 import got from 'got';
 
 const weatherIcons = {
-    "clear-night": "🌙",
-    "rain": "☔️",
-    "snow": "❄️",
-    "sleet": "❄️🌨️",
-    "wind": "💨",
-    "fog": "🌫️",
-    "cloudy": "☁️",
-    "partly-cloudy-day": "⛅️",
     "partly-cloudy-night": "☁️",
-    "thunderstorm": "⚡",
-    "tornado": "🌪️"
+    "partly-cloudy-day": "⛅️",
+    "clear-night": "🌙",
+    thunderstorm: "⚡",
+    sleet: "❄️🌨️",
+    tornado: "🌪️",
+    cloudy: "☁️",
+    wind: "💨",
+    snow: "❄️",
+    rain: "☔️",
+    fog: "🌫️",
 };
 
 export const command: Command = {
@@ -28,7 +28,7 @@ export const command: Command = {
     enabled: false,
     usage: '[invocation] [city | state | zip | etc]',
     async execute(message, args) {
-        const userLocation = await getUserLocation(message.author.username, args);
+        const userLocation = await getUserLocation(message.author.username, args, message);
         if (!userLocation) {
             message.channel.send('Set your default location with .weather set YOUR_LOCATION')
         }
@@ -50,17 +50,26 @@ export const command: Command = {
     }
 };
 
-const getUserLocation = async (username: string, args: string[]): Promise<string> => {
-    if (args.length === 0) {
-        const pathToDb = path.normalize(path.join(path.join(__dirname, '../../../', 'db', 'DataStorage.json')));
-        const storedUsers = JSON.parse(await readFile(pathToDb, "utf8"));
-        const storedLocation = storedUsers[username];
-        return storedLocation || '';
-    }
-    if (args[1].toLowerCase() === 'set') {
-        // todo: implement
-    }
-    return args.join(' ');
+const getUserLocation = async (username: string, args: string[], message: Message): Promise<string> => {
+    // if the user specified a specific location, return it (i.e. .we Hyderabad)
+    const isStoredUserLocation = args.length === 0;
+    const isStoringNewLocation = args[0]?.toLowerCase() === 'set';
+    if (!isStoredUserLocation && !isStoringNewLocation) return args[0];
+
+    // if user exists in db, load location
+    const pathToDb = path.normalize((path.join(__dirname, '../../../', 'db', 'DataStorage.json')));
+    const storedUsers: { [key: string]: string; } = JSON.parse(await readFile(pathToDb, "utf8"));
+    const storedLocation = storedUsers[username];
+    if (storedLocation && !isStoringNewLocation) return storedLocation;
+
+    // otherwise store the user/location and return their location
+    storedUsers[username] = args[1];
+    const updatedUsers = JSON.stringify(storedUsers);
+    const newLocation = args[1];
+    await writeFile(pathToDb, updatedUsers);
+
+    message.channel.send(`${storedLocation ? 'Updated' : 'Set'} ${username}'s location to ${newLocation}`);
+    return newLocation;
 };
 
 const getGeoLocation = async (userLocation: string): Promise<google.maps.GeocoderResult> => {
@@ -99,7 +108,7 @@ const generateOutputEmbed = (weather: DarkSkyResponse, formattedAddress: string)
         ${currentTemp}F / ${((currentTemp - 32) * 5 / 9).toFixed(2)}C
         **Cloud Cover**: ${convertDecimalToPercent(currentWeather.cloudCover)}%
         **Windspeed**: ${currentWeather.windSpeed}mph
-        **Humidity**: ${convertDecimalToPercent(currentWeather.humidity)}%
+        **Humidity**: ${convertDecimalToPercent(currentWeather.humidity).toFixed(0)}%
         **Chance of Rain**: ${convertDecimalToPercent(chanceRainToday)}%
         **Forecast**: ${weather.daily.summary}
     `);

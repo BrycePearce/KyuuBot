@@ -1,6 +1,6 @@
+import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { commands } from '../utils/commandUtils';
 import { Command } from './../types/Command';
-import { existsSync, mkdirSync } from 'fs';
 import { readdir } from "fs/promises"
 import path from 'path';
 
@@ -8,6 +8,12 @@ export async function initCommands() {
     // create a tmp directory for short lived files
     if (!existsSync('tmp')) {
         mkdirSync('tmp');
+    }
+
+    // same with db
+    if (!existsSync('db')) {
+        mkdirSync('db');
+        writeFileSync(path.normalize(path.join('db', 'dataStorage.json')), JSON.stringify({}));
     }
 
     // load commands
