@@ -118,7 +118,7 @@ const generateOutputEmbed = (weather: DarkSkyResponse, formattedAddress: string)
         **Humidity**: ${convertDecimalToPercent(currentWeather.humidity).toFixed(0)}%
         **Chance of Rain**: ${convertDecimalToPercent(chanceRainToday)}%
         **Forecast**: ${weather.daily.summary}
-        ${errors && `\n**Alerts**:\n ${errors}`}
+        ${errors ? `\n**Alerts**:\n ${errors}` : ''}
     `);
 
     let embedColor: ColorResolvable = '';
