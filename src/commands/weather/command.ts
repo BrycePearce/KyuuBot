@@ -7,9 +7,10 @@ import path from 'path';
 import got from 'got';
 
 const weatherIcons = {
-    "partly-cloudy-night": "☁️",
+    "partly-cloudy-night": "☁️🌙",
     "partly-cloudy-day": "⛅️",
     "clear-night": "🌙",
+    "clear-day": "☀️",
     thunderstorm: "⚡",
     sleet: "❄️🌨️",
     tornado: "🌪️",
@@ -54,7 +55,7 @@ const getUserLocation = async (username: string, args: string[], message: Messag
     // if the user specified a specific location, return it (i.e. .we Hyderabad)
     const isStoredUserLocation = args.length === 0;
     const isStoringNewLocation = args[0]?.toLowerCase() === 'set';
-    if (!isStoredUserLocation && !isStoringNewLocation) return args[0];
+    if (!isStoredUserLocation && !isStoringNewLocation) return args.join('');
 
     // if user exists in db, load location
     const pathToDb = path.normalize((path.join(__dirname, '../../../', 'db', 'DataStorage.json')));
@@ -77,10 +78,10 @@ const getGeoLocation = async (userLocation: string): Promise<google.maps.Geocode
         try {
             const geoCodeUri = encodeURI(`https://maps.googleapis.com/maps/api/geocode/json?address=${userLocation}&key=${process.env.googleGeoToken}`);
             const { results }: { results: google.maps.GeocoderResult[] } = await got(geoCodeUri).json();
-
             if (results?.length === 0) {
                 resolve(null);
-            };
+            }
+
             resolve(results[0]);
         } catch (ex) {
             console.error(ex);
@@ -101,16 +102,23 @@ const getWeather = async ({ lat, lng }: google.maps.LatLng): Promise<DarkSkyResp
 const generateOutputEmbed = (weather: DarkSkyResponse, formattedAddress: string): MessageEmbed => {
     const currentWeather = weather.currently;
     const currentTemp = Number(currentWeather.temperature.toFixed(2));
-    const chanceRainToday = weather.daily.data.reduce((accum, curr) => accum + curr.precipProbability, 0) / weather.daily.data.length;
+    const chanceRainToday = weather.daily.data.reduce((accum, curr) => accum + curr.precipProbability, 0) / weather.daily.data.length; // todo: get nearest hour, not average
+    const errors = weather.alerts.reduce((accum, alert) => {
+        const dateIssued = new Date(alert.time);
+        const timeIssued = dateIssued.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+        return accum += `${alert.title} (${timeIssued})\n`;
+    }, '');
+
     const embed = new MessageEmbed();
-    embed.title = `${weatherIcons[currentWeather.icon]} ${formattedAddress}`;
+    embed.title = `${weatherIcons[currentWeather.icon] || ''} ${formattedAddress}`;
     embed.setDescription(`
         ${currentTemp}F / ${((currentTemp - 32) * 5 / 9).toFixed(2)}C
-        **Cloud Cover**: ${convertDecimalToPercent(currentWeather.cloudCover)}%
+        **Cloud Cover**: ${convertDecimalToPercent(currentWeather.cloudCover).toFixed(0)}%
         **Windspeed**: ${currentWeather.windSpeed}mph
         **Humidity**: ${convertDecimalToPercent(currentWeather.humidity).toFixed(0)}%
         **Chance of Rain**: ${convertDecimalToPercent(chanceRainToday)}%
         **Forecast**: ${weather.daily.summary}
+        ${errors && `\n**Alerts**:\n ${errors}`}
     `);
 
     let embedColor: ColorResolvable = '';
