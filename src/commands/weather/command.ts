@@ -103,7 +103,7 @@ const generateOutputEmbed = (weather: DarkSkyResponse, formattedAddress: string)
     const currentWeather = weather.currently;
     const currentTemp = Number(currentWeather.temperature.toFixed(2));
     const chanceRainToday = weather.daily.data.reduce((accum, curr) => accum + curr.precipProbability, 0) / weather.daily.data.length; // todo: get nearest hour, not average
-    const errors = weather.alerts.reduce((accum, alert) => {
+    const errors = weather?.alerts?.reduce((accum, alert) => {
         const dateIssued = new Date(alert.time);
         const timeIssued = dateIssued.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
         return accum += `${alert.title} (${timeIssued})\n`;
