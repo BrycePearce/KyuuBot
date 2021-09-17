@@ -2,6 +2,9 @@ import got from 'got';
 import { Command } from './../../../types/Command';
 
 const catInvocations = ['cat', 'meow'];
+const percentOppositeChance = 10;
+
+type Animal = 'cat' | 'dog';
 
 export const command: Command = {
     name: 'Catdog',
@@ -11,9 +14,17 @@ export const command: Command = {
     enabled: true,
     usage: '[invocation]',
     async execute(message) {
-        const shouldGiveOpposite = (Math.random() * 100) <= 10; // 10% chance of opposite
         const hasRequestedCat = catInvocations.includes(message.content.slice(1, 4).toLowerCase());
-        const animalToGive = shouldGiveOpposite && hasRequestedCat ? 'dog' : 'cat';
+        const requestedAnimal = hasRequestedCat ? 'cat' : 'dog';
+        const shouldGiveOpposite = (Math.random() * 100) <= percentOppositeChance;
+
+        let animalToGive: Animal = requestedAnimal;
+        if (shouldGiveOpposite && requestedAnimal === 'cat') {
+            animalToGive = 'dog';
+        } else if (shouldGiveOpposite && 'dog') {
+            animalToGive = 'cat';
+        }
+
         try {
             const url = await getRandomAnimal(animalToGive)
             await message.channel.send({
@@ -26,7 +37,7 @@ export const command: Command = {
     }
 };
 
-const getRandomAnimal = async (animal: 'dog' | 'cat') => {
+const getRandomAnimal = async (animal: Animal) => {
     try {
         const animalResponse = await got(`https://api.the${animal}api.com/v1/images/search`).json() as [{ url: string }];
         return animalResponse[0].url;
