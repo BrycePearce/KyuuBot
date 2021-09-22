@@ -14,7 +14,7 @@ export const command: Command = {
     enabled: true,
     usage: '[invocation]',
     async execute(message) {
-        const hasRequestedCat = catInvocations.includes(message.content.slice(1, 4).toLowerCase());
+        const hasRequestedCat = catInvocations.includes(message.content.toLowerCase());
         const requestedAnimal = hasRequestedCat ? 'cat' : 'dog';
         const shouldGiveOpposite = (Math.random() * 100) <= percentOppositeChance;
 

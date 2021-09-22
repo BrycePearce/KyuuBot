@@ -116,7 +116,7 @@ const generateOutputEmbed = (weather: DarkSkyResponse, formattedAddress: string)
         **Cloud Cover**: ${convertDecimalToPercent(currentWeather.cloudCover).toFixed(0)}%
         **Windspeed**: ${currentWeather.windSpeed}mph
         **Humidity**: ${convertDecimalToPercent(currentWeather.humidity).toFixed(0)}%
-        **Chance of Rain**: ${convertDecimalToPercent(chanceRainToday)}%
+        **Chance of Rain**: ${convertDecimalToPercent(chanceRainToday).toFixed(0)}%
         **Forecast**: ${weather.daily.summary}
         ${errors ? `\n**Alerts**:\n ${errors}` : ''}
     `);
