@@ -23,7 +23,7 @@ const responses = [
     'very doubtful'
 ];
 
-export const command: Command = {
+const command: Command = {
     name: '8ball',
     description: 'Generates an answer to a question',
     invocations: ['8', '8ball'],
@@ -43,3 +43,5 @@ export const command: Command = {
 const getRandomItemFromList = <T>(list: T[]): T => {
     return list[Math.floor(Math.random() * list.length)];
 };
+
+export default command;

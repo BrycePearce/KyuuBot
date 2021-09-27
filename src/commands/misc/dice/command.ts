@@ -2,7 +2,7 @@ import { Command } from '../../../types/Command';
 import Roll from 'roll';
 
 const dice = new Roll();
-export const command: Command = {
+const command: Command = {
     name: 'Dice Roll',
     description: 'Rolls dice',
     invocations: ['r', 'roll', 'd', 'dice'],
@@ -30,3 +30,5 @@ const isValidArgs = (args: string) => {
     const digitsOnly = Number(args.replace(/\D/g, ''));
     return Number.isInteger(digitsOnly);
 };
+
+export default command;

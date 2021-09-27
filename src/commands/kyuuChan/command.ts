@@ -1,16 +1,16 @@
-import { deleteFileFromTmp, getFileExtension, getRandomEmotePath, isUrlExtensionStatic, saveImageToTmp } from '../../utils/files';
+import { Chapter, Manga } from 'mangadex-full-api';
+import path from 'path';
+import { Command } from "../../types/Command";
 import { PromiseResolver } from '../../types/PromiseResolver';
 import { writeTextOnMedia } from '../../utils/ffmpeg';
-import { Chapter, Manga } from 'mangadex-full-api';
-import { Command } from "../../types/Command";
-import path from 'path';
+import { deleteFileFromTmp, getFileExtension, getRandomEmotePath, isUrlExtensionStatic, saveImageToTmp } from '../../utils/files';
 
 interface ResolvedChapter {
     chapter: Chapter;
     pages: string[];
 };
 
-export const command: Command = {
+const command: Command = {
     name: 'Retrieve Chapter',
     description: 'Returns the the kyuu comic number specified by the user',
     invocations: ['k', 'kyute', 'kyuute', 'kyuuchan', 'kyuu'],
@@ -123,3 +123,5 @@ const getChapterWithChapterInfo = async (chapter: Chapter, pageUrl: string, rawM
 const getTmpPathWithFilename = (filename: string) => {
     return path.normalize(path.join(__dirname, '../../../tmp', filename));
 };
+
+export default command;

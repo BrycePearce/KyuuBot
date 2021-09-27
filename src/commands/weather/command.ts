@@ -1,10 +1,10 @@
 import { ColorResolvable, Message, MessageEmbed } from 'discord.js';
+import { readFile, writeFile } from 'fs/promises';
+import got from 'got';
+import path from 'path';
 import { DarkSkyResponse } from '../../types/DarkSkyResponse';
 import { getRandomEmotePath } from '../../utils/files';
-import { readFile, writeFile } from 'fs/promises';
 import { Command } from './../../types/Command';
-import path from 'path';
-import got from 'got';
 
 const weatherIcons = {
     "partly-cloudy-night": "☁️🌙",
@@ -21,7 +21,7 @@ const weatherIcons = {
     fog: "🌫️",
 };
 
-export const command: Command = {
+const command: Command = {
     name: 'Weather',
     description: 'Gets the weather',
     invocations: ['weather', 'we', 'w'],
@@ -136,3 +136,5 @@ const generateOutputEmbed = (weather: DarkSkyResponse, formattedAddress: string)
 const convertDecimalToPercent = (decimal: number, fixed: number = 2): number => {
     return Number(decimal.toFixed(fixed)) * 100;
 };
+
+export default command
