@@ -10,7 +10,7 @@ interface ResolvedChapter {
     pages: string[];
 };
 
-export const command: Command = {
+const command: Command = {
     name: 'Retrieve Chapter',
     description: 'Returns the the kyuu comic number specified by the user',
     invocations: ['k', 'kyute', 'kyuute', 'kyuuchan', 'kyuu'],
@@ -123,3 +123,5 @@ const getChapterWithChapterInfo = async (chapter: Chapter, pageUrl: string, rawM
 const getTmpPathWithFilename = (filename: string) => {
     return path.normalize(path.join(__dirname, '../../../tmp', filename));
 };
+
+export default command;

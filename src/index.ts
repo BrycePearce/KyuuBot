@@ -5,7 +5,7 @@ import Mangadex from 'mangadex-full-api';
 
 require('dotenv').config();
 
-const client = new Client();
+export const client = new Client();
 
 async function init() {
 	// todo: error handling, do not run if cannot connect

@@ -17,7 +17,7 @@ interface XKCD {
 
 const numberRegex = new RegExp(/^\d+$/);
 
-export const command: Command = {
+const command: Command = {
     name: 'xkcd',
     description: 'Gets xkcd comic',
     invocations: ['xkcd'],
@@ -66,3 +66,5 @@ const getRandomComic = async (): Promise<XKCD> => {
         throw new Error('Failed to fetch from xkcd');
     }
 };
+
+export default command;

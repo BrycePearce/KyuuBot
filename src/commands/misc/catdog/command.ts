@@ -6,7 +6,7 @@ const percentOppositeChance = 10;
 
 type Animal = 'cat' | 'dog';
 
-export const command: Command = {
+const command: Command = {
     name: 'Catdog',
     description: 'Displays a cat or dog image',
     invocations: ['cat', 'dog', 'meow', 'woof'],
@@ -45,3 +45,5 @@ const getRandomAnimal = async (animal: Animal) => {
         throw new Error(`Failed to fetch from ${animal} api`);
     }
 };
+
+export default command;

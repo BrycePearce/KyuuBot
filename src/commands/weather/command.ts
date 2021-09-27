@@ -21,7 +21,7 @@ const weatherIcons = {
     fog: "🌫️",
 };
 
-export const command: Command = {
+const command: Command = {
     name: 'Weather',
     description: 'Gets the weather',
     invocations: ['weather', 'we', 'w'],
@@ -136,3 +136,5 @@ const generateOutputEmbed = (weather: DarkSkyResponse, formattedAddress: string)
 const convertDecimalToPercent = (decimal: number, fixed: number = 2): number => {
     return Number(decimal.toFixed(fixed)) * 100;
 };
+
+export default command;

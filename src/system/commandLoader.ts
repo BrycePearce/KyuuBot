@@ -16,12 +16,12 @@ export async function initCommands() {
         writeFileSync(path.normalize(path.join('db', 'dataStorage.json')), JSON.stringify({}));
     }
 
-    // load commands
+    // load commands (todo: export this function for hot reload/fixes. Add new commands and run !refreshCommands, and commands will be added with no downtime)
     for await (const file of getFiles(path.normalize(path.join(__dirname, '..', 'commands', '/')))) {
         // only load commands
         if (file.name !== 'command.ts') return;
 
-        const { command }: { command: Command } = require(file.path);
+        const command: Command = require(file.path).default;
         if (command.enabled) {
             console.log('initialized', command.name)
             commands.set(command.name, command);
