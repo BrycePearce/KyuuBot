@@ -1,18 +1,18 @@
-import { Entity, ManyToOne, Property } from "@mikro-orm/core";
-import { BaseEntity } from "./BaseEntity";
-import { User } from "./User";
+import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
+import { Base } from "./Base";
+import { v4 as uuidv4 } from 'uuid';
 
 @Entity()
-export class Reminder extends BaseEntity {
-  @Property()
-  message: string;
+export class Reminder extends Base {
+    @PrimaryKey()
+    uuid: string = uuidv4();
 
-  @Property()
-  context: string;
+    @Property()
+    userId: string;
 
-  @Property()
-  triggerAt: Date;
+    @Property()
+    reminder!: string;
 
-  @ManyToOne(() => User, { nullable: false })
-  user: User;
-}
+    @Property()
+    time!: Date;
+};

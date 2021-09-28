@@ -1,4 +1,3 @@
-export * from "./BaseEntity";
-export * from "./Reminder";
-export * from "./User";
-
+export * from './Base';
+export * from './User';
+export * from './Reminder';

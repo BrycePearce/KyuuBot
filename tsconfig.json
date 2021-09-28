@@ -10,8 +10,8 @@
         "strictNullChecks": false,
         "esModuleInterop": true,
         "skipLibCheck": true,
-        "emitDecoratorMetadata": true,
+        "forceConsistentCasingInFileNames": true,
         "experimentalDecorators": true,
-        "forceConsistentCasingInFileNames": true
+        "emitDecoratorMetadata": true,
     }
 }
