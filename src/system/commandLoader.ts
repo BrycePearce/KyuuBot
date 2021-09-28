@@ -1,8 +1,8 @@
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
+import { readdir } from "fs/promises";
+import path from 'path';
 import { commands } from '../utils/commandUtils';
 import { Command } from './../types/Command';
-import { readdir } from "fs/promises"
-import path from 'path';
 
 export async function initCommands() {
     // create a tmp directory for short lived files
@@ -24,6 +24,7 @@ export async function initCommands() {
         const command: Command = require(file.path).default;
         if (command.enabled) {
             console.log('initialized', command.name)
+            command.onload?.(); // run onload function if present
             commands.set(command.name, command);
         }
     }

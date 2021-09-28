@@ -1,17 +1,15 @@
-import { Entity, Property, OneToMany, PrimaryKey } from "@mikro-orm/core";
-import { Base, Reminder } from './index';
+import { Cascade, Collection, Entity, OneToMany, PrimaryKey, Property } from "@mikro-orm/core";
+import { BaseEntity } from "./BaseEntity";
+import { Reminder } from "./Reminder";
 
 @Entity()
-export class User extends Base {
-    @PrimaryKey()
-    userId!: string;
+export class User extends BaseEntity {
+  @PrimaryKey()
+  id: string;
 
-    @Property()
-    createdAt: Date = new Date();
+  @Property()
+  username?: string;
 
-    @Property({ onUpdate: () => new Date() })
-    updatedAt: Date = new Date();
-
-    @OneToMany(() => Reminder, reminder => reminder.userId)
-    reminders: Reminder[] = [];
-};
+  @OneToMany(() => Reminder, (reminder) => reminder.user, { cascade: [Cascade.ALL] })
+  reminders = new Collection<Reminder>(this);
+}

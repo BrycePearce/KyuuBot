@@ -1,9 +1,9 @@
-import { deleteFileFromTmp, getFileExtension, getRandomEmotePath, isUrlExtensionStatic, saveImageToTmp } from '../../utils/files';
+import { Chapter, Manga } from 'mangadex-full-api';
+import path from 'path';
+import { Command } from "../../types/Command";
 import { PromiseResolver } from '../../types/PromiseResolver';
 import { writeTextOnMedia } from '../../utils/ffmpeg';
-import { Chapter, Manga } from 'mangadex-full-api';
-import { Command } from "../../types/Command";
-import path from 'path';
+import { deleteFileFromTmp, getFileExtension, getRandomEmotePath, isUrlExtensionStatic, saveImageToTmp } from '../../utils/files';
 
 interface ResolvedChapter {
     chapter: Chapter;

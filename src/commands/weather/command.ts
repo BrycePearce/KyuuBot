@@ -1,10 +1,10 @@
 import { ColorResolvable, Message, MessageEmbed } from 'discord.js';
+import { readFile, writeFile } from 'fs/promises';
+import got from 'got';
+import path from 'path';
 import { DarkSkyResponse } from '../../types/DarkSkyResponse';
 import { getRandomEmotePath } from '../../utils/files';
-import { readFile, writeFile } from 'fs/promises';
 import { Command } from './../../types/Command';
-import path from 'path';
-import got from 'got';
 
 const weatherIcons = {
     "partly-cloudy-night": "☁️🌙",
