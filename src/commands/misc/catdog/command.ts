@@ -1,5 +1,5 @@
-import got from 'got';
 import { Command } from './../../../types/Command';
+import got from 'got';
 
 const catInvocations = ['cat', 'meow'];
 const percentOppositeChance = 10;
@@ -14,21 +14,13 @@ const command: Command = {
     enabled: true,
     usage: '[invocation]',
     async execute(message) {
-        const hasRequestedCat = catInvocations.includes(message.content.toLowerCase());
-        const requestedAnimal = hasRequestedCat ? 'cat' : 'dog';
         const shouldGiveOpposite = (Math.random() * 100) <= percentOppositeChance;
-
-        let animalToGive: Animal = requestedAnimal;
-        if (shouldGiveOpposite && requestedAnimal === 'cat') {
-            animalToGive = 'dog';
-        } else if (shouldGiveOpposite && 'dog') {
-            animalToGive = 'cat';
-        }
+        const animal = getAnimal(message.content, shouldGiveOpposite);
 
         try {
-            const url = await getRandomAnimal(animalToGive)
+            const url = await getAnimalUrl(animal);
             await message.channel.send({
-                content: shouldGiveOpposite ? `Have a ${animalToGive} instead` : '',
+                content: shouldGiveOpposite ? `Have a ${animal} instead` : '',
                 files: [url]
             });
         } catch (ex) {
@@ -37,7 +29,14 @@ const command: Command = {
     }
 };
 
-const getRandomAnimal = async (animal: Animal) => {
+const getAnimal = (command: string, shouldGiveOpposite: boolean): Animal => {
+    const requestedAnimal = catInvocations.includes(command.substring(1).toLowerCase()) ? 'cat' : 'dog';
+
+    if (shouldGiveOpposite) return requestedAnimal === 'cat' ? 'dog' : 'cat';
+    return requestedAnimal;
+};
+
+const getAnimalUrl = async (animal: Animal) => {
     try {
         const animalResponse = await got(`https://api.the${animal}api.com/v1/images/search`).json() as [{ url: string }];
         return animalResponse[0].url;
