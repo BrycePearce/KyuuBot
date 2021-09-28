@@ -8,7 +8,13 @@ import { Command } from "../../types/Command";
 
 let reminderCache: Reminder[] = [];
 
-const reminderInterval = setInterval(() => {
+let reminderInterval: NodeJS.Timer = null;
+
+async function refreshRemindersCache() {
+  reminderCache = await DI.reminderRepository.findAll();
+}
+
+const reminderLoop = () => {
   const pastReminders = reminderCache.filter((r) => {
     return isBefore(r.triggerAt, new Date());
   });
@@ -25,11 +31,7 @@ const reminderInterval = setInterval(() => {
 
     DI.reminderRepository.removeAndFlush(r);
   });
-}, 1000);
-
-async function refreshRemindersCache() {
-  reminderCache = await DI.reminderRepository.findAll();
-}
+};
 
 const command: Command = {
   name: "Reminder",
@@ -40,6 +42,14 @@ const command: Command = {
   usage: "[invocation]",
   async onload() {
     refreshRemindersCache();
+    if (this.enabled) {
+      reminderInterval = setInterval(reminderLoop, 1000);
+    }
+  },
+  unload() {
+    if (reminderInterval) {
+      clearInterval(reminderInterval);
+    }
   },
   async execute(message, args) {
     if (args.length < 2) return;
