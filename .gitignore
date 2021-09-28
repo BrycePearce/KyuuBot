@@ -4,3 +4,4 @@ out
 .env
 tmp/
 db/
+kyuu.db
