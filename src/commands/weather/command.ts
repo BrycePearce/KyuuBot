@@ -137,4 +137,4 @@ const convertDecimalToPercent = (decimal: number, fixed: number = 2): number => 
     return Number(decimal.toFixed(fixed)) * 100;
 };
 
-export default command
+export default command;

@@ -29,7 +29,6 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@types/roll": "^1.2.0",
     "@types/fluent-ffmpeg": "^2.1.18",
     "@types/google.maps": "^3.45.6",
     "@types/node": "^16.7.5",
