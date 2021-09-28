@@ -5,14 +5,14 @@ import { User } from "./User";
 @Entity()
 export class Reminder extends BaseEntity {
   @Property()
-  message!: string;
+  message: string;
 
   @Property()
-  context!: string;
+  context: string;
 
   @Property()
-  triggerAt!: Date;
+  triggerAt: Date;
 
   @ManyToOne(() => User, { nullable: false })
-  user!: User;
+  user: User;
 }
