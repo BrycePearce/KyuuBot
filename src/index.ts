@@ -1,7 +1,7 @@
 import { Client } from 'discord.js';
 import Mangadex from 'mangadex-full-api';
+import { initCommands } from './commands';
 import BindDatabase from './database';
-import { initCommands } from './system/commandLoader';
 import { findCommand } from './utils/commandUtils';
 
 require('dotenv').config();
