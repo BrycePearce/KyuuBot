@@ -127,8 +127,6 @@ async function listReminders(message: Message) {
     reminders = reminderStrings.join('\n');
   }
 
-  console.log(reminders);
-
   message.channel.send(
     `${message.author.toString()} Reminders:\n\n${reminders}\n ${
       user?.reminders.length > 4 ? "\nWow! You're a busy dude! 😅" : ''
