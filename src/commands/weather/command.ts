@@ -1,9 +1,9 @@
-import { ColorResolvable, Message, MessageEmbed } from 'discord.js';
-import { readFile, writeFile } from 'fs/promises';
+import { ColorResolvable, MessageEmbed } from 'discord.js';
 import got from 'got';
-import path from 'path';
+import { Location, User } from '../../database/entities';
 import { DarkSkyResponse } from '../../types/DarkSkyResponse';
 import { getRandomEmotePath } from '../../utils/files';
+import { DI } from './../../database';
 import { Command } from './../../types/Command';
 
 const weatherIcons = {
@@ -29,48 +29,52 @@ const command: Command = {
   enabled: true,
   usage: '[invocation] [city | state | zip | etc]',
   async execute(message, args) {
-    const userLocation = await getUserLocation(message.author.username, args, message);
-    if (!userLocation) {
-      message.channel.send('Set your default location with .weather set YOUR_LOCATION');
-    }
-
     try {
-      const geoData = await getGeoLocation(userLocation);
-      if (!geoData) {
-        message.channel.send('Location was not found!', { files: [await getRandomEmotePath()] });
+      let user = await DI.userRepository.findOne(message.author.id);
+      const isUpdatingLocation = args && args[0].toLowerCase().trim() === 'set';
+      const location = await getUserLocation(user, args, isUpdatingLocation);
+
+      if (!location) {
+        message.channel.send('Set your default location with .weather set YOUR_LOCATION');
         return;
       }
 
-      const weather = await getWeather(geoData.geometry.location);
-      const weatherEmbed = generateOutputEmbed(weather, geoData.formatted_address);
+      if (isUpdatingLocation) {
+        await updateOrCreateUser(user, message.author.id, message.author.username, isUpdatingLocation, location);
+        message.channel.send(`Updated ${message.author.username}'s location to ${location.address}`);
+      }
+
+      const weather = await getWeather(location);
+      const weatherEmbed = generateOutputEmbed(weather, location.address);
       message.channel.send(weatherEmbed);
     } catch (ex) {
       console.error(ex);
-      message.channel.send((ex && ex['message']) || 'Something really went wrong');
+      message.channel.send((ex && ex['message']) || 'Something really went wrong', {
+        files: [await getRandomEmotePath()],
+      });
     }
   },
 };
 
-const getUserLocation = async (username: string, args: string[], message: Message): Promise<string> => {
-  // if the user specified a specific location, return it (i.e. .we Hyderabad)
-  const isStoredUserLocation = args.length === 0;
-  const isStoringNewLocation = args[0]?.toLowerCase() === 'set';
-  if (!isStoredUserLocation && !isStoringNewLocation) return args.join('');
+const getUserLocation = async (user: User, args: string[], isUpdatingLocation: boolean = false): Promise<Location> => {
+  let requestedLocation = null;
 
-  // if user exists in db, load location
-  const pathToDb = path.normalize(path.join(__dirname, '../../../', 'db', 'DataStorage.json'));
-  const storedUsers: { [key: string]: string } = JSON.parse(await readFile(pathToDb, 'utf8'));
-  const storedLocation = storedUsers[username];
-  if (storedLocation && !isStoringNewLocation) return storedLocation;
+  if (args.length === 0 && user?.location) {
+    return user.location;
+  } else if (isUpdatingLocation) {
+    requestedLocation = args.slice(1).join('');
+  } else {
+    requestedLocation = args.join('');
+  }
 
-  // otherwise store the user/location and return their location
-  storedUsers[username] = args[1];
-  const updatedUsers = JSON.stringify(storedUsers);
-  const newLocation = args[1];
-  await writeFile(pathToDb, updatedUsers);
+  const geoData = await getGeoLocation(requestedLocation);
+  if (!geoData) throw new Error('Location was not found!');
 
-  message.channel.send(`${storedLocation ? 'Updated' : 'Set'} ${username}'s location to ${newLocation}`);
-  return newLocation;
+  const location = new Location();
+  location.latlng = `${geoData.geometry.location.lat},${geoData.geometry.location.lng}`;
+  location.address = geoData.formatted_address;
+
+  return location;
 };
 
 const getGeoLocation = async (userLocation: string): Promise<google.maps.GeocoderResult> => {
@@ -80,6 +84,7 @@ const getGeoLocation = async (userLocation: string): Promise<google.maps.Geocode
         `https://maps.googleapis.com/maps/api/geocode/json?address=${userLocation}&key=${process.env.googleGeoToken}`
       );
       const { results }: { results: google.maps.GeocoderResult[] } = await got(geoCodeUri).json();
+
       if (results?.length === 0) {
         resolve(null);
       }
@@ -92,7 +97,25 @@ const getGeoLocation = async (userLocation: string): Promise<google.maps.Geocode
   });
 };
 
-const getWeather = async ({ lat, lng }: google.maps.LatLng): Promise<DarkSkyResponse> => {
+const updateOrCreateUser = async (
+  user: User,
+  userId: string,
+  username: string,
+  isUpdatingLocation: boolean,
+  location: Location
+) => {
+  if (!user) {
+    user = new User();
+    user.id = userId;
+    user.username = username;
+  }
+
+  user.location = isUpdatingLocation ? location : null;
+  await DI.userRepository.persistAndFlush(user);
+};
+
+const getWeather = async (location: Location): Promise<DarkSkyResponse> => {
+  const [lat, lng] = location.latlng.split(',');
   try {
     return (await got(
       `https://api.darksky.net/forecast/${process.env.darkSkyToken}/${lat},${lng}`

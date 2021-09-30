@@ -19,7 +19,7 @@ export async function initCommands() {
   // load commands (todo: export this function for hot reload/fixes. Add new commands and run !refreshCommands, and commands will be added with no downtime)
   for await (const file of getFiles(path.normalize(path.join(__dirname, '..', 'commands', '/')))) {
     // only load commands
-    if (file.name !== 'command.ts') return;
+    if (file.name !== 'command.ts') continue;
 
     const command: Command = require(file.path).default;
     if (command.enabled) {
