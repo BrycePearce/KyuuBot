@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync } from 'fs';
 import { readdir } from 'fs/promises';
 import path from 'path';
 import { Command } from '../types/Command';
@@ -8,12 +8,6 @@ export async function initCommands() {
   // create a tmp directory for short lived files
   if (!existsSync('tmp')) {
     mkdirSync('tmp');
-  }
-
-  // same with db
-  if (!existsSync('db')) {
-    mkdirSync('db');
-    writeFileSync(path.normalize(path.join('db', 'dataStorage.json')), JSON.stringify({}));
   }
 
   // load commands (todo: export this function for hot reload/fixes. Add new commands and run !refreshCommands, and commands will be added with no downtime)
