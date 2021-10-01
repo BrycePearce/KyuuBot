@@ -1,6 +1,9 @@
 import { Client } from 'discord.js';
 import Mangadex from 'mangadex-full-api';
+import 'reflect-metadata';
 import { initCommands } from './commands';
+import { commandRegistry } from './commands/commandRegistry';
+import './commands/tester';
 import BindDatabase from './database';
 import { findCommand } from './utils/commandUtils';
 
@@ -9,6 +12,7 @@ require('dotenv').config();
 export const client: Client = new Client();
 
 async function init() {
+  commandRegistry.discover();
   // todo: error handling, do not run if cannot connect
   await Promise.all([
     client.login(process.env.token),
@@ -32,7 +36,8 @@ client.on('message', async (message) => {
   const command = findCommand(commandName); // todo: probably do a validate command & arguments method
 
   if (!command) return;
-  command.execute(message, commandArguments);
+  commandRegistry.execute(commandName, commandArguments, message);
+  // command.execute(message, commandArguments);
 });
 
 BindDatabase();
