@@ -31,7 +31,7 @@ const command: Command = {
   async execute(message, args) {
     try {
       let user = await DI.userRepository.findOne(message.author.id);
-      const isUpdatingLocation = args && args[0].toLowerCase().trim() === 'set';
+      const isUpdatingLocation = args[0]?.toLowerCase().trim() === 'set';
       const location = await getUserLocation(user, args, isUpdatingLocation);
 
       if (!location) {
@@ -59,8 +59,8 @@ const command: Command = {
 const getUserLocation = async (user: User, args: string[], isUpdatingLocation: boolean = false): Promise<Location> => {
   let requestedLocation = null;
 
-  if (args.length === 0 && user?.location) {
-    return user.location;
+  if (args.length === 0) {
+    return user?.location || null;
   } else if (isUpdatingLocation) {
     requestedLocation = args.slice(1).join('');
   } else {
