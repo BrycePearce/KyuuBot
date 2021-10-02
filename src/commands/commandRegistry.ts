@@ -20,6 +20,7 @@ export class CommandRegistry {
    * @param {@link ICommand} command
    */
   register(phrase: string, command: ICommand | any) {
+    // TODO: check for existing command with this name. throw error if collison
     const commandExists = _.find(Array.from(this._commands.values()), (cmd) => (cmd.name = command.name));
 
     if (commandExists) {
@@ -48,16 +49,28 @@ export class CommandRegistry {
 
 //#region Decorators
 
-export function Command(invokePhrase?: string): ClassDecorator {
+export function Command(invokePhrase?: string | string[]): ClassDecorator {
   return function (target: any) {
-    commandRegistry.register(invokePhrase, target);
+    if (Array.isArray(invokePhrase)) {
+      invokePhrase.forEach((phrase) => {
+        commandRegistry.register(phrase, target);
+      });
+    } else {
+      commandRegistry.register(invokePhrase, target);
+    }
   };
 }
 
-export function Invoke(invokePhrase?: string) {
+export function Invoke(invokePhrase?: string | string[]) {
   return function (target: Object, propertyKey: string) {
     if (!target.hasOwnProperty('commands')) target['commands'] = new Map<string, string>();
-    target['commands'].set(invokePhrase, propertyKey);
+    if (Array.isArray(invokePhrase)) {
+      invokePhrase.forEach((phrase) => {
+        target['commands'].set(phrase, propertyKey);
+      });
+    } else {
+      target['commands'].set(invokePhrase, propertyKey);
+    }
   };
 }
 
