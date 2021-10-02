@@ -1,10 +1,9 @@
 import { Message } from 'discord.js';
 import Roll from 'roll';
-import { Command, ICommand, Invoke } from './commandRegistry';
+import { Command, ICommand, Invoke } from '../../commandRegistry';
 const dice = new Roll();
 
-@Command('roll')
-@Command('r')
+@Command(['roll', 'r', 'dice', 'd'])
 class Dice implements ICommand {
   name = 'Dice Roll';
 
