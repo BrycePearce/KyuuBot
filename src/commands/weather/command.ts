@@ -1,6 +1,6 @@
 import { ColorResolvable, MessageEmbed } from 'discord.js';
 import got from 'got';
-import { Location, User } from '../../database/entities';
+import { User } from '../../database/entities';
 import { DarkSkyResponse } from '../../types/DarkSkyResponse';
 import { getRandomEmotePath } from '../../utils/files';
 import { DI } from './../../database';
@@ -21,6 +21,11 @@ const weatherIcons = {
   fog: '🌫️',
 };
 
+type Location = {
+  latlng: string;
+  address: string;
+};
+
 const command: Command = {
   name: 'Weather',
   description: 'Gets the weather',
@@ -31,7 +36,7 @@ const command: Command = {
   async execute(message, args) {
     try {
       let user = await DI.userRepository.findOne(message.author.id);
-      const isUpdatingLocation = args[0]?.toLowerCase().trim() === 'set';
+      const isUpdatingLocation = args[0]?.toLowerCase().trim() === 'set' && !!args[1]?.length;
       const location = await getUserLocation(user, args, isUpdatingLocation);
 
       if (!location) {
@@ -49,7 +54,7 @@ const command: Command = {
       message.channel.send(weatherEmbed);
     } catch (ex) {
       console.error(ex);
-      message.channel.send((ex && ex['message']) || 'Something really went wrong', {
+      message.channel.send((ex && ex['message']) ?? 'Something really went wrong', {
         files: [await getRandomEmotePath()],
       });
     }
@@ -60,7 +65,8 @@ const getUserLocation = async (user: User, args: string[], isUpdatingLocation: b
   let requestedLocation = null;
 
   if (args.length === 0) {
-    return user?.location || null;
+    const storedData = { latlng: user.latlng, address: user.address };
+    return user?.latlng ? storedData : null;
   } else if (isUpdatingLocation) {
     requestedLocation = args.slice(1).join('');
   } else {
@@ -70,11 +76,10 @@ const getUserLocation = async (user: User, args: string[], isUpdatingLocation: b
   const geoData = await getGeoLocation(requestedLocation);
   if (!geoData) throw new Error('Location was not found!');
 
-  const location = new Location();
-  location.latlng = `${geoData.geometry.location.lat},${geoData.geometry.location.lng}`;
-  location.address = geoData.formatted_address;
-
-  return location;
+  return {
+    latlng: `${geoData.geometry.location.lat},${geoData.geometry.location.lng}`,
+    address: geoData.formatted_address,
+  };
 };
 
 const getGeoLocation = async (userLocation: string): Promise<google.maps.GeocoderResult> => {
@@ -109,8 +114,10 @@ const updateOrCreateUser = async (
     user.id = userId;
     user.username = username;
   }
-
-  user.location = isUpdatingLocation ? location : null;
+  if (isUpdatingLocation) {
+    user.latlng = location.latlng;
+    user.address = location.address;
+  }
   await DI.userRepository.persistAndFlush(user);
 };
 
