@@ -19,16 +19,19 @@ export class CommandRegistry {
    * Registers a command into the command registry. Calling this method directly is often not needed and will be handled by the {@link discover} method
    * @param {@link ICommand} command
    */
-  register(phrase: string, command: ICommand | any) {
+  register(phrase: string, command: ICommand) {
     // TODO: check for existing command with this name. throw error if collison
-    const commandExists = _.find(Array.from(this._commands.values()), (cmd) => (cmd.name = command.name));
+    const existingCommand = _.find(Array.from(this._commands.values()), (cmd) => (cmd.name = command.name)) as ICommand;
+    if (this._commands.has(phrase)) {
+      throw new Error(`command phrase "${phrase}" already in use by [${existingCommand.name}]`);
+    }
 
-    if (commandExists) {
+    if (existingCommand) {
       // reuse instance if it is being used for an alias
-      this._commands.set(phrase, commandExists as ICommand);
+      this._commands.set(phrase, existingCommand as ICommand);
     } else {
       // create new instance of the command and map it to the phrase
-      this._commands.set(phrase, new command());
+      this._commands.set(phrase, new (command as any)());
       command.onload?.();
     }
   }
