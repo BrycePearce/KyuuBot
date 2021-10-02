@@ -3,7 +3,6 @@ import Mangadex from 'mangadex-full-api';
 import 'reflect-metadata';
 import { initCommands } from './commands';
 import { commandRegistry } from './commands/commandRegistry';
-import './commands/tester';
 import BindDatabase from './database';
 import { findCommand } from './utils/commandUtils';
 
@@ -11,8 +10,12 @@ require('dotenv').config();
 
 export const client: Client = new Client();
 
+const USE_NEW_COMMAND_LOADER = false;
+
 async function init() {
-  commandRegistry.discover();
+  if (USE_NEW_COMMAND_LOADER) {
+    commandRegistry.discover();
+  }
   // todo: error handling, do not run if cannot connect
   await Promise.all([
     client.login(process.env.token),
@@ -21,7 +24,9 @@ async function init() {
 }
 
 client.on('ready', async () => {
-  initCommands();
+  if (!USE_NEW_COMMAND_LOADER) {
+    initCommands();
+  }
 });
 
 client.on('message', async (message) => {
@@ -33,11 +38,13 @@ client.on('message', async (message) => {
 
   const commandArguments = message.content.slice(guildPrefix.length).trim().split(/ +/g);
   const commandName = commandArguments.shift().toLowerCase();
-  const command = findCommand(commandName); // todo: probably do a validate command & arguments method
-
-  if (!command) return;
-  commandRegistry.execute(commandName, commandArguments, message);
-  // command.execute(message, commandArguments);
+  if (USE_NEW_COMMAND_LOADER) {
+    commandRegistry.execute(commandName, commandArguments, message);
+  } else {
+    const command = findCommand(commandName); // todo: probably do a validate command & arguments method
+    if (!command) return;
+    command.execute(message, commandArguments);
+  }
 });
 
 BindDatabase();
