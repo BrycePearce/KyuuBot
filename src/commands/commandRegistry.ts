@@ -7,7 +7,7 @@ export class CommandRegistry {
   private _commands: Map<string, ICommand> = new Map();
 
   /**
-   * Deep scans all files, and directories at the root of this file for annotated @Commands()
+   * Deep scans all files, and directories at the root of this file for triggering command decorators for registration
    */
   @Measure('Command Discovery')
   async discover() {
@@ -20,8 +20,10 @@ export class CommandRegistry {
    * @param {@link ICommand} command
    */
   register(phrase: string, command: ICommand) {
-    // TODO: check for existing command with this name. throw error if collison
-    const existingCommand = _.find(Array.from(this._commands.values()), (cmd) => (cmd.name = command.name)) as ICommand;
+    const existingCommand = _.find(
+      Array.from(this._commands.values()),
+      (cmd) => cmd.constructor.name == command.name
+    ) as ICommand;
     if (this._commands.has(phrase)) {
       throw new Error(`command phrase "${phrase}" already in use by [${existingCommand.name}]`);
     }
@@ -31,13 +33,14 @@ export class CommandRegistry {
       this._commands.set(phrase, existingCommand as ICommand);
     } else {
       // create new instance of the command and map it to the phrase
-      this._commands.set(phrase, new (command as any)());
-      command.onload?.();
+      const instance = new (command as any)();
+      this._commands.set(phrase, instance);
+      instance.onLoad?.();
     }
   }
 
   execute(...args) {
-    // Root command
+    // Root command instance
     const command = this._commands.get(args[0]);
     // Phrase after root command
     const subCommandPhrase = args[1][0];
@@ -45,7 +48,10 @@ export class CommandRegistry {
     if (command['commands'].get(subCommandPhrase)) {
       command[command['commands'].get(subCommandPhrase)](args[1].splice(1), args[2]);
     } else {
-      command[command['commands'].get(undefined)](args[1], args[2]);
+      // gets the function where @Invoke() was parameterless
+      const func = command[command['commands'].get(undefined)];
+      // apply the command instance to the function call to perserve the 'this' context
+      func.apply(command, [args[1], args[2]]);
     }
   }
 }
@@ -83,7 +89,7 @@ export function Invoke(invokePhrase?: string | string[]) {
 
 export interface ICommand {
   name: string;
-  onload?: () => void;
+  onLoad?: () => void;
   unload?: () => void;
 }
 

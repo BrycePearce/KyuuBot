@@ -13,6 +13,7 @@ export const client: Client = new Client();
 const USE_NEW_COMMAND_LOADER = false;
 
 async function init() {
+  await BindDatabase();
   if (USE_NEW_COMMAND_LOADER) {
     commandRegistry.discover();
   }
@@ -47,5 +48,4 @@ client.on('message', async (message) => {
   }
 });
 
-BindDatabase();
 init();
