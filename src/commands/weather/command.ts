@@ -51,6 +51,13 @@ const command: Command = {
       } else {
         const parsedLocation = isUpdatingLocation ? args.slice(1).join('') : args.join('');
         const geoCoords = await getGeoLocation(parsedLocation);
+
+        if (!geoCoords) {
+          message.channel.send('Location was not found', {
+            files: [await getRandomEmotePath()],
+          });
+          return;
+        }
         requestedLocation = {
           latlng: `${geoCoords.geometry.location.lat},${geoCoords.geometry.location.lng}`,
           address: geoCoords.formatted_address,
