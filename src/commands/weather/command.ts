@@ -37,20 +37,39 @@ const command: Command = {
     try {
       let user = await DI.userRepository.findOne(message.author.id);
       const isUpdatingLocation = args[0]?.toLowerCase().trim() === 'set' && !!args[1]?.length;
-      const location = await getUserLocation(user, args, isUpdatingLocation);
+      const isStoredLocation = args.length === 0;
 
-      if (!location) {
+      if (!user && isStoredLocation) {
         message.channel.send('Set your default location with .weather set YOUR_LOCATION');
         return;
       }
 
-      if (isUpdatingLocation) {
-        await updateOrCreateUser(user, message.author.id, message.author.username, isUpdatingLocation, location);
-        message.channel.send(`Updated ${message.author.username}'s location to ${location.address}`);
+      let requestedLocation: Location = null;
+      if (isStoredLocation) {
+        const storedLocation = { latlng: user.latlng, address: user.address };
+        requestedLocation = storedLocation;
+      } else {
+        const parsedLocation = isUpdatingLocation ? args.slice(1).join('') : args.join('');
+        const geoCoords = await getGeoLocation(parsedLocation);
+        requestedLocation = {
+          latlng: `${geoCoords.geometry.location.lat},${geoCoords.geometry.location.lng}`,
+          address: geoCoords.formatted_address,
+        };
       }
 
-      const weather = await getWeather(location);
-      const weatherEmbed = generateOutputEmbed(weather, location.address);
+      if (isUpdatingLocation) {
+        await updateOrCreateUser(
+          user,
+          message.author.id,
+          message.author.username,
+          isUpdatingLocation,
+          requestedLocation
+        );
+        message.channel.send(`Updated ${message.author.username}'s location to ${requestedLocation.address}`);
+      }
+
+      const weather = await getWeather(requestedLocation);
+      const weatherEmbed = generateOutputEmbed(weather, requestedLocation.address);
       message.channel.send(weatherEmbed);
     } catch (ex) {
       console.error(ex);
@@ -59,27 +78,6 @@ const command: Command = {
       });
     }
   },
-};
-
-const getUserLocation = async (user: User, args: string[], isUpdatingLocation: boolean = false): Promise<Location> => {
-  let requestedLocation = null;
-
-  if (args.length === 0) {
-    const storedData = { latlng: user.latlng, address: user.address };
-    return user?.latlng ? storedData : null;
-  } else if (isUpdatingLocation) {
-    requestedLocation = args.slice(1).join('');
-  } else {
-    requestedLocation = args.join('');
-  }
-
-  const geoData = await getGeoLocation(requestedLocation);
-  if (!geoData) throw new Error('Location was not found!');
-
-  return {
-    latlng: `${geoData.geometry.location.lat},${geoData.geometry.location.lng}`,
-    address: geoData.formatted_address,
-  };
 };
 
 const getGeoLocation = async (userLocation: string): Promise<google.maps.GeocoderResult> => {
@@ -122,10 +120,9 @@ const updateOrCreateUser = async (
 };
 
 const getWeather = async (location: Location): Promise<DarkSkyResponse> => {
-  const [lat, lng] = location.latlng.split(',');
   try {
     return (await got(
-      `https://api.darksky.net/forecast/${process.env.darkSkyToken}/${lat},${lng}`
+      `https://api.darksky.net/forecast/${process.env.darkSkyToken}/${location.latlng}`
     ).json()) as DarkSkyResponse;
   } catch (ex) {
     console.error(ex);
