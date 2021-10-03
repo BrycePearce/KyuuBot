@@ -3,5 +3,4 @@ node_modules
 out
 .env
 tmp/
-db/
 kyuu.db
