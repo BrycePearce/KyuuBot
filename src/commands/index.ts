@@ -1,10 +1,11 @@
 import { existsSync, mkdirSync } from 'fs';
 import { readdir } from 'fs/promises';
 import path from 'path';
+import { deprecate } from 'util';
 import { Command } from '../types/Command';
 import { commands } from '../utils/commandUtils';
 
-export async function initCommands() {
+export const initCommands = deprecate(async function () {
   // create a tmp directory for short lived files
   if (!existsSync('tmp')) {
     mkdirSync('tmp');
@@ -22,7 +23,7 @@ export async function initCommands() {
       commands.set(command.name, command);
     }
   }
-}
+}, 'Using old command loader. Consider moving to the new system');
 
 async function* getFiles(rootDirectory: string) {
   const entries = await readdir(rootDirectory, { withFileTypes: true });
