@@ -21,7 +21,7 @@
     "fluent-ffmpeg": "^2.1.2",
     "got": "^11.8.2",
     "image-size": "^1.0.0",
-    "mangadex-full-api": "^5.5.1",
+    "mangadex-full-api": "^5.8.0",
     "parse-duration": "^1.0.0",
     "reflect-metadata": "^0.1.13",
     "roll": "^1.3.1",
