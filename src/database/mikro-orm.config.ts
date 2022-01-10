@@ -5,7 +5,7 @@ import { BaseEntity, Reminder, User } from './entities';
 
 const config: Options = {
   type: 'sqlite',
-  dbName: 'kyuu.db',
+  dbName: './config/kyuu.db',
   entities: [User, Reminder, BaseEntity],
   highlighter: new SqlHighlighter(),
   debug: true,
