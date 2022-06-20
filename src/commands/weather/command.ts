@@ -53,9 +53,7 @@ const command: Command = {
         const geoCoords = await getGeoLocation(parsedLocation);
 
         if (!geoCoords) {
-          message.channel.send('Location was not found', {
-            files: [await getRandomEmotePath()],
-          });
+          message.channel.send({ content: 'No chapter was found', files: [await getRandomEmotePath()] });
           return;
         }
         requestedLocation = {
@@ -77,12 +75,11 @@ const command: Command = {
 
       const weather = await getWeather(requestedLocation);
       const weatherEmbed = generateOutputEmbed(weather, requestedLocation.address);
-      message.channel.send(weatherEmbed);
+      message.channel.send({ embeds: [weatherEmbed] });
     } catch (ex) {
       console.error(ex);
-      message.channel.send((ex && ex['message']) ?? 'Something really went wrong', {
-        files: [await getRandomEmotePath()],
-      });
+      const errmsg = ex && ex['message'] ? 'Something really went wrong' : '';
+      message.channel.send({ content: errmsg, files: [await getRandomEmotePath()] });
     }
   },
 };
@@ -160,7 +157,7 @@ const generateOutputEmbed = (weather: DarkSkyResponse, formattedAddress: string)
         ${errors ? `\n**Alerts**:\n ${errors}` : ''}
     `);
 
-  let embedColor: ColorResolvable = '';
+  let embedColor: ColorResolvable;
   if (currentTemp <= 20) embedColor = 'DARK_BLUE';
   else if (currentTemp <= 60) embedColor = 'AQUA';
   else if (currentTemp <= 75) embedColor = 'GREEN';

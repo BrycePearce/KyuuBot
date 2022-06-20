@@ -1,4 +1,4 @@
-import { Client } from 'discord.js';
+import { Client, Intents } from 'discord.js';
 import Mangadex from 'mangadex-full-api';
 import 'reflect-metadata';
 import { initCommands } from './commands';
@@ -8,7 +8,7 @@ import { findCommand } from './utils/commandUtils';
 
 require('dotenv').config();
 
-export const client: Client = new Client();
+export const client: Client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 
 const USE_NEW_COMMAND_LOADER = false;
 
@@ -30,10 +30,9 @@ client.on('ready', async () => {
   }
 });
 
-client.on('message', async (message) => {
+client.on('messageCreate', async (message) => {
   const guildPrefix = process.env.defaultPrefix; // todo: get server default
-
-  if (message.author.bot || message.channel.type === 'dm' || !message.content.startsWith(guildPrefix)) {
+  if (message.author.bot || message.channel.type === 'DM' || !message.content.startsWith(guildPrefix)) {
     return;
   }
 

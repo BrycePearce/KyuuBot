@@ -40,7 +40,7 @@ async function getUser(id: string): Promise<DiscordUser> {
   if (client.users.cache.get(id)) {
     return client.users.cache.get(id);
   }
-  return await client.users.fetch(id, true);
+  return await client.users.fetch(id, { force: true });
 }
 
 const command: Command = {
