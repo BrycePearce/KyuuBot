@@ -1,5 +1,8 @@
+import { Message } from 'discord.js';
 import { wordlist } from '../../utils/wordlist';
 import { Command } from './../../types/Command';
+
+let hintText = '';
 
 const command: Command = {
   name: 'WordGuess',
@@ -10,7 +13,9 @@ const command: Command = {
   usage: '[invocation]',
   async execute(message) {
     const word = wordlist[Math.floor(Math.random() * wordlist.length)];
-    const scrambledWord = shuffle([...word]).join('');
+    if (word.length <= 2) return;
+    const scrambledWord = getshuffledWord(word); // 'raw' breaks it SOMETIMES
+    hintText = ''.padStart(word.length, '*');
     let hasAnswerBeenGuessed = false;
 
     // begin quiz
@@ -18,8 +23,9 @@ const command: Command = {
     const collector = message.channel.createMessageCollector({ time: 32000 });
 
     // hint timers
-    const firstHint = handleHint(scrambledWord, 12000);
-    const secondHint = handleHint(scrambledWord, 23000);
+    const numHints = getHintAmount(word);
+    const firstHintTimeout = revealHintAtTime(message, hintText, word, numHints, 12000);
+    const secondHintTimeout = revealHintAtTime(message, hintText, word, numHints, 23000);
 
     // listen for collection events
     collector.on('collect', (guess) => {
@@ -31,10 +37,18 @@ const command: Command = {
     });
 
     collector.on('end', () => {
-      [firstHint, secondHint].forEach((timer) => clearInterval(timer));
+      clearTimeout(firstHintTimeout);
+      clearTimeout(secondHintTimeout);
       if (!hasAnswerBeenGuessed) message.channel.send(`Time's up! The answer was ${word}`);
     });
   },
+};
+
+const getshuffledWord = (word: string) => {
+  const shuffledWord = shuffle([...word]);
+  while (shuffledWord !== word) {
+    return shuffledWord;
+  }
 };
 
 // Fisher-Yates
@@ -52,13 +66,52 @@ const shuffle = (word: string[]) => {
     [word[currentIndex], word[randomIndex]] = [word[randomIndex], word[currentIndex]];
   }
 
-  return word;
+  return word.join('');
 };
 
-const handleHint = (scrambledWord: string, interval: number) => {
+const getHintAmount = (word: string) => {
+  if (word.length <= 5) {
+    return 1;
+  } else if (word.length <= 10) {
+    return 2;
+  } else {
+    return 3;
+  }
+};
+
+const revealHintAtTime = (message: Message, hintText: string, answer: string, numHints: number, interval: number) => {
+  const hintCharacters = hintText.split('');
+
+  // get random characters to reveal
+  for (let i = 0; i < numHints; i++) {
+    const { randomIndex, letter } = getUnobfuscatedLetterIndex(answer, hintText);
+    hintCharacters[randomIndex] = letter;
+  }
+
+  // rejoin hint
+  const hintString = hintCharacters.join('');
+
+  // print hint at interval
   return setTimeout(() => {
-    console.log('hint', interval);
+    const formattedHintString = hintString.replaceAll('*', '\\*');
+    message.channel.send(`hint: ${formattedHintString}`);
   }, interval);
+};
+
+const getUnobfuscatedLetterIndex = (word: string, hintText: string) => {
+  let letter = '*';
+  let randomIndex = 0;
+
+  while (letter === '*') {
+    randomIndex = Math.floor(Math.random() * word.length);
+
+    if (hintText[randomIndex] === '*') {
+      letter = word[randomIndex];
+      return { letter, randomIndex };
+    }
+  }
+
+  return { letter, randomIndex };
 };
 
 export default command;
