@@ -98,6 +98,23 @@ const revealHintAtTime = (message: Message, hintText: string, answer: string, nu
   }, interval);
 };
 
+/*
+
+  much more sane idea:
+  when word is generated you randomly select [num characters to hide] indexes and store them
+  
+  revealHintAtTime takes a param [num indexes to reveal] the are generated when the word is
+  e.g. if there are 6 hidden characters you would pass 3 for the first hint to reveal three
+  
+  the second hint can reveal the rest of the 6, e.g. whatever is not shown in the first hint
+
+  then, right before the hint is sent (in settimeout), just take original word
+  and star everything that isn't those indexes
+
+  Much more straight forward than what I did
+
+*/
+
 const getUnobfuscatedLetterIndex = (word: string, hintText: string) => {
   let letter = '*';
   let randomIndex = 0;

@@ -35,7 +35,7 @@ const command: Command = {
   usage: '[invocation] [city | state | zip | etc]',
   async execute(message, args) {
     try {
-      let user = await DI.userRepository.findOne(message.author.id);
+      const user = await DI.userRepository.findOne(message.author.id);
       const isUpdatingLocation = args[0]?.toLowerCase().trim() === 'set' && !!args[1]?.length;
       const isStoredLocation = args.length === 0;
 
