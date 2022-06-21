@@ -1,8 +1,11 @@
 // https://github.com/imsky/wordlists
 export const wordlist = [
+  // easter eggs
   'lightning_count',
   'scooby doo',
-  'scooby doo airbud crossover',
+  'scooby doo and airbud too crossover',
+
+  // regular words
   'adagio',
   'allegro',
   'andante',
