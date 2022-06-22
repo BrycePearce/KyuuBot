@@ -8,7 +8,7 @@ import { findCommand } from './utils/commandUtils';
 
 require('dotenv').config();
 
-export const client: Client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+export const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 
 const USE_NEW_COMMAND_LOADER = false;
 

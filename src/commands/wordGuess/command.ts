@@ -21,7 +21,7 @@ const command: Command = {
 
     // generate hints
     const numHints = Math.floor(word.length / 2);
-    const hintIndexes = shuffle([...Array(numHints).keys()]);
+    const hintIndexes = shuffle([...Array(word.length).keys()]).slice(0, numHints);
     const half = Math.floor(hintIndexes.length / 2);
     const [firstHintIndexes, secondHintIndexes] = [hintIndexes.slice(0, half), hintIndexes.slice(-half)];
 
@@ -71,8 +71,9 @@ const revealHintAtTime = (message: Message, answer: string, indexesToReveal: num
     // generate hint string
     const hintString = answer
       .split('')
-      .map((_, answerIndex) => {
-        if (indexesToReveal.includes(answerIndex)) return answer[answerIndex];
+      .map((character, answerIndex) => {
+        if (indexesToReveal.includes(answerIndex)) return character;
+        else if (character === ' ') return character;
         return '*';
       })
       .join('');
