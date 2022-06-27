@@ -163,7 +163,7 @@ export const wordlist = [
   'terminator',
   'tiger',
   'titan',
-  'trailblazer',
+  'trail',
   'trinity',
   'tsunami',
   'typhoon',
