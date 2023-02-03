@@ -47,13 +47,15 @@ const command: Command = {
 };
 
 const getshuffledWord = (word: string) => {
-  const shuffledWord = shuffle([...word]).join('');
-
   if (word.length <= 1) return word;
 
-  while (shuffledWord !== word) {
-    return shuffledWord;
+  let shuffledWord = shuffle([...word]);
+
+  while (shuffledWord.join('') === word) {
+    shuffledWord = shuffledWord;
   }
+
+  return shuffledWord;
 };
 
 // Fisher-Yates
