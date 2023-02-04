@@ -30,7 +30,7 @@ const command: Command = {
 
     const hintIntervals = [10000, 25000, 40000];
     let hintMask = generateStrMask(answer);
-    let hintPercentToReveal = answer.length > 10 ? 40 : 15; // todo: maybe could do this based off difficulty rating
+    let hintPercentToReveal = answer.length > 9 ? 40 : 15; // todo: maybe could do this based off difficulty rating
 
     // start the hint timers, they will reveal after an interval amount of time
     const hintOutputTimers = hintIntervals.map((interval) =>
