@@ -145,7 +145,7 @@
       "answer": "Brazil"
     },
     {
-      "question": "What is the capital of South Africa?",
+      "question": "What is the administrative capital of South Africa?",
       "answer": "Pretoria"
     },
     {
@@ -190,11 +190,151 @@
     },
     {
       "question": "What is the name of the actor who played the character Iron Man in the Marvel Cinematic Universe?",
-      "answer": "Robert Downey Jr."
+      "answer": "Robert Downey Jr"
     },
     {
       "question": "What is the name of the actor who played the character of Jack Sparrow in the Pirates of the Caribbean film franchise?",
       "answer": "Johnny Depp"
+    },
+    {
+      "question": "What platform did Node231 find SalvageBar before inviting him to join the Discord?",
+      "answer": "Twitch"
+    },
+    {
+      "question": "What year was the original Super Mario Bros. released?",
+      "answer": "1985",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What is the name of the main character in The Legend of Zelda series?",
+      "answer": "Link",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What is the name of the planet that the character Commander Shepard is tasked to save in Mass Effect?",
+      "answer": "Earth",
+      "difficulty": "Medium"
+    },
+    {
+      "question": "In what year was the first Grand Theft Auto game released?",
+      "answer": "1997",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What is the name of the protagonist in the Uncharted series?",
+      "answer": "Nathan Drake",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "In what year was the first Sonic the Hedgehog game released?",
+      "answer": "1991",
+      "category": "Sonic the Hedgehog",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What item does Link obtain after defeating the Forest Temple boss in The Legend of Zelda: Ocarina of Time?",
+      "answer": "Fairy Bow",
+      "difficulty": "Intermediate"
+    },
+    {
+      "question": "In The Legend of Zelda: Ocarina of Time, how many spiritual stones does Link need to collect to access the Temple of Time and obtain the Master Sword?",
+      "answer": "Three",
+      "difficulty": "Hard"
+    },
+    {
+      "question": "What is the title of Ernest Hemingway's novel about World War I?",
+      "answer": "A Farewell to Arms",
+      "difficulty": "Intermediate"
+    },
+    {
+      "question": "What is the name of the main character in F. Scott Fitzgerald's novel 'The Great Gatsby'?",
+      "answer": "Jay Gatsby",
+      "difficulty": "Hard"
+    },
+    {
+      "question": "What is the name of the coolest person in chat?",
+      "answer": "LC",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What is the chemical symbol for gold?",
+      "answer": "Au",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What is the largest organ in the human body?",
+      "answer": "Skin",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What is the study of sound called?",
+      "answer": "Acoustics",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What is the study of stars and galaxies called?",
+      "answer": "Astrophysics",
+      "difficulty": "Intermediate"
+    },
+    {
+      "question": "What is the study of plants called?",
+      "answer": "Botany",
+      "difficulty": "Intermediate"
+    },
+    {
+      "question": "What is the study of insects called?",
+      "answer": "Entomology",
+      "difficulty": "Intermediate"
+    },
+    {
+      "question": "When did the American Civil War end?",
+      "answer": "1865",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What was the name of Julius Caesar's famous diary?",
+      "answer": "The Commentaries",
+      "difficulty": "Intermediate"
+    },
+    {
+      "question": "Who was the first person to circumnavigate the globe?",
+      "answer": "Ferdinand Magellan",
+      "difficulty": "Hard"
+    },
+    {
+      "question": "What was the name of the first feature length animated film?",
+      "answer": "Snow White and the Seven Dwarfs",
+      "difficulty": "Intermediate"
+    },
+    {
+      "question": "What is the real name of Spider-Man?",
+      "answer": "Peter Parker",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What is the name of Wonder Woman's home island?",
+      "answer": "Themyscira",
+      "difficulty": "Intermediate"
+    },
+    {
+      "question": "What is the name of Thor's hammer?",
+      "answer": "Mjolnir",
+      "difficulty": "Intermediate"
+    },
+    {
+      "question": "What is the name of the X-Men character who can control metal?",
+      "answer": "Magneto",
+      "difficulty": "Intermediate"
+    },
+    {
+      "question": "What is the capital of Australia?",
+      "answer": "Canberra",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What is the second highest mountain peak in the world?",
+      "answer": "K2",
+      "difficulty": "Easy"
     }
   ]
 }

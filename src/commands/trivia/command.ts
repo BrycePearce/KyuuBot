@@ -2,16 +2,18 @@ import { Command } from '../../types/Command';
 import triviaQuestions from '../../utils/trivia.json';
 
 // :todo:
-// 1.) up the hint percent shown based on the answer length
-// 2.) make sure it shows spaces, special characters like ' by default. Currently blocks all
+// 1.) [x] up the hint percent shown based on the answer length
+// 2.) [x] make sure it shows spaces, special characters like ' by default. Currently blocks all
 // 3.) [x] Actually listen for responses/answers
-// 4.) Clear hint timeouts on answer
-// 5.) Time's up! Handling
+// 4.) [x] Clear hint timeouts on answer
+// 5.) [x] Time's up! Handling
 // 6.) Levenshtein distance on answer?
-// 7.) Hints break on Batman answer
+// 7.) [x] Hints break on Batman answer
 // 8.) Add tracked point totals
-// 9.) More questions, question categories as optional param?
+// 9.) Question categories as optional second param?
+// 10.) Difficulty rating for questions?
 
+const maskCharacter = '∗';
 const command: Command = {
   name: 'Trivia',
   description: 'Trivia questions',
@@ -22,17 +24,25 @@ const command: Command = {
   async execute(message) {
     const { question, answer } = triviaQuestions.misc[Math.floor(Math.random() * triviaQuestions.misc.length)];
     const collector = message.channel.createMessageCollector({ time: 60000 });
-    message.channel.send(question);
-    // message.channel.send(answer);
-    const hintIntervals = [10000, 25000, 40000];
-    let hintMask = generateMask(answer);
-    const hintPercentToReveal = 10;
 
+    // Ask the trivia question
+    message.channel.send(question);
+
+    const hintIntervals = [10000, 25000, 40000];
+    let hintMask = generateStrMask(answer);
+    let hintPercentToReveal = answer.length > 10 ? 40 : 15; // todo: maybe could do this based off difficulty rating
+
+    // start the hint timers, they will reveal after an interval amount of time
     const hintOutputTimers = hintIntervals.map((interval) =>
       setTimeout(() => {
         const revealedHint = revealHint(answer, hintMask, hintPercentToReveal);
         message.channel.send(`hint: ${revealedHint}`);
+
+        // update the hint mask
         hintMask = revealedHint;
+
+        // give a flat 10% character reveal increase for the next hint
+        hintPercentToReveal += 10;
       }, interval)
     );
 
@@ -41,36 +51,47 @@ const command: Command = {
 
     // listen for answers
     collector.on('collect', (guess) => {
+      // todo: levenshtein distance
       if (guess.content.toLowerCase() === answer.toLowerCase()) {
-        message.channel.send(`Success! ${guess.author}`);
-        hintOutputTimers.forEach((timer) => clearTimeout(timer));
-        collector.stop();
+        collector.stop('success');
+        message.channel.send(`${guess.author} has the correct answer! `);
       }
+    });
+
+    collector.on('end', (_, msg) => {
+      // clear out any hint timers left
+      hintOutputTimers.forEach((timer) => clearTimeout(timer));
+
+      if (msg.toLowerCase() === 'time') message.channel.send(`Time's up! The answer was **${answer}**`);
     });
   },
 };
 
-const generateMask = (str: string) => {
-  return new Array(str.length).fill('∗').join('');
+const generateStrMask = (str: string) => {
   // change all characters except special characters and spaces to asterisks
-  // return str
-  //   .split('')
-  //   .map((character) => (/[^\s!-/:-@\[-`{-~]+/g.test(character) ? character : '*'))
-  //   .join(',');
+  const specialChars = '!@#$%^&*()_+-=[]{}\\|;\':",./<>?';
+  return [...str].map((char) => (specialChars.includes(char) || char === ' ' ? char : maskCharacter)).join('');
 };
 
 const revealHint = (word: string, mask: string, percent: number) => {
   let wordArray = [...word];
   let maskArray = [...mask];
+
+  // generate indexes to that are not already revealed
   let indexesRevealable: string[] = maskArray.reduce(
-    (accumulator, current, index) => (current === '∗' ? [index, ...accumulator] : accumulator),
+    (accumulator, current, index) => (current === maskCharacter ? [index, ...accumulator] : accumulator),
     []
   );
+
+  // based on percent chance, determine the number of characters to reveal
   let numCharactersToReveal = Math.ceil((indexesRevealable.length * percent) / 100);
 
+  if (numCharactersToReveal <= 0) return maskArray.join('');
+
+  // if there are characters left to reveal, reveal them
   while (numCharactersToReveal > 0) {
     const indexToReveal = Math.floor(Math.random() * maskArray.length);
-    if (maskArray[indexToReveal] === '∗') {
+    if (maskArray[indexToReveal] === maskCharacter) {
       maskArray[indexToReveal] = wordArray[indexToReveal];
       numCharactersToReveal--;
     }
@@ -78,23 +99,5 @@ const revealHint = (word: string, mask: string, percent: number) => {
 
   return maskArray.join('');
 };
-
-// const revealHintAtTime = (message: Message, answer: string, indexesToReveal: number[], interval: number) => {
-//   // print hint at interval
-//   return setTimeout(() => {
-//     // generate hint string
-//     const hintString = answer
-//       .split('')
-//       .map((character, answerIndex) => {
-//         if (indexesToReveal.includes(answerIndex)) return character;
-//         else if (character === ' ') return character;
-//         return '*';
-//       })
-//       .join('');
-
-//     const formattedHintString = hintString.replaceAll('*', '\\*');
-//     message.channel.send(`hint: ${formattedHintString}`);
-//   }, interval);
-// };
 
 export default command;
