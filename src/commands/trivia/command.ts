@@ -1,3 +1,4 @@
+import { addPoints, getPoints } from '../../database/api/triviaApi';
 import { Command } from '../../types/Command';
 import triviaQuestions from '../../utils/trivia.json';
 
@@ -9,7 +10,7 @@ import triviaQuestions from '../../utils/trivia.json';
 // 5.) [x] Time's up! Handling
 // 6.) Levenshtein distance on answer?
 // 7.) [x] Hints break on Batman answer
-// 8.) Add tracked point totals
+// 8.) [x] Add tracked point totals
 // 9.) Question categories as optional second param?
 // 10.) Difficulty rating for questions?
 
@@ -50,11 +51,13 @@ const command: Command = {
     hintOutputTimers.forEach((hintTimer) => hintTimer);
 
     // listen for answers
-    collector.on('collect', (guess) => {
+    collector.on('collect', async (guess) => {
       // todo: levenshtein distance
       if (guess.content.toLowerCase() === answer.toLowerCase()) {
         collector.stop('success');
-        message.channel.send(`${guess.author} has the correct answer! `);
+        await addPoints(message.channelId, guess.author.id, 1);
+        const toalpts = await getPoints(message.channelId, guess.author.id);
+        message.channel.send(`${guess.author} has the correct answer. They now have ${toalpts} pts!`);
       }
     });
 

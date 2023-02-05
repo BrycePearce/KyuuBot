@@ -1,12 +1,12 @@
 import { Options } from '@mikro-orm/core';
 import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
 import path from 'path';
-import { BaseEntity, Reminder, User } from './entities';
+import { BaseEntity, Reminder, TriviaPoints, User } from './entities';
 
 const config: Options = {
   type: 'sqlite',
   dbName: './config/kyuu.db',
-  entities: [User, Reminder, BaseEntity],
+  entities: [TriviaPoints, User, Reminder, BaseEntity],
   highlighter: new SqlHighlighter(),
   debug: true,
   migrations: {
