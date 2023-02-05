@@ -1,10 +1,6 @@
 {
   "misc": [
     {
-      "question": "What is the capital of the United States?",
-      "answer": "Washington, D.C."
-    },
-    {
       "question": "Who won the Nobel Prize for Literature in 2018?",
       "answer": "Olga Tokarczuk"
     },
@@ -22,15 +18,15 @@
     },
     {
       "question": "What is Shaggy’s real name?",
-      "answer": " Norville Rogers"
+      "answer": "Norville Rogers"
     },
     {
       "question": "What was the name of the girl band who made their first appearance in the 1999 animated movie, Scooby-Doo and the Witch’s Ghost?",
-      "answer": " Hex Girls"
+      "answer": "Hex Girls"
     },
     {
       "question": "Who did Scooby-Doo meet in The Dynamic Scooby-Doo Affair & The Caped Crusader Caper?",
-      "answer": " Batman"
+      "answer": "Batman"
     },
     {
       "question": "What year did the Berlin Wall fall?",
@@ -335,6 +331,306 @@
       "question": "What is the second highest mountain peak in the world?",
       "answer": "K2",
       "difficulty": "Easy"
+    },
+    {
+      "question": "What is the name of the Roman Emperor who divided the Roman Empire into two halves?",
+      "answer": "Constantine",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "What was the name of the Mongol ruler who conquered much of Asia and Eastern Europe in the 13th century?",
+      "answer": "Genghis Khan",
+      "difficulty": "Difficult"
+    },
+    {
+      "question": "What was the name of the 16th-century religious movement in Europe that aimed to reform the Roman Catholic Church?",
+      "answer": "The Reformation",
+      "difficulty": "Difficult"
+    },
+    {
+      "question": "What was the name of the slave trade route that connected West Africa to the Americas and the Caribbean?",
+      "answer": "The Middle Passage",
+      "difficulty": "Difficult"
+    },
+    {
+      "question": "What was the name of the Greek god of war?",
+      "answer": "Ares",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What was the capital of Ancient Greece?",
+      "answer": "Athens",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "Who was the goddess of wisdom, war, and crafts in ancient Greece?",
+      "answer": "Athena",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "Who was the father of Alexander the Great?",
+      "answer": "Philip II of Macedon",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "Who was Julius Caesar's main rival in the Roman Civil War?",
+      "answer": "Pompey",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "Who was the first king of Rome?",
+      "answer": "Romulus",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "What was the name of the famous temple in Ancient Greece dedicated to Athena?",
+      "answer": "Parthenon",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "Who was the first emperor of the Roman Empire?",
+      "answer": "Augustus",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "What was the name of the powerful empire that dominated much of the eastern Mediterranean, including Greece, during the 4th century BCE?",
+      "answer": "Persian Empire",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "What was the name of the city-state that was home to the great philosopher Socrates, who was famously sentenced to death for impiety and corruption of the young?",
+      "answer": "Athens",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "What was the name of the powerful city-state located in the central region of ancient Greece that was known for its military and political power?",
+      "answer": "Sparta",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "Who was the famous Roman general and politician who was responsible for the conquest of Gaul, which is modern-day France, and is often considered the greatest military commander in history?",
+      "answer": "Julius Caesar",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "What was the name of the great philosopher and politician of ancient Athens who was known for his ideas about democracy and justice, and who was sentenced to death for impiety and corruption of the young?",
+      "answer": "Socrates",
+      "difficulty": "Difficult"
+    },
+    {
+      "question": "Who was the founder of the Achaemenid Empire?",
+      "answer": "Cyrus the Great",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "What was the name of the capital city of the Achaemenid Empire?",
+      "answer": "Pasargadae",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "Who is considered the father of history and wrote the Histories, a narrative of the wars between the Greeks and Persians in the early 5th century BCE?",
+      "answer": "Herodotus",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "What is the title of Herodotus' work that chronicled the events of the Greco-Persian Wars and other historical and geographical material?",
+      "answer": "The Histories",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "What was Julius Caesar's most famous war campaign?",
+      "answer": "The Gallic War",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "Which famous conqueror was born in the city of Pella, in the ancient kingdom of Macedon?",
+      "answer": "Alexander the Great",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "What is the name of the protagonist in the movie 'The Terminator'?",
+      "answer": "Sarah Connor",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What was the name of the animated film that was released in 1986 by Disney and featured a character named Oliver?",
+      "answer": "Oliver & Company",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "Who direct the 1982 movie, The Thing?",
+      "answer": "John Carpenter",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What was the name of the classic 80s movie that was a coming-of-age comedy-drama film released in 1985 and directed by John Hughes?",
+      "answer": "The Breakfast Club",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "In what year was the original release of the game Doom?",
+      "answer": "1993",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What is the protagonist's name in Doom?",
+      "answer": "Doomguy",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What is the name of the planet that Doom takes place on?",
+      "answer": "Phobos",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "What was the first commercially successful real-time strategy video game for PC?",
+      "answer": "Dune II",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "Who was the first person to describe the circulation of blood in the human body?",
+      "answer": "William Harvey",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "What was the first planet discovered using the telescope?",
+      "answer": "Uranus",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "Who was the first person to propose the theory of evolution through natural selection?",
+      "answer": "Charles Darwin",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "Who was the first leader of the Soviet Union?",
+      "answer": "Vladimir Lenin",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "Who, in 1903, was the first woman to win a Nobel Prize?",
+      "answer": "Marie Curie",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "What is the smallest planet in our solar system?",
+      "answer": "Mercury",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "In the rulebook for basketball, is there a rule saying that dog's can't play?",
+      "answer": "No",
+      "difficulty": "Difficult"
+    },
+    {
+      "question": "What is the name of the main character in the movie 'Air Bud'?",
+      "answer": "Buddy",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What sport does Buddy play in the movie 'Air Bud'?",
+      "answer": "Basketball",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What is the name of the basketball team that Buddy joins in the movie 'Air Bud'?",
+      "answer": "The Timberwolves",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "How much did the widely acclaimed cinemetogrophic masterpiece 1997 hit Air Bud make at the box office?",
+      "answer": "27.8 million",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What year was the first iPhone released?",
+      "answer": "2007",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "How many bones do sharks have?",
+      "answer": "zero",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "In Greek mythology, who was known as the messenger of the gods?",
+      "answer": "Hermes",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "In chess, what direction can a bishop move?",
+      "answer": "Diagonally",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What river runs through Paris?",
+      "answer": "Seine",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What was the first toy to be advertised on television?",
+      "answer": "Mr Potato Head",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "What TV series showed the first interracial kiss on American network television?",
+      "answer": "Star Trek",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "What's the fastest land animal?",
+      "answer": "Cheetah",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What's the smallest country in the world?",
+      "answer": "Vatican City",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What's the second smallest country in the world?",
+      "answer": "Monaco",
+      "difficulty": "Difficult"
+    },
+    {
+      "question": "What country touches the Indian Ocean, the Arabian Sea, and the Bay of Bengal?",
+      "answer": "India",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "What are the folds of skin on a cat's ears called?",
+      "answer": "Henry's pocket",
+      "difficulty": "Difficult"
+    },
+    {
+      "question": "What type of animal is a Flemish giant?",
+      "answer": "Rabbit",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "What is the hottest planet in the solar system? (460c)",
+      "answer": "Venus",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "Iceland diverted roads to avoid disturbing communities of what?",
+      "answer": "Elves",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What is the name of the planet that Darth Vader calls home?",
+      "answer": "Tatooine",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What is the name of Han Solo's ship in Star Wars?",
+      "answer": "Millennium Falcon",
+      "difficulty": "Moderate"
+    },
+    {
+      "question": "What is the name of the planet where the Rebel Alliance had its secret base in 'A New Hope'?",
+      "answer": "Yavin IV",
+      "difficulty": "Difficult"
     }
   ]
 }
