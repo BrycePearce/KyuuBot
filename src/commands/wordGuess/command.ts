@@ -16,7 +16,7 @@ const command: Command = {
     let hasAnswerBeenGuessed = false;
 
     // begin quiz
-    message.channel.send(`Unscramble this word: **${scrambledWord}**`);
+    message.channel.send(`Unscramble this word: **${scrambledWord.join('')}**`);
     const collector = message.channel.createMessageCollector({ time: 60000 });
 
     // generate hints
@@ -47,7 +47,7 @@ const command: Command = {
 };
 
 const getshuffledWord = (word: string) => {
-  if (word.length <= 1) return word;
+  if (word.length <= 1) return [...word];
 
   let shuffledWord = shuffle([...word]);
 
