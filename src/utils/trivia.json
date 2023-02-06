@@ -2,209 +2,258 @@
   "misc": [
     {
       "question": "Who won the Nobel Prize for Literature in 2018?",
-      "answer": "Olga Tokarczuk"
+      "answer": "Olga Tokarczuk",
+      "difficulty": "easy"
     },
     {
       "question": "What is the largest country in the world by land area?",
-      "answer": "Russia"
+      "answer": "Russia",
+      "difficulty": "easy"
     },
     {
       "question": "What breed of dog is Scooby-Doo?",
-      "answer": "Great Dane"
+      "answer": "Great Dane",
+      "difficulty": "easy"
     },
     {
       "question": "What is Scooby-Doo’s real name?",
-      "answer": "Schoobert Doo"
+      "answer": "Schoobert Doo",
+      "difficulty": "moderate"
     },
     {
       "question": "What is Shaggy’s real name?",
-      "answer": "Norville Rogers"
+      "answer": "Norville Rogers",
+      "difficulty": "easy"
     },
     {
       "question": "What was the name of the girl band who made their first appearance in the 1999 animated movie, Scooby-Doo and the Witch’s Ghost?",
-      "answer": "Hex Girls"
+      "answer": "Hex Girls",
+      "difficulty": "easy"
     },
     {
       "question": "Who did Scooby-Doo meet in The Dynamic Scooby-Doo Affair & The Caped Crusader Caper?",
-      "answer": "Batman"
+      "answer": "Batman",
+      "difficulty": "easy"
     },
     {
       "question": "What year did the Berlin Wall fall?",
-      "answer": "1989"
+      "answer": "1989",
+      "difficulty": "easy"
     },
     {
       "question": "Who was the first president of the United States?",
-      "answer": "George Washington"
+      "answer": "George Washington",
+      "difficulty": "easy"
     },
     {
       "question": "Who is considered the father of the modern computer?",
-      "answer": "John Von Neumann"
+      "answer": "John Von Neumann",
+      "difficulty": "easy"
     },
     {
       "question": "In what year did the United States enter World War II?",
-      "answer": "1941"
+      "answer": "1941",
+      "difficulty": "easy"
     },
     {
       "question": "What is the capital of China?",
-      "answer": "Beijing"
+      "answer": "Beijing",
+      "difficulty": "easy"
     },
     {
       "question": "Who wrote 'To Kill a Mockingbird'?",
-      "answer": "Harper Lee"
+      "answer": "Harper Lee",
+      "difficulty": "easy"
     },
     {
       "question": "What is the capital of France?",
-      "answer": "Paris"
+      "answer": "Paris",
+      "difficulty": "easy"
     },
     {
       "question": "Who wrote 'Pride and Prejudice'?",
-      "answer": "Jane Austen"
+      "answer": "Jane Austen",
+      "difficulty": "easy"
     },
     {
       "question": "What is the currency used in Japan?",
-      "answer": "Yen"
+      "answer": "Yen",
+      "difficulty": "easy"
     },
     {
       "question": "What is the largest ocean on Earth?",
-      "answer": "Pacific Ocean"
+      "answer": "Pacific Ocean",
+      "difficulty": "easy"
     },
     {
       "question": "What is the smallest country in the world by land area?",
-      "answer": "Vatican City"
+      "answer": "Vatican City",
+      "difficulty": "easy"
     },
     {
       "question": "What is the longest river in the world?",
-      "answer": "The Nile"
+      "answer": "The Nile",
+      "difficulty": "easy"
     },
     {
       "question": "Who painted the Sistine Chapel ceiling?",
-      "answer": "Michelangelo"
+      "answer": "Michelangelo",
+      "difficulty": "easy"
     },
     {
       "question": "In what year did the Cuban Missile Crisis occur?",
-      "answer": "1962"
+      "answer": "1962",
+      "difficulty": "easy"
     },
     {
       "question": "What is the capital of Russia?",
-      "answer": "Moscow"
+      "answer": "Moscow",
+      "difficulty": "easy"
     },
     {
       "question": "What is the name of SpongeBob SquarePants's best friend?",
-      "answer": "Patrick Star"
+      "answer": "Patrick Star",
+      "difficulty": "easy"
     },
     {
       "question": "What is the name of the robot from The Jetsons?",
-      "answer": "Rosie"
+      "answer": "Rosie",
+      "difficulty": "easy"
     },
     {
       "question": "What is the name of the main character in Dexter's Laboratory?",
-      "answer": "Dexter"
+      "answer": "Dexter",
+      "difficulty": "easy"
     },
     {
       "question": "What is the name of the boy in the Powerpuff Girls?",
-      "answer": "Mojo Jojo"
+      "answer": "Mojo Jojo",
+      "difficulty": "easy"
     },
     {
       "question": "What is the name of the villain in Teen Titans?",
-      "answer": "Slade"
+      "answer": "Slade",
+      "difficulty": "easy"
     },
     {
       "question": "What is the name of the father in The Simpsons?",
-      "answer": "Homer Simpson"
+      "answer": "Homer Simpson",
+      "difficulty": "easy"
     },
     {
       "question": "What is the name of the superhero family in The Incredibles?",
-      "answer": "The Parr family"
+      "answer": "The Parr family",
+      "difficulty": "easy"
     },
     {
       "question": "What is the name of the main character in Adventure Time?",
-      "answer": "Finn the Human"
+      "answer": "Finn the Human",
+      "difficulty": "easy"
     },
     {
       "question": "What is the name of the main character in Danny Phantom?",
-      "answer": "Danny Fenton"
+      "answer": "Danny Fenton",
+      "difficulty": "easy"
     },
     {
       "question": "What country is the Great Barrier Reef located in?",
-      "answer": "Australia"
+      "answer": "Australia",
+      "difficulty": "easy"
     },
     {
       "question": "What is the capital of Japan?",
-      "answer": "Tokyo"
+      "answer": "Tokyo",
+      "difficulty": "easy"
     },
     {
       "question": "Which continent is home to the Andes mountain range?",
-      "answer": "South America"
+      "answer": "South America",
+      "difficulty": "easy"
     },
     {
       "question": "What country is home to the Amazon Rainforest?",
-      "answer": "Brazil"
+      "answer": "Brazil",
+      "difficulty": "easy"
     },
     {
       "question": "What is the administrative capital of South Africa?",
-      "answer": "Pretoria"
+      "answer": "Pretoria",
+      "difficulty": "easy"
     },
     {
       "question": "What is the chemical symbol for Iron?",
-      "answer": "Fe"
+      "answer": "Fe",
+      "difficulty": "easy"
     },
     {
       "question": "What is the most abundant gas in Earth's atmosphere?",
-      "answer": "Nitrogen"
+      "answer": "Nitrogen",
+      "difficulty": "easy"
     },
     {
       "question": "What is the mathematical symbol for the constant pi?",
-      "answer": "π"
+      "answer": "π",
+      "difficulty": "easy"
     },
     {
       "question": "What is the first element in the periodic table?",
-      "answer": "Hydrogen"
+      "answer": "Hydrogen",
+      "difficulty": "easy"
     },
     {
       "question": "What is the unit of electrical resistance in the International System of Units (SI)?",
-      "answer": "Ohm"
+      "answer": "Ohm",
+      "difficulty": "easy"
     },
     {
       "question": "What was the first full-length animated film produced by Disney?",
-      "answer": "Snow White and the Seven Dwarfs"
+      "answer": "Snow White and the Seven Dwarfs",
+      "difficulty": "easy"
     },
     {
       "question": "Who played the character Indiana Jones in the film franchise of the same name?",
-      "answer": "Harrison Ford"
+      "answer": "Harrison Ford",
+      "difficulty": "easy"
     },
     {
       "question": "What is the highest grossing film of all time (unadjusted for inflation)?",
-      "answer": "Avengers: Endgame"
+      "answer": "Avengers: Endgame",
+      "difficulty": "easy"
     },
     {
       "question": "Who played the role of Katniss Everdeen in The Hunger Games film franchise?",
-      "answer": "Jennifer Lawrence"
+      "answer": "Jennifer Lawrence",
+      "difficulty": "easy"
     },
     {
       "question": "What is the name of the alien species in the film franchise Alien?",
-      "answer": "Xenomorph"
+      "answer": "Xenomorph",
+      "difficulty": "easy"
     },
     {
       "question": "What is the name of the actor who played the character Iron Man in the Marvel Cinematic Universe?",
-      "answer": "Robert Downey Jr"
+      "answer": "Robert Downey Jr",
+      "difficulty": "easy"
     },
     {
       "question": "What is the name of the actor who played the character of Jack Sparrow in the Pirates of the Caribbean film franchise?",
-      "answer": "Johnny Depp"
+      "answer": "Johnny Depp",
+      "difficulty": "easy"
     },
     {
       "question": "What platform did Node231 find SalvageBar before inviting him to join the Discord?",
-      "answer": "Twitch"
+      "answer": "Twitch",
+      "difficulty": "easy"
     },
     {
       "question": "What year was the original Super Mario Bros. released?",
       "answer": "1985",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What is the name of the main character in The Legend of Zelda series?",
       "answer": "Link",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What is the name of the planet that the character Commander Shepard is tasked to save in Mass Effect?",
@@ -214,493 +263,708 @@
     {
       "question": "In what year was the first Grand Theft Auto game released?",
       "answer": "1997",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What is the name of the protagonist in the Uncharted series?",
       "answer": "Nathan Drake",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "In what year was the first Sonic the Hedgehog game released?",
       "answer": "1991",
       "category": "Sonic the Hedgehog",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What item does Link obtain after defeating the Forest Temple boss in The Legend of Zelda: Ocarina of Time?",
       "answer": "Fairy Bow",
-      "difficulty": "Intermediate"
+      "difficulty": "moderate"
     },
     {
       "question": "In The Legend of Zelda: Ocarina of Time, how many spiritual stones does Link need to collect to access the Temple of Time and obtain the Master Sword?",
       "answer": "Three",
-      "difficulty": "Difficult"
+      "difficulty": "difficult"
     },
     {
       "question": "What is the title of Ernest Hemingway's novel about World War I?",
       "answer": "A Farewell to Arms",
-      "difficulty": "Intermediate"
+      "difficulty": "moderate"
     },
     {
       "question": "What is the name of the main character in F. Scott Fitzgerald's novel 'The Great Gatsby'?",
       "answer": "Jay Gatsby",
-      "difficulty": "Difficult"
+      "difficulty": "difficult"
     },
     {
       "question": "What is the name of the coolest person in chat?",
       "answer": "LC",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What is the chemical symbol for gold?",
       "answer": "Au",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What is the largest organ in the human body?",
       "answer": "Skin",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What is the study of sound called?",
       "answer": "Acoustics",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What is the study of stars and galaxies called?",
       "answer": "Astrophysics",
-      "difficulty": "Intermediate"
+      "difficulty": "moderate"
     },
     {
       "question": "What is the study of plants called?",
       "answer": "Botany",
-      "difficulty": "Intermediate"
+      "difficulty": "moderate"
     },
     {
       "question": "What is the study of insects called?",
       "answer": "Entomology",
-      "difficulty": "Intermediate"
+      "difficulty": "moderate"
     },
     {
       "question": "When did the American Civil War end?",
       "answer": "1865",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What was the name of Julius Caesar's famous diary?",
       "answer": "The Commentaries",
-      "difficulty": "Intermediate"
+      "difficulty": "moderate"
     },
     {
       "question": "Who was the first person to circumnavigate the globe?",
       "answer": "Ferdinand Magellan",
-      "difficulty": "Difficult"
+      "difficulty": "difficult"
     },
     {
       "question": "What was the name of the first feature length animated film?",
       "answer": "Snow White and the Seven Dwarfs",
-      "difficulty": "Intermediate"
+      "difficulty": "moderate"
     },
     {
       "question": "What is the real name of Spider-Man?",
       "answer": "Peter Parker",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What is the name of Wonder Woman's home island?",
       "answer": "Themyscira",
-      "difficulty": "Intermediate"
+      "difficulty": "moderate"
     },
     {
       "question": "What is the name of Thor's hammer?",
       "answer": "Mjolnir",
-      "difficulty": "Intermediate"
+      "difficulty": "moderate"
     },
     {
       "question": "What is the name of the X-Men character who can control metal?",
       "answer": "Magneto",
-      "difficulty": "Intermediate"
+      "difficulty": "moderate"
     },
     {
       "question": "What is the capital of Australia?",
       "answer": "Canberra",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What is the second highest mountain peak in the world?",
       "answer": "K2",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What is the name of the Roman Emperor who divided the Roman Empire into two halves?",
       "answer": "Constantine",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "What was the name of the Mongol ruler who conquered much of Asia and Eastern Europe in the 13th century?",
       "answer": "Genghis Khan",
-      "difficulty": "Difficult"
+      "difficulty": "difficult"
     },
     {
       "question": "What was the name of the 16th-century religious movement in Europe that aimed to reform the Roman Catholic Church?",
       "answer": "The Reformation",
-      "difficulty": "Difficult"
+      "difficulty": "difficult"
     },
     {
       "question": "What was the name of the slave trade route that connected West Africa to the Americas and the Caribbean?",
       "answer": "The Middle Passage",
-      "difficulty": "Difficult"
+      "difficulty": "difficult"
     },
     {
       "question": "What was the name of the Greek god of war?",
       "answer": "Ares",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What was the capital of Ancient Greece?",
       "answer": "Athens",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "Who was the goddess of wisdom, war, and crafts in ancient Greece?",
       "answer": "Athena",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "Who was the father of Alexander the Great?",
       "answer": "Philip II of Macedon",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "Who was Julius Caesar's main rival in the Roman Civil War?",
       "answer": "Pompey",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "Who was the first king of Rome?",
       "answer": "Romulus",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "What was the name of the famous temple in Ancient Greece dedicated to Athena?",
       "answer": "Parthenon",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "Who was the first emperor of the Roman Empire?",
       "answer": "Augustus",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "What was the name of the powerful empire that dominated much of the eastern Mediterranean, including Greece, during the 4th century BCE?",
       "answer": "Persian Empire",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "What was the name of the city-state that was home to the great philosopher Socrates, who was famously sentenced to death for impiety and corruption of the young?",
       "answer": "Athens",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "What was the name of the powerful city-state located in the central region of ancient Greece that was known for its military and political power?",
       "answer": "Sparta",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "Who was the famous Roman general and politician who was responsible for the conquest of Gaul, which is modern-day France, and is often considered the greatest military commander in history?",
       "answer": "Julius Caesar",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "What was the name of the great philosopher and politician of ancient Athens who was known for his ideas about democracy and justice, and who was sentenced to death for impiety and corruption of the young?",
       "answer": "Socrates",
-      "difficulty": "Difficult"
+      "difficulty": "difficult"
     },
     {
       "question": "Who was the founder of the Achaemenid Empire?",
       "answer": "Cyrus the Great",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "What was the name of the capital city of the Achaemenid Empire?",
       "answer": "Pasargadae",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "Who is considered the father of history and wrote the Histories, a narrative of the wars between the Greeks and Persians in the early 5th century BCE?",
       "answer": "Herodotus",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "What is the title of Herodotus' work that chronicled the events of the Greco-Persian Wars and other historical and geographical material?",
       "answer": "The Histories",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "What was Julius Caesar's most famous war campaign?",
       "answer": "The Gallic War",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "Which famous conqueror was born in the city of Pella, in the ancient kingdom of Macedon?",
       "answer": "Alexander the Great",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "What is the name of the protagonist in the movie 'The Terminator'?",
       "answer": "Sarah Connor",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What was the name of the animated film that was released in 1986 by Disney and featured a character named Oliver?",
       "answer": "Oliver & Company",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "Who direct the 1982 movie, The Thing?",
       "answer": "John Carpenter",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What was the name of the classic 80s movie that was a coming-of-age comedy-drama film released in 1985 and directed by John Hughes?",
       "answer": "The Breakfast Club",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "In what year was the original release of the game Doom?",
       "answer": "1993",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What is the protagonist's name in Doom?",
       "answer": "Doomguy",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What is the name of the planet that Doom takes place on?",
       "answer": "Phobos",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "What was the first commercially successful real-time strategy video game for PC?",
       "answer": "Dune II",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "Who was the first person to describe the circulation of blood in the human body?",
       "answer": "William Harvey",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "What was the first planet discovered using the telescope?",
       "answer": "Uranus",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "Who was the first person to propose the theory of evolution through natural selection?",
       "answer": "Charles Darwin",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "Who was the first leader of the Soviet Union?",
       "answer": "Vladimir Lenin",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "Who, in 1903, was the first woman to win a Nobel Prize?",
       "answer": "Marie Curie",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "What is the smallest planet in our solar system?",
       "answer": "Mercury",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "In the rulebook for basketball, is there a rule saying that dog's can't play?",
       "answer": "No",
-      "difficulty": "Difficult"
+      "difficulty": "difficult"
     },
     {
       "question": "What is the name of the main character in the movie 'Air Bud'?",
       "answer": "Buddy",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What sport does Buddy play in the movie 'Air Bud'?",
       "answer": "Basketball",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What is the name of the basketball team that Buddy joins in the movie 'Air Bud'?",
       "answer": "The Timberwolves",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "How much did the widely acclaimed cinemetogrophic masterpiece 1997 hit Air Bud make at the box office?",
       "answer": "27.8 million",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What year was the first iPhone released?",
       "answer": "2007",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "How many bones do sharks have?",
       "answer": "zero",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "In Greek mythology, who was known as the messenger of the gods?",
       "answer": "Hermes",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "In chess, what direction can a bishop move?",
       "answer": "Diagonally",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What river runs through Paris?",
       "answer": "Seine",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What was the first toy to be advertised on television?",
       "answer": "Mr Potato Head",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "What TV series showed the first interracial kiss on American network television?",
       "answer": "Star Trek",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "What's the fastest land animal?",
       "answer": "Cheetah",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What's the smallest country in the world?",
       "answer": "Vatican City",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What's the second smallest country in the world?",
       "answer": "Monaco",
-      "difficulty": "Difficult"
+      "difficulty": "difficult"
     },
     {
       "question": "What country touches the Indian Ocean, the Arabian Sea, and the Bay of Bengal?",
       "answer": "India",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "What are the folds of skin on a cat's ears called?",
       "answer": "Henry's pocket",
-      "difficulty": "Difficult"
+      "difficulty": "difficult"
     },
     {
       "question": "What type of animal is a Flemish giant?",
       "answer": "Rabbit",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "What is the hottest planet in the solar system? (460c)",
       "answer": "Venus",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "Iceland diverted roads to avoid disturbing communities of what?",
       "answer": "Elves",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What is the name of the planet that Darth Vader called home during the imperial era?",
       "answer": "Mustafar",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "What is the name of Han Solo's ship in Star Wars?",
       "answer": "Millennium Falcon",
-      "difficulty": "Moderate"
+      "difficulty": "moderate"
     },
     {
       "question": "What is the name of the planet where the Rebel Alliance had its secret base in 'A New Hope'?",
       "answer": "Yavin IV",
-      "difficulty": "Difficult"
+      "difficulty": "difficult"
     },
     {
       "question": "Name the movie this is quoted from, 'It's not the years, honey, it's the mileage'",
       "answer": "Raiders of the Lost Ark",
-      "difficulty": "Intermediate"
+      "difficulty": "moderate"
     },
     {
       "question": "Who was thought to popularize the phrase 'keep your friends close and your enemies closer'?",
       "answer": "Sun Tzu",
-      "difficulty": "Intermediate"
+      "difficulty": "moderate"
     },
     {
       "question": "Where does the following quote 'The princess is in another castle' originate from?",
       "answer": "Super Mario Bros",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "Where does the following quote 'Do you want to join the Brotherhood of Steel?' originate from?",
       "answer": "Fallout",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "Where does the following quote 'You can't handle the truth!' originate from?",
       "answer": "A Few Good Men",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "Where does the following quote 'Get to the choppa!' originate from?",
       "answer": "Predator",
-      "difficulty": "Intermediate"
+      "difficulty": "moderate"
     },
     {
       "question": "Where does the following quote 'All your base are belong to us.' originate from?",
       "answer": "Zero Wing",
-      "difficulty": "Difficult"
+      "difficulty": "difficult"
     },
     {
       "question": "What is the name of Naruto's sensei?",
       "answer": "Iruka Umino",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What is the name of the powerful ninja organization that seeks world domination in Naruto?",
       "answer": "Akatsuki",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "What is the name of the jutsu that allows users to bind the soul of a deceased person to a living vessel, restoring them as they were in the last moments of their lives?",
       "answer": "Edo Tensei",
-      "difficulty": "Difficult"
+      "difficulty": "difficult"
     },
     {
       "question": "What is the name of the technique that allows a user to perform a genjutsu on a massive scale, affecting entire battlefields and thousands of targets at once?",
       "answer": "Infinite Tsukuyomi",
-      "difficulty": "Difficult"
+      "difficulty": "difficult"
     },
     {
       "question": "With Sharingan now mastered, Madara's plan to control all, what moon's eye technique is said to be his greatest fall?",
       "answer": "Infinite Tsukuyomi",
-      "difficulty": "Difficult"
+      "difficulty": "difficult"
     },
     {
       "question": "A group of friends with a talking dog so grand, Travels around in Mystery Machine, solving each demand, What is this cartoon that's filled with humor and fear, That's been delighting audiences for many a year?",
       "answer": "Scooby-Doo",
-      "difficulty": "Easy"
+      "difficulty": "easy"
     },
     {
       "question": "Where does the following quote 'You're killin' me Smalls!' originate from?",
       "answer": "The Sandlot",
-      "difficulty": "Intermediate"
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What color is the sunset on Mars?",
+      "answer": "Blue",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What is the largest bone in the human body?",
+      "answer": "The femur",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "Which animal can change direction midair?",
+      "answer": "Cheetah",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What is the largest land animal alive today?",
+      "answer": "African Elephant",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the smallest unit of matter?",
+      "answer": "atom",
+      "difficulty": "easy"
+    },
+    {
+      "question": "How many states of matter are there?",
+      "answer": "four",
+      "difficulty": "easy"
+    },
+    {
+      "question": "Electron pairs, when shared between two atoms, help create what kind of bond?",
+      "answer": "A covalent bond",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "How do scientists measure the severity of an earthquake?",
+      "answer": "Richter Scale",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What does a “Geiger Counter” measure?",
+      "answer": "Radiation",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What kind of energy does that sun create?",
+      "answer": "Nuclear",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What reaction releases energy into its surroundings?",
+      "answer": "Exothermic reaction",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What word do scientists use to describe a unit of measure that is also the name of an animal?",
+      "answer": "A mole",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "Announced in 2020, the program AlphaFold 2 program became record-settingly good at using AI algorithms to accurately predict the structure of what biomolecules?",
+      "answer": "Proteins",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "The largest living lizard can't breathe fire but it does have a venomous bite that inhibits blood clotting. What creature is this?",
+      "answer": "Komodo dragon",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What mosquito-borne, parasitic disease causes red blood cells to explode after they've served as a mating ground?",
+      "answer": "Malaria",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What “P” term refers to a virus, bacteria, or other agent that causes disease?",
+      "answer": "Pathogen",
+      "difficulty": "easy"
+    },
+    {
+      "question": "Officially recognized as its state berry in 1991, Maine is one the world’s top producers of the wild variety of what fruit that is actually deep purple due to its anthocyanin antioxidants?",
+      "answer": "Blueberry",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "With exclamations that can travel as far as 5km, one of the loudest land animals is what aptly named monkey group?",
+      "answer": "Howler monkeys",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "Often appended with 'tea' to distinguish it from a culture of bacteria and yeast, what is the fermented, slightly effervescent, sweetened tea drink that is often consumed for purported health benefits? Although its origins are not fully known, it is believed to have originated in China?",
+      "answer": "Kombucha",
+      "difficulty": "easy"
+    },
+    {
+      "question": "A person is about 1 cm taller in the morning, compared to when they go to bed. This is because what “C” tissue that connects bones is squished over the course of a day?",
+      "answer": "Cartilage",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "Roughly twenty percent of the oxygen in the Earth’s atmosphere is provided exclusively by what large rainforest?",
+      "answer": "The Amazon",
+      "difficulty": "easy"
+    },
+    {
+      "question": "An average human performs what basic function about 20 times a minute, or over ten million times a year?",
+      "answer": "Blink",
+      "difficulty": "easy"
+    },
+    {
+      "question": "The mojave ground ________ found mainly in the American West hibernates for two-thirds of the year. What is it commonly called?",
+      "answer": "Squirrel",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the common name of the species of shark known to have a bite force of 18,000 newtons, the highest of any fish species?",
+      "answer": "Bull shark",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the common name of the species of shark known to have a bite force of 18,000 newtons, the highest of any fish species?",
+      "answer": "Bull shark",
+      "difficulty": "easy"
+    },
+    {
+      "question": "The ______ is the largest living species of bird in the world?",
+      "answer": "ostrich",
+      "difficulty": "easy"
+    },
+    {
+      "question": "The _____ _____ is the largest species of shark in the world, growing up to 18 meters in length.",
+      "answer": "whale shark",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "The _____ is the national symbol of the United States",
+      "answer": "eagle",
+      "difficulty": "easy"
+    },
+    {
+      "question": "The first video game ever released was named _________.",
+      "answer": "Pong",
+      "difficulty": "easy"
+    },
+    {
+      "question": "The scientific term for the study of fossils is _________.",
+      "answer": "Paleontology",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "_________ is known as the father of the computer.",
+      "answer": "Charles Babbage",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "The highest mountain in the solar system is located on the planet _________.",
+      "answer": "Mars",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "__________ is a widely used programming language that was first released in 1991.",
+      "answer": "Python",
+      "difficulty": "easy"
+    },
+    {
+      "question": "The __________ is the currency used in Japan.",
+      "answer": "Yen",
+      "difficulty": "easy"
+    },
+    {
+      "question": "The __________ is a legendary weapon said to serve as the balance that weighs the three forces: Power, Wisdom and Courage",
+      "answer": "Triforce",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "__________ is a chemical element with the atomic number 26 and is widely used in construction and manufacturing.",
+      "answer": "Iron",
+      "difficulty": "easy"
+    },
+    {
+      "question": "The __________ is a musical instrument that is made from metal and is used to make a loud, ringing sound.",
+      "answer": "Triangle",
+      "difficulty": "easy"
+    },
+    {
+      "question": "The __________ is a famous painting by Pablo Picasso that was painted in 1937.",
+      "answer": "Guernica",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "The planet Jupiter has a moon named after this mythological figure who was known for his cunning ways.",
+      "answer": "Europa",
+      "difficulty": "easy"
+    },
+    {
+      "question": "The planet Jupiter has a moon named after this mythological figure who was known for his cunning ways.",
+      "answer": "Europa",
+      "difficulty": "easy"
+    },
+    {
+      "question": "________ is a fossilization process where minerals deposits replace the organic material in a deceased organism, preserving its shape.",
+      "answer": "Permineralization ",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "The 18th Amendment to the US Constitution, passed in 1919, is also known as this.",
+      "answer": "Prohibition",
+      "difficulty": "easy"
+    },
+    {
+      "question": "This video game franchise, created by Hideo Kojima, follows the adventures of Solid Snake, Raiden, and other soldiers in a world filled with advanced technology.",
+      "answer": "Metal Gear Solid",
+      "difficulty": "moderate"
     }
   ]
 }

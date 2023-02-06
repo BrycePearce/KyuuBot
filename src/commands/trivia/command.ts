@@ -15,6 +15,20 @@ import triviaQuestions from '../../utils/trivia.json';
 // 10.) Difficulty rating for questions?
 
 const maskCharacter = '∗';
+const difficultyPts = {
+  easy: 1,
+  moderate: 2,
+  difficult: 3,
+};
+
+type Difficulty = 'easy' | 'moderate' | 'difficult';
+
+interface TriviaQuestion {
+  question: string;
+  answer: string;
+  difficulty: Difficulty;
+}
+
 const command: Command = {
   name: 'Trivia',
   description: 'Trivia questions',
@@ -23,8 +37,14 @@ const command: Command = {
   enabled: true,
   usage: '[invocation]',
   async execute(message) {
-    const { question, answer } = triviaQuestions.misc[Math.floor(Math.random() * triviaQuestions.misc.length)];
+    const {
+      question,
+      answer,
+      difficulty = 'easy', // easy, moderate, difficult
+    } = triviaQuestions.misc[Math.floor(Math.random() * triviaQuestions.misc.length)] as TriviaQuestion;
+
     const collector = message.channel.createMessageCollector({ time: 60000 });
+    const startTime = new Date();
 
     // Ask the trivia question
     message.channel.send(question);
@@ -37,7 +57,7 @@ const command: Command = {
     const hintOutputTimers = hintIntervals.map((interval) =>
       setTimeout(() => {
         const revealedHint = revealHint(answer, hintMask, hintPercentToReveal);
-        message.channel.send(`hint: ${revealedHint}`);
+        message.channel.send(`Hint: ${revealedHint}`);
 
         // update the hint mask
         hintMask = revealedHint;
@@ -54,10 +74,17 @@ const command: Command = {
     collector.on('collect', async (guess) => {
       // todo: levenshtein distance
       if (guess.content.toLowerCase() === answer.toLowerCase()) {
+        const endTime = new Date();
         collector.stop('success');
-        await addPoints(message.channelId, guess.author.id, 1);
+        const pointsEarned = difficultyPts[difficulty];
+
+        await addPoints(message.channelId, guess.author.id, pointsEarned);
+
         const toalpts = await getPoints(message.channelId, guess.author.id);
-        message.channel.send(`${guess.author} has the correct answer. They now have ${toalpts} pts!`);
+        const elapsedTime = parseFloat(((endTime.valueOf() - startTime.valueOf()) / 1000).toFixed(3));
+        message.channel.send(
+          `**Winner**: ${guess.author}; **Answer**: ${answer}; **Time**: ${elapsedTime}s; **Points**: ${pointsEarned}; **Total**: ${toalpts}`
+        );
       }
     });
 
