@@ -235,7 +235,7 @@
     {
       "question": "In The Legend of Zelda: Ocarina of Time, how many spiritual stones does Link need to collect to access the Temple of Time and obtain the Master Sword?",
       "answer": "Three",
-      "difficulty": "Hard"
+      "difficulty": "Difficult"
     },
     {
       "question": "What is the title of Ernest Hemingway's novel about World War I?",
@@ -245,7 +245,7 @@
     {
       "question": "What is the name of the main character in F. Scott Fitzgerald's novel 'The Great Gatsby'?",
       "answer": "Jay Gatsby",
-      "difficulty": "Hard"
+      "difficulty": "Difficult"
     },
     {
       "question": "What is the name of the coolest person in chat?",
@@ -295,7 +295,7 @@
     {
       "question": "Who was the first person to circumnavigate the globe?",
       "answer": "Ferdinand Magellan",
-      "difficulty": "Hard"
+      "difficulty": "Difficult"
     },
     {
       "question": "What was the name of the first feature length animated film?",
@@ -631,6 +631,76 @@
       "question": "What is the name of the planet where the Rebel Alliance had its secret base in 'A New Hope'?",
       "answer": "Yavin IV",
       "difficulty": "Difficult"
+    },
+    {
+      "question": "Name the movie this is quoted from, 'It's not the years, honey, it's the mileage'",
+      "answer": "Raiders of the Lost Ark",
+      "difficulty": "Intermediate"
+    },
+    {
+      "question": "Who was thought to popularize the phrase 'keep your friends close and your enemies closer'?",
+      "answer": "Sun Tzu",
+      "difficulty": "Intermediate"
+    },
+    {
+      "question": "Where does the following quote 'The princess is in another castle' originate from?",
+      "answer": "Super Mario Bros",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "Where does the following quote 'Do you want to join the Brotherhood of Steel?' originate from?",
+      "answer": "Fallout",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "Where does the following quote 'You can't handle the truth!' originate from?",
+      "answer": "A Few Good Men",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "Where does the following quote 'Get to the choppa!' originate from?",
+      "answer": "Predator",
+      "difficulty": "Intermediate"
+    },
+    {
+      "question": "Where does the following quote 'All your base are belong to us.' originate from?",
+      "answer": "Zero Wing",
+      "difficulty": "Difficult"
+    },
+    {
+      "question": "What is the name of Naruto's sensei?",
+      "answer": "Iruka Umino",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What is the name of the powerful ninja organization that seeks world domination in Naruto?",
+      "answer": "Akatsuki",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "What is the name of the jutsu that allows users to bind the soul of a deceased person to a living vessel, restoring them as they were in the last moments of their lives?",
+      "answer": "Edo Tensei",
+      "difficulty": "Difficult"
+    },
+    {
+      "question": "What is the name of the technique that allows a user to perform a genjutsu on a massive scale, affecting entire battlefields and thousands of targets at once?",
+      "answer": "Infinite Tsukuyomi",
+      "difficulty": "Difficult"
+    },
+    {
+      "question": "With Sharingan now mastered, Madara's plan to control all, what moon's eye technique is said to be his greatest fall?",
+      "answer": "Infinite Tsukuyomi",
+      "difficulty": "Difficult"
+    },
+    {
+      "question": "A group of friends with a talking dog so grand, Travels around in Mystery Machine, solving each demand, What is this cartoon that's filled with humor and fear, That's been delighting audiences for many a year?",
+      "answer": "Scooby-Doo",
+      "difficulty": "Easy"
+    },
+    {
+      "question": "Where does the following quote 'You're killin' me Smalls!' originate from?",
+      "answer": "The Sandlot",
+      "difficulty": "Intermediate"
     }
   ]
 }
