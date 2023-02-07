@@ -216,11 +216,6 @@
       "difficulty": "easy"
     },
     {
-      "question": "What is the highest grossing film of all time (unadjusted for inflation)?",
-      "answer": "Avengers: Endgame",
-      "difficulty": "easy"
-    },
-    {
       "question": "Who played the role of Katniss Everdeen in The Hunger Games film franchise?",
       "answer": "Jennifer Lawrence",
       "difficulty": "easy"
@@ -953,7 +948,7 @@
     },
     {
       "question": "________ is a fossilization process where minerals deposits replace the organic material in a deceased organism, preserving its shape.",
-      "answer": "Permineralization ",
+      "answer": "Permineralization",
       "difficulty": "moderate"
     },
     {
@@ -965,6 +960,201 @@
       "question": "This video game franchise, created by Hideo Kojima, follows the adventures of Solid Snake, Raiden, and other soldiers in a world filled with advanced technology.",
       "answer": "Metal Gear Solid",
       "difficulty": "moderate"
+    },
+    {
+      "question": "In the song 'The Ultimate Showdown of Ultimate Destiny' who is the only one to survive the battle?",
+      "answer": "Mr. Rogers",
+      "difficulty": "medium"
+    },
+    {
+      "question": "How many books are in the Chronicles of Narnia series?",
+      "answer": "8",
+      "difficulty": "medium"
+    },
+    {
+      "question": "Which American family band had a 1986 top 10 hit with the song Crush On You?",
+      "answer": "The Jets",
+      "difficulty": "medium"
+    },
+    {
+      "question": "What is the name of Team Fortress 2s Heavy Weapons Guys minigun?",
+      "answer": "Sasha",
+      "difficulty": "easy"
+    },
+    {
+      "question": "According to the International System of Units, how many bytes are in a kilobyte of RAM?",
+      "answer": "1000",
+      "difficulty": "easy"
+    },
+    {
+      "question": "Which of these countries is NOT a part of the Asian continent?",
+      "answer": "Suriname",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "What was the name of the cancelled sequel of Team Fortress?",
+      "answer": "Team Fortress 2: Brotherhood of Arms",
+      "difficulty": "easy"
+    },
+    {
+      "question": "Gannymede is the largest moon of which planet?",
+      "answer": "Jupiter",
+      "difficulty": "medium"
+    },
+    {
+      "question": "Which of the following Inuit languages was the FIRST to use a unique writing system not based on the Latin alphabet?",
+      "answer": "Inuktitut",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "In Portal 2, the iconic character GLaDOS is turned into:",
+      "answer": "A potato",
+      "difficulty": "medium"
+    },
+    {
+      "question": "What is on display in the Madame Tussauds museum in London?",
+      "answer": "Wax sculptures",
+      "difficulty": "easy"
+    },
+    {
+      "question": "Who created the 2011 Video Game Minecraft?",
+      "answer": "Markus Persson",
+      "difficulty": "easy"
+    },
+    {
+      "question": "Which coding language was the #1 programming language in terms of usage on GitHub in 2015?",
+      "answer": "JavaScript",
+      "difficulty": "medium"
+    },
+    {
+      "question": "Whats Harry Potters dads name?",
+      "answer": "James Potter",
+      "difficulty": "easy"
+    },
+    {
+      "question": "In Dota 2, Wraith King was previously known as...",
+      "answer": "Skeleton King",
+      "difficulty": "easy"
+    },
+    {
+      "question": "Which language does NOT use gender as a part of its grammar?",
+      "answer": "Turkish",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "Which of these programming languages is a low-level language?",
+      "answer": "Assembly",
+      "difficulty": "medium"
+    },
+    {
+      "question": "Which 80s band is fronted by singer/guitarist Robert Smith?",
+      "answer": "The Cure",
+      "difficulty": "easy"
+    },
+    {
+      "question": "Who was the first president born in the independent United States?",
+      "answer": "Martin Van Buren",
+      "difficulty": "medium"
+    },
+    {
+      "question": "In the 1992 film Army of Darkness, what name does Ash give to his double-barreled shotgun?",
+      "answer": "Boomstick",
+      "difficulty": "easy"
+    },
+    {
+      "question": "In the novel Lord of the Rings, how many rings of power were given to the race of man?",
+      "answer": "9",
+      "difficulty": "medium"
+    },
+    {
+      "question": "In the movie Blade Runner, what is the term used for human-like androids ?",
+      "answer": "Replicants",
+      "difficulty": "easy"
+    },
+    {
+      "question": "Ikki Kurogane is known by what nickname at the beginning of Chivalry of a Failed Knight?",
+      "answer": "Worst One",
+      "difficulty": "medium"
+    },
+    {
+      "question": "Whats the first National Park designated in the United States?",
+      "answer": "Yellowstone",
+      "difficulty": "medium"
+    },
+    {
+      "question": "How many different notes is the tune, Song of Healing, comprised of in The Legend of Zelda: Majoras Mask?",
+      "answer": "3",
+      "difficulty": "medium"
+    },
+    {
+      "question": "What is the full name of the protagonist from the indie adventure game Night in the Woods?",
+      "answer": "Margaret Borowski",
+      "difficulty": "medium"
+    },
+    {
+      "question": "In Call Of Duty: Zombies, what does the game traditionally reward you for completing a boss round?",
+      "answer": "Max Ammo",
+      "difficulty": "medium"
+    },
+    {
+      "question": "What is the name of Joels daughter in the game, The Last of Us? ",
+      "answer": "Sarah",
+      "difficulty": "medium"
+    },
+    {
+      "question": "When Magic: The Gathering was first solicited, what was its original title?",
+      "answer": "Mana Clash",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "In Big Hero 6, what fictional city is the Big Hero 6 from?",
+      "answer": "San Fransokyo",
+      "difficulty": "easy"
+    },
+    {
+      "question": "In the Friday The 13th series, what is Jasons mothers first name?",
+      "answer": "Pamela",
+      "difficulty": "medium"
+    },
+    {
+      "question": "Coulrophobia is the irrational fear of what?",
+      "answer": "Clowns",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "If you are caught Goldbricking, what are you doing wrong?",
+      "answer": "Slacking",
+      "difficulty": "easy"
+    },
+    {
+      "question": "Which weapon that was cut from the game Half Life 2 was going to replace the crowbar?",
+      "answer": "Ice Axe",
+      "difficulty": "medium"
+    },
+    {
+      "question": "Which terran unit from the RTS game Starcraft was first introduced in the expansion Brood War?",
+      "answer": "Medic",
+      "difficulty": "medium"
+    },
+    {
+      "question": "Who directed the 2012 movie Wolf Children",
+      "answer": "Mamoru Hosoda",
+      "difficulty": "medium"
+    },
+    {
+      "question": "The notion of a set that contains all sets which do not contain themselves is a paradoxical idea attributed to which English philospher?",
+      "answer": "Bertrand Russel",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "In what year was Tchaikovskys 1812 Overture composed?",
+      "answer": "1880",
+      "difficulty": "medium"
+    },
+    {
+      "question": "In the complex plane, multiplying a given function by i rotates it anti-clockwise by how many degrees?",
+      "answer": "90",
+      "difficulty": "medium"
     }
   ]
 }
