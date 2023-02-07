@@ -253,7 +253,7 @@
     {
       "question": "What is the name of the planet that the character Commander Shepard is tasked to save in Mass Effect?",
       "answer": "Earth",
-      "difficulty": "Medium"
+      "difficulty": "moderate"
     },
     {
       "question": "In what year was the first Grand Theft Auto game released?",
@@ -964,17 +964,17 @@
     {
       "question": "In the song 'The Ultimate Showdown of Ultimate Destiny' who is the only one to survive the battle?",
       "answer": "Mr. Rogers",
-      "difficulty": "medium"
+      "difficulty": "moderate"
     },
     {
       "question": "How many books are in the Chronicles of Narnia series?",
       "answer": "8",
-      "difficulty": "medium"
+      "difficulty": "moderate"
     },
     {
       "question": "Which American family band had a 1986 top 10 hit with the song Crush On You?",
       "answer": "The Jets",
-      "difficulty": "medium"
+      "difficulty": "moderate"
     },
     {
       "question": "What is the name of Team Fortress 2s Heavy Weapons Guys minigun?",
@@ -999,7 +999,7 @@
     {
       "question": "Gannymede is the largest moon of which planet?",
       "answer": "Jupiter",
-      "difficulty": "medium"
+      "difficulty": "moderate"
     },
     {
       "question": "Which of the following Inuit languages was the FIRST to use a unique writing system not based on the Latin alphabet?",
@@ -1009,7 +1009,7 @@
     {
       "question": "In Portal 2, the iconic character GLaDOS is turned into:",
       "answer": "A potato",
-      "difficulty": "medium"
+      "difficulty": "moderate"
     },
     {
       "question": "What is on display in the Madame Tussauds museum in London?",
@@ -1024,7 +1024,7 @@
     {
       "question": "Which coding language was the #1 programming language in terms of usage on GitHub in 2015?",
       "answer": "JavaScript",
-      "difficulty": "medium"
+      "difficulty": "moderate"
     },
     {
       "question": "Whats Harry Potters dads name?",
@@ -1044,7 +1044,7 @@
     {
       "question": "Which of these programming languages is a low-level language?",
       "answer": "Assembly",
-      "difficulty": "medium"
+      "difficulty": "moderate"
     },
     {
       "question": "Which 80s band is fronted by singer/guitarist Robert Smith?",
@@ -1054,7 +1054,7 @@
     {
       "question": "Who was the first president born in the independent United States?",
       "answer": "Martin Van Buren",
-      "difficulty": "medium"
+      "difficulty": "moderate"
     },
     {
       "question": "In the 1992 film Army of Darkness, what name does Ash give to his double-barreled shotgun?",
@@ -1064,7 +1064,7 @@
     {
       "question": "In the novel Lord of the Rings, how many rings of power were given to the race of man?",
       "answer": "9",
-      "difficulty": "medium"
+      "difficulty": "moderate"
     },
     {
       "question": "In the movie Blade Runner, what is the term used for human-like androids ?",
@@ -1074,32 +1074,32 @@
     {
       "question": "Ikki Kurogane is known by what nickname at the beginning of Chivalry of a Failed Knight?",
       "answer": "Worst One",
-      "difficulty": "medium"
+      "difficulty": "moderate"
     },
     {
       "question": "Whats the first National Park designated in the United States?",
       "answer": "Yellowstone",
-      "difficulty": "medium"
+      "difficulty": "moderate"
     },
     {
       "question": "How many different notes is the tune, Song of Healing, comprised of in The Legend of Zelda: Majoras Mask?",
       "answer": "3",
-      "difficulty": "medium"
+      "difficulty": "moderate"
     },
     {
       "question": "What is the full name of the protagonist from the indie adventure game Night in the Woods?",
       "answer": "Margaret Borowski",
-      "difficulty": "medium"
+      "difficulty": "moderate"
     },
     {
       "question": "In Call Of Duty: Zombies, what does the game traditionally reward you for completing a boss round?",
       "answer": "Max Ammo",
-      "difficulty": "medium"
+      "difficulty": "moderate"
     },
     {
       "question": "What is the name of Joels daughter in the game, The Last of Us? ",
       "answer": "Sarah",
-      "difficulty": "medium"
+      "difficulty": "moderate"
     },
     {
       "question": "When Magic: The Gathering was first solicited, what was its original title?",
@@ -1114,7 +1114,7 @@
     {
       "question": "In the Friday The 13th series, what is Jasons mothers first name?",
       "answer": "Pamela",
-      "difficulty": "medium"
+      "difficulty": "moderate"
     },
     {
       "question": "Coulrophobia is the irrational fear of what?",
@@ -1129,17 +1129,17 @@
     {
       "question": "Which weapon that was cut from the game Half Life 2 was going to replace the crowbar?",
       "answer": "Ice Axe",
-      "difficulty": "medium"
+      "difficulty": "moderate"
     },
     {
       "question": "Which terran unit from the RTS game Starcraft was first introduced in the expansion Brood War?",
       "answer": "Medic",
-      "difficulty": "medium"
+      "difficulty": "moderate"
     },
     {
       "question": "Who directed the 2012 movie Wolf Children",
       "answer": "Mamoru Hosoda",
-      "difficulty": "medium"
+      "difficulty": "moderate"
     },
     {
       "question": "The notion of a set that contains all sets which do not contain themselves is a paradoxical idea attributed to which English philospher?",
@@ -1149,12 +1149,12 @@
     {
       "question": "In what year was Tchaikovskys 1812 Overture composed?",
       "answer": "1880",
-      "difficulty": "medium"
+      "difficulty": "moderate"
     },
     {
       "question": "In the complex plane, multiplying a given function by i rotates it anti-clockwise by how many degrees?",
       "answer": "90",
-      "difficulty": "medium"
+      "difficulty": "moderate"
     }
   ]
 }
