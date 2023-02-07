@@ -52,7 +52,7 @@ const getshuffledWord = (word: string) => {
   let shuffledWord = shuffle([...word]);
 
   while (shuffledWord.join('') === word) {
-    shuffledWord = shuffledWord;
+    shuffledWord = shuffle([...word]);
   }
 
   return shuffledWord;
