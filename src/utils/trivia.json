@@ -1155,6 +1155,51 @@
       "question": "In the complex plane, multiplying a given function by i rotates it anti-clockwise by how many degrees?",
       "answer": "90",
       "difficulty": "moderate"
+    },
+    {
+      "question": "Which actor played Samwise Gamgee?",
+      "answer": "90",
+      "difficulty": "moderate"
+    },
+    {
+      "difficulty": "difficult",
+      "question": "What is the Elvish word for 'friend'?",
+      "answer": "Mellon"
+    },
+    {
+      "difficulty": "moderate",
+      "question": "What is the name of Gandalf's horse?",
+      "answer": "Shadowfax"
+    },
+    {
+      "difficulty": "difficult",
+      "question": "What is the name of the sword that Aragorn uses to destroy the Nazgul?",
+      "answer": "Anduril"
+    },
+    {
+      "difficulty": "moderate",
+      "question": "In the ‘Lord of the Rings: The Fellowship of the Ring,’ who said, “I would rather share one lifetime with you than face all the Ages of this world alone”?",
+      "answer": "Arwen"
+    },
+    {
+      "difficulty": "moderate",
+      "question": "Which Ent carried Pippin and Merry through Fangorn Forest?",
+      "answer": "Treebeard"
+    },
+    {
+      "difficulty": "moderate",
+      "question": "In ‘The Hobbit,’ what was the name of Thorin’s Elven sword that originally came from Gondolin?",
+      "answer": "Orcrist"
+    },
+    {
+      "difficulty": "moderate",
+      "question": "What frightened the Orcs in the Mines of Moria?",
+      "answer": "The Balrog"
+    },
+    {
+      "difficulty": "moderate",
+      "question": "Name the spider, a fictional demon that Frodo fought bravely to recover the One Ring",
+      "answer": "Shelob"
     }
   ]
 }

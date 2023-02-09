@@ -76,7 +76,7 @@ const command: Command = {
       if (guess.content.toLowerCase() === answer.toLowerCase()) {
         const endTime = new Date();
         collector.stop('success');
-        const pointsEarned = difficultyPts[difficulty];
+        const pointsEarned = difficultyPts[difficulty] ?? 1;
 
         await addPoints(message.channelId, guess.author.id, pointsEarned);
 
