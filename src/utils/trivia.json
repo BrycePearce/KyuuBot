@@ -582,7 +582,7 @@
       "difficulty": "easy"
     },
     {
-      "question": "How much did the widely acclaimed cinemetogrophic masterpiece 1997 hit Air Bud make at the box office?",
+      "question": "How much did the widely acclaimed cinematographic masterpiece 1997 hit Air Bud make at the box office?",
       "answer": "27.8 million",
       "difficulty": "easy"
     },
@@ -937,16 +937,6 @@
       "difficulty": "moderate"
     },
     {
-      "question": "The planet Jupiter has a moon named after this mythological figure who was known for his cunning ways.",
-      "answer": "Europa",
-      "difficulty": "easy"
-    },
-    {
-      "question": "The planet Jupiter has a moon named after this mythological figure who was known for his cunning ways.",
-      "answer": "Europa",
-      "difficulty": "easy"
-    },
-    {
       "question": "________ is a fossilization process where minerals deposits replace the organic material in a deceased organism, preserving its shape.",
       "answer": "Permineralization",
       "difficulty": "moderate"
@@ -954,6 +944,36 @@
     {
       "question": "The 18th Amendment to the US Constitution, passed in 1919, is also known as this.",
       "answer": "Prohibition",
+      "difficulty": "easy"
+    },
+    {
+      "question": "In the Iliad, who were the custodians of the gates of Olympus?",
+      "answer": "Horae",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "Who built the Trojan horse?",
+      "answer": "Epeius",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "Who dragged Hector’s body around the tomb of Patroclus?",
+      "answer": "Achilles",
+      "difficulty": "easy"
+    },
+    {
+      "question": "Best known as the god of the sea, Poseidon was also god of which of these?",
+      "answer": "earthquakes",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "Who was the Greek goddess of the rainbow?",
+      "answer": "Iris",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "In Greek mythology, which Titan was condemned to holding up the sky for eternity?",
+      "answer": "Atlas",
       "difficulty": "easy"
     },
     {
@@ -985,11 +1005,6 @@
       "question": "According to the International System of Units, how many bytes are in a kilobyte of RAM?",
       "answer": "1000",
       "difficulty": "easy"
-    },
-    {
-      "question": "Which of these countries is NOT a part of the Asian continent?",
-      "answer": "Suriname",
-      "difficulty": "difficult"
     },
     {
       "question": "What was the name of the cancelled sequel of Team Fortress?",
@@ -1199,7 +1214,7 @@
     {
       "difficulty": "moderate",
       "question": "Name the spider, a fictional demon that Frodo fought bravely to recover the One Ring",
-      "answer": "Shelob"
+      "answer": "Samwise Gamgee"
     }
   ]
 }
