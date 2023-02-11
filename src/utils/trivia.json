@@ -712,8 +712,158 @@
       "difficulty": "difficult"
     },
     {
-      "question": "What is the name of Naruto's sensei?",
+      "question": "What is the name of Naruto's first sensei?",
       "answer": "Iruka Umino",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the name of the criminal organization that Vicious is a high-ranking member of in Cowboy Bebop?",
+      "answer": "Red Dragon Crime Syndicate",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "What breed is Ein in Cowboy Bebop?",
+      "answer": "Welsh Corgi",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is Edward's nickname in Cowboy Bebop?",
+      "answer": "Radical Edward",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the name of the city that Roger Smith and the other characters in Big O reside in?",
+      "answer": "Paradigm City",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the setting of the anime film Akira?",
+      "answer": "Neo Tokyo, a post-apocalyptic city in Japan",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the year in which the events of the anime film Akira take place?",
+      "answer": "The events of the film take place in the year 2019",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What is the name of the gang that Shōtarō Kaneda belongs to in the anime film Akira?",
+      "answer": "The Capsules",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the name of the government agency responsible for the containment and study of psychic powers in the anime film Akira?",
+      "answer": "The Espers",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the name of the closest star to our solar system?",
+      "answer": "Proxima Centauri",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "What is the name of the largest moon in our solar system?",
+      "answer": "Ganymede",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "What is the name of the asteroid belt located between the orbits of Mars and Jupiter?",
+      "answer": "Main Belt",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "In the C programming language, what is the name of the function used to allocate a block of memory dynamically during runtime?",
+      "answer": "malloc",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "Who created the World Wide Web while working at CERN in 1989?",
+      "answer": "Tim Berners-Lee",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "Who created the Linux operating system?",
+      "answer": "Linus Torvalds",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the name of the novel by John Steinbeck that was published in 1939 and is considered a masterpiece of American literature, depicting the lives of migrant workers during the Great Depression?",
+      "answer": "The Grapes of Wrath",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the name of the science fiction novel by Philip K. Dick, published in 1962, that explores the nature of reality and the human experience through the story of a man who may or may not be a government agent in a simulated world?",
+      "answer": "The Man in the High Castle",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the name of the science fiction novel by William Gibson, published in 1984, that is considered a classic of cyberpunk literature and is set in a dystopian future where humanity is interconnected by a global virtual reality network?",
+      "answer": "Neuromancer",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What notorious American bank robber, who was active in the 1930s, was known for his sophisticated bank robbing techniques, such as drilling into vaults and removing safes, as well as his elaborate prison escapes?",
+      "answer": "Willie Sutton",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What 1982 film directed by Ridley Scott is set in a dystopian future and is considered a classic of the cyberpunk genre, blending elements of film noir, science fiction, and dystopian fiction?",
+      "answer": "Blade Runner",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What 1987 Japanese anime film, directed by Katsuhiro Otomo, is set in a post-apocalyptic future and is considered a classic of the cyberpunk genre, blending elements of science fiction and action?",
+      "answer": "Akira",
+      "difficulty": "easy"
+    },
+    {
+      "question": "Who directed the original 1995 anime film 'Ghost in the Shell'?",
+      "answer": "Mamoru Oshii",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What is the name of the main character in the 1995 anime film 'Ghost in the Shell'?",
+      "answer": "Motoko Kusanagi",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What is the name of the organization in the 1995 anime film 'Ghost in the Shell' that Motoko Kusanagi works for?",
+      "answer": "Public Security Section 9",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What is the name of the chemist who made the periodic table of elements?",
+      "answer": "Dmitri Mendeleev",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "Who was the first person to develop a successful vaccine for smallpox?",
+      "answer": "Edward Jenner",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "Who is the most powerful member of the Green Lantern Corps in the DC Comics universe?",
+      "answer": "Sinestro",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "What is the name of the jungle man-cub who is raised by wolves in the Disney film 'The Jungle Book'?",
+      "answer": "Mowgli",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "Scooby, Shaggy, and LC are fans of what treat contained within a box",
+      "answer": "Scooby Snacks",
+      "difficulty": "easy"
+    },
+    {
+      "question": "In Harry Potter, what spell is used to summon objects or creatures towards the caster?",
+      "answer": "Accio",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "What is the name of the phenomenon where two celestial bodies pass in front of each other as seen from a third body?",
+      "answer": "Eclipse",
       "difficulty": "easy"
     },
     {
@@ -734,6 +884,31 @@
     {
       "question": "With Sharingan now mastered, Madara's plan to control all, what moon's eye technique is said to be his greatest fall?",
       "answer": "Infinite Tsukuyomi",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "What is the name of the first Hokage of the Hidden Leaf Village?",
+      "answer": "Hashirama Senju",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "What is the name of the insurance company that hires Meryl Stryfe and Milly Thompson to track down Vash the Stampede?",
+      "answer": "Bernadelli Insurance",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "What is the name of the weapon that Vash the Stampede uses in combat?",
+      "answer": "Angel Arm",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "What is the name of the group of bandits that Vash the Stampede is often forced to fight against?",
+      "answer": "Gung-Ho-Guns",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "What is the name of the desert planet where Trigun takes place?",
+      "answer": "Gunsmoke",
       "difficulty": "difficult"
     },
     {
