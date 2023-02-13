@@ -1390,6 +1390,136 @@
       "difficulty": "moderate",
       "question": "Name the spider, a fictional demon that Frodo fought bravely to recover the One Ring",
       "answer": "Samwise Gamgee"
+    },
+    {
+      "difficulty": "moderate",
+      "question": "For media to pass the _______ test a work must feature at least two women, these women must talk to each other, and their conversation must concern something other than a man.",
+      "answer": "Bechdel test"
+    },
+    {
+      "question": "What is the term used to describe the study of how people interact with each other in groups?",
+      "answer": "Sociology",
+      "difficulty": "easy"
+    },
+    {
+      "question": "According to _____ (1915), the unconscious mind is the primary source of human behavior",
+      "answer": "Freud",
+      "difficulty": "easy"
+    },
+    {
+      "question": "This theory states that people's personalities are largely determined by their unconscious mind.",
+      "answer": "Freudian",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "____ ______ is a psychologist who developed a theory of cognitive development focused on intellectual development of children",
+      "answer": "Jean Piaget",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "______ is the psychological phenomenon where an individual aligns their attitudes, beliefs, and behaviors with those of the people around them",
+      "answer": "Conformity",
+      "difficulty": "easy"
+    },
+    {
+      "question": "This psychological condition is characterized by a persistent feeling of sadness and loss of interest.",
+      "answer": "Depression",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "This psychologist is known for his work on classical and operant conditioning.",
+      "answer": "Ivan Pavlov",
+      "difficulty": "easy"
+    },
+    {
+      "question": "In the 'Bobo Doll Experiment,' who demonstrated that aggression is learned through observation and imitation?",
+      "answer": "Bandura",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "Who developed the concept of the 'self-fulfilling prophecy' and the 'Pygmalion Effect'?",
+      "answer": "Rosenthal",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "____ is a psychological phenomenon in which high expectations lead to improved performance in a given area",
+      "answer": "Pygmalion effect",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "The theory of the unconscious mind and the concept of the 'Oedipus Complex' are associated with which psychologist?",
+      "answer": "Freud",
+      "difficulty": "easy"
+    },
+    {
+      "question": "The _____ ____ experiment was a study that mid-20th century psychologists interpret as evidence of classical conditioning in humans",
+      "answer": "Little Albert experiment",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "The '____ Effect,' is where individuals are less likely to offer help in an emergency situation when other people are present",
+      "answer": "Bystander",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "What psychological theory proposes the differentiation of human intelligence into specific modalities of intelligence, rather than defining intelligence as a single, general ability?",
+      "answer": "Theory of multiple intelligences",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "From 1961 to 1963 Albert Bandura conducted the ____ __ experiment studying children's behavior after watching an adult model act aggressively towards a doll.",
+      "answer": "Bobo doll experiment",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "The Operant conditioning chamber, also known as the _____ ___  was a groundbreaking investigation of the power of positive reinforcement and its effects on behavior",
+      "answer": "Skinner Box",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "___ was a seminal study that showed that social influence could be used to change people's opinions and behaviors.",
+      "answer": "Asch conformity experiment",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "The Battle of _____ was fought on July 1-3, 1863 during the American Civil War.",
+      "answer": "Gettysburg",
+      "difficulty": "easy"
+    },
+    {
+      "question": "____ was the first civilization in the world.",
+      "answer": "Mesopotamia",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "The _____ dynasty ruled China from 1368-1644.",
+      "answer": "Ming",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "The _____ was a war fought between the United States and Mexico from 1846-1848.",
+      "answer": "Mexican-American War",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "The First Opium War was fought between China and __.",
+      "answer": "Britain",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "The __ empire was the name of the empire founded by Genghis Khan in 1206.",
+      "answer": "Mongol",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "The Berlin Wall separated East and West Germany from 1961 to __.",
+      "answer": "1989",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "In the 1950's the ___ _____ was a period of fear and panic caused by the fear of communism in the United States.",
+      "answer": "Red Scare",
+      "difficulty": "easy"
     }
   ]
 }
