@@ -1815,6 +1815,56 @@
       "question": "What is the name of the alien race that Frieza belongs to?",
       "answer": "Frost Demons",
       "difficulty": "difficult"
+    },
+    {
+      "question": "How many eggs does a queen bee lay per day?",
+      "answer": "2000",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "A hummingbird can flap its wings __ times per second?",
+      "answer": "80",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What is the name of the lowest layer of Earth's atmosphere?",
+      "answer": "troposphere",
+      "difficulty": "easy"
+    },
+    {
+      "question": "How much does the average cumulus cloud weigh?",
+      "answer": "1.1 million pounds",
+      "difficulty": "easy"
+    },
+    {
+      "question": "How long does it take for light to travel from the Sun's surface to the Earth?",
+      "answer": "8 minutes",
+      "difficulty": "easy"
+    },
+    {
+      "question": "How long does it take an individual blood cell to make a complete circuit of the body?",
+      "answer": "60 seconds",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the hottest planet in our solar system?",
+      "answer": "Venus",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the thinnest layer of the Earth?",
+      "answer": "crust",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What planet has the highest density?",
+      "answer": "earth",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the windiest planet in our solar system?",
+      "answer": "Neptune",
+      "difficulty": "easy"
     }
   ]
 }
