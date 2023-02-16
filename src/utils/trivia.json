@@ -852,6 +852,16 @@
       "difficulty": "moderate"
     },
     {
+      "question": "What country did the first nicotine replacement product on the market come from?",
+      "answer": "Sweden",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "Which major furniture company was a tiny business in Älmhult, a small Swedish village in the countryside, selling through a mail-order catalog?",
+      "answer": "IKEA",
+      "difficulty": "moderate"
+    },
+    {
       "question": "Scooby, Shaggy, and LC are fans of what treat contained within a box",
       "answer": "Scooby Snacks",
       "difficulty": "easy"
@@ -992,7 +1002,12 @@
       "difficulty": "easy"
     },
     {
-      "question": "What is the smallest unit of matter?",
+      "question": "What Swedish drink outsells Coca-Cola during the Winter",
+      "answer": "Julmust",
+      "difficulty": "medium"
+    },
+    {
+      "question": "What is the smallest unit of matter that retains all of the chemical properties of an element?",
       "answer": "atom",
       "difficulty": "easy"
     },
