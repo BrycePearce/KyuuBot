@@ -312,7 +312,7 @@
       "difficulty": "easy"
     },
     {
-      "question": "What is the study of stars and galaxies called?",
+      "question": "_____ is a branch of space science that applies the laws of physics and chemistry to seek to understand the universe and our place in it",
       "answer": "Astrophysics",
       "difficulty": "moderate"
     },
@@ -1137,7 +1137,7 @@
       "difficulty": "easy"
     },
     {
-      "question": "Best known as the god of the sea, Poseidon was also god of which of these?",
+      "question": "Poseidon was also god of the sea, horses, and ________?",
       "answer": "earthquakes",
       "difficulty": "moderate"
     },
@@ -1232,7 +1232,7 @@
       "difficulty": "difficult"
     },
     {
-      "question": "Which of these programming languages is a low-level language?",
+      "question": "_____ is any low-level programming language with a very strong correspondence between the instructions in the language?",
       "answer": "Assembly",
       "difficulty": "moderate"
     },
@@ -1437,8 +1437,8 @@
       "difficulty": "difficult"
     },
     {
-      "question": "Who developed the concept of the 'self-fulfilling prophecy' and the 'Pygmalion Effect'?",
-      "answer": "Rosenthal",
+      "question": "Rosenthal and Jacobson developed the concept of the '____ ____ ____' and the 'Pygmalion Effect'?",
+      "answer": "self-fulfilling prophecy",
       "difficulty": "difficult"
     },
     {
