@@ -857,6 +857,56 @@
       "difficulty": "easy"
     },
     {
+      "question": "Eric of Pomerania became Eric XIII of Sweden, he was known as a ______ king",
+      "answer": "pirate",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "____ is a unique and social coffee break custom in Sweden",
+      "answer": "fika",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What is Ned Flanders’s wife’s name in the Simpsons?",
+      "answer": "Maude",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "Which musical band turned down the part of the vultures for the cartoon “The Jungle Book”?",
+      "answer": "The Beatles",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What is the name of Dick Dastardly dog sidekick in “Wacky Races”?",
+      "answer": "Mutley",
+      "difficulty": "easy"
+    },
+    {
+      "question": "Which muscular character is based on Elvis Pressley, who spends his time failing to get the girls to date him?",
+      "answer": "Johnny Bravo",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the dog’s name in the show “Doug”?",
+      "answer": "Porkchop",
+      "difficulty": "easy"
+    },
+    {
+      "question": "In Captain Planet, Planeteers each possess a power related to the elements: wind, earth, water, fire, and what?",
+      "answer": "Heart",
+      "difficulty": "easy"
+    },
+    {
+      "question": "The word “Simba” originated from which language in “The Lion King”?",
+      "answer": "Swahili",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the name of the garfield comic online that omits garfield's presence",
+      "answer": "garfield minus garfield",
+      "difficulty": "easy"
+    },
+    {
       "question": "In Harry Potter, what spell is used to summon objects or creatures towards the caster?",
       "answer": "Accio",
       "difficulty": "difficult"
@@ -1348,7 +1398,117 @@
     },
     {
       "question": "Which actor played Samwise Gamgee?",
-      "answer": "90",
+      "answer": "Sean Astin",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "According to Japanese legend, a sick person will recover if they fold 1,000 of what type of origami?",
+      "answer": "Crane",
+      "difficulty": "easy"
+    },
+    {
+      "question": "How many seconds is a jiffy?",
+      "answer": "0.01",
+      "difficulty": "easy"
+    },
+    {
+      "question": "Who was the first Time Magazine Man of the Year?",
+      "answer": "Charles Lindbergh",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What animal undertakes the world's longest migration each year?",
+      "answer": "Arctic Tern",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "What African ethnic group is known as the people of the veil because the men wear veils that conceal all but their eyes?",
+      "answer": "Tuareg",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "Charlie Brown's father was a _______.",
+      "answer": "Barber",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the little dot above a lowercase i or j called?",
+      "answer": "tittle",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "Who was the first explorer to reach the North Pole?",
+      "answer": "Robert E. Perry",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "Which poison do apple seeds contain?",
+      "answer": "cyanide",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the earliest surviving system of laws?",
+      "answer": "The Code of Hammurabi",
+      "difficulty": "easy"
+    },
+    {
+      "question": "The Rosetta Stone is listed as a stone of black granodiorite, it held the key to understanding what?",
+      "answer": "Egyptian hieroglyphs",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "Who was the first democratically elected President of Russia?",
+      "answer": "Boris Yeltsin",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What was the first city to reach a population of one million?",
+      "answer": "Rome",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What famous general was once attacked by rabbits?",
+      "answer": "Napoleon",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What American general famously promised 'I shall return'?",
+      "answer": "Douglas MacArthur",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "Where did arabic numerals originate?",
+      "answer": "India",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "In which ocean was the Battle of Midway fought?",
+      "answer": "Pacific",
+      "difficulty": "easy"
+    },
+    {
+      "question": "Ancient Egyptians often used what as pillows?",
+      "answer": "Stones",
+      "difficulty": "easy"
+    },
+    {
+      "question": "Which Soviet satellite was the first to be launched into space in 1957?",
+      "answer": "Sputnik",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What famous criminal started a soup kitchen? Jesse James, Al Capone, Charles Manson, Adolf Eichmann",
+      "answer": "Al Capone",
+      "difficulty": "easy"
+    },
+    {
+      "question": "Which pope wrote an erotic novel?",
+      "answer": "Pope Pius II",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "What year was the first Internet domain registered?",
+      "answer": "1985",
       "difficulty": "moderate"
     },
     {
