@@ -1520,6 +1520,21 @@
       "question": "In the 1950's the ___ _____ was a period of fear and panic caused by the fear of communism in the United States.",
       "answer": "Red Scare",
       "difficulty": "easy"
+    },
+    {
+      "difficulty": "moderate",
+      "question": "What is the name of the vigilante who wears a hockey mask and helps the turtles fight crime?",
+      "answer": "Casey Jones"
+    },
+    {
+      "difficulty": "moderate",
+      "question": "What is the one ingredient the turtles (specifically Michelangelo) do NOT like on their pizzas?",
+      "answer": "Anchovies"
+    },
+    {
+      "difficulty": "easy",
+      "question": "Which national pizza chain bought the product placement rights to be the pizza delivered to the Turtles while they were in April's apartment?",
+      "answer": "Pizza Hut"
     }
   ]
 }
