@@ -43,13 +43,13 @@ const command: Command = {
       difficulty = 'easy', // easy, moderate, difficult
     } = triviaQuestions.misc[Math.floor(Math.random() * triviaQuestions.misc.length)] as TriviaQuestion;
 
-    const collector = message.channel.createMessageCollector({ time: 60000 });
+    const collector = message.channel.createMessageCollector({ time: 65000 });
     const startTime = new Date();
 
     // Ask the trivia question
     message.channel.send(question);
 
-    const hintIntervals = [10000, 25000, 40000];
+    const hintIntervals = [15000, 25000, 40000];
     let hintMask = generateStrMask(answer);
     let hintPercentToReveal = answer.length > 9 ? 40 : 15; // todo: maybe could do this based off difficulty rating
 
