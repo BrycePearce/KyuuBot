@@ -1865,6 +1865,66 @@
       "question": "What is the windiest planet in our solar system?",
       "answer": "Neptune",
       "difficulty": "easy"
+    },
+    {
+      "question": "What Hogwart's house does LC belong to, as evidenced by the document below: https://cdn.discordapp.com/attachments/989725987551977522/1076374666823872593/ravenclaw.png",
+      "answer": "Hufflepuff",
+      "difficulty": "easy"
+    },
+    {
+      "question": "In Harry Potter, what species is Gringott's Dragon, who was used to guard several high-security vaults, including the Lestrange Vault, at Gringotts Wizarding Bank?",
+      "answer": "Ukranian Ironbelly",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "What is the name of the secret society that opposes Lord Voldemort and his Death Eaters?",
+      "answer": "The Order of the Phoenix",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What is the name of the wizard prison in the Harry Potter universe?",
+      "answer": "Azkaban",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the name of the potion that Harry, Ron, and Hermione use to disguise themselves as Crabbe, Goyle, and Polyjuice Potion in Chamber of Secrets?",
+      "answer": "Polyjuice Potion",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "In the Harry Potter universe, what nationality was Viktor Krum, who attended before the Triwizard Tournament?",
+      "answer": "Bulgarian",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the name of the wizarding bank that is run by goblins?",
+      "answer": "Gringotts",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the name of the magical creature that guards the Sorcerer's Stone?",
+      "answer": "Fluffy",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the real name of Lord Voldemort?",
+      "answer": "Tom Riddle",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What did the Golden Snitch say when Harry caught it in his mouth in his first Quidditch match?",
+      "answer": "I open at the close",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "What type of dragon did Harry face in the Triwizard Tournament?",
+      "answer": "Hungarian Horntail",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "In Harry Potter, what was the name of the house elf who served the house of Black, and was left to Harry Potter?",
+      "answer": "Kreacher",
+      "difficulty": "moderate"
     }
   ]
 }
