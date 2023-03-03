@@ -1013,7 +1013,7 @@
     },
     {
       "question": "How many states of matter are there?",
-      "answer": "four",
+      "answer": "five",
       "difficulty": "easy"
     },
     {
@@ -1887,7 +1887,7 @@
       "difficulty": "easy"
     },
     {
-      "question": "What is the name of the potion that Harry, Ron, and Hermione use to disguise themselves as Crabbe, Goyle, and Polyjuice Potion in Chamber of Secrets?",
+      "question": "What is the name of the potion that Harry, Ron, and Hermione use to disguise themselves as Crabbe & Goyle in the Chamber of Secrets?",
       "answer": "Polyjuice Potion",
       "difficulty": "moderate"
     },
@@ -1924,6 +1924,11 @@
     {
       "question": "In Harry Potter, what was the name of the house elf who served the house of Black, and was left to Harry Potter?",
       "answer": "Kreacher",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What Scandinavian legal office was obliged to memorize and recite the law at the `thing` (governing assembly)",
+      "answer": "Lawspeaker",
       "difficulty": "moderate"
     }
   ]
