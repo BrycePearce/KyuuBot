@@ -28,32 +28,31 @@ const command: Command = {
       return;
     }
 
-    const temperatureArg = parseValidTemperature(args[0]);
-    const isValidUserTemp = temperatureArg !== invalidTempCodes.invalid;
-    if (!isValidUserTemp) {
-      message.channel.send(
-        `🙀 Invalid temperature given. Valid temperatures are percentages, like: 30%, 0.3, or 30 🙀`
-      );
-      return;
-    }
+    // const temperatureArg = parseValidTemperature(args[0]);
+    // const isValidUserTemp = temperatureArg !== invalidTempCodes.invalid;
+    // if (!isValidUserTemp) {
+    //   message.channel.send(
+    //     `🙀 Invalid temperature given. Valid temperatures are percentages, like: 30%, 0.3, or 30 🙀`
+    //   );
+    //   return;
+    // }
 
-    const defaultSuggestedTemperature = 0.5;
-    const shouldUseDefaultTemp = temperatureArg === invalidTempCodes.default;
-    const userPrompt = isValidUserTemp ? args.slice(1).join(' ') : args.join(' ');
-    const temperature = shouldUseDefaultTemp ? defaultSuggestedTemperature : temperatureArg;
+    // const defaultSuggestedTemperature = 0.5;
+    // const shouldUseDefaultTemp = temperatureArg === invalidTempCodes.default;
+    // const userPrompt = isValidUserTemp ? args.slice(1).join(' ') : args.join(' ');
+    // const temperature = shouldUseDefaultTemp ? defaultSuggestedTemperature : temperatureArg;
+    const userPrompt = args.join(' ');
 
-    const defaultPrompt = `In less than ${max_tokens} words, but giving as brief an answer as possible, answer or evaluate the following:`;
-    const openAIPrompt = `${defaultPrompt} ${userPrompt}`;
     let completionText = '';
 
     try {
-      const response = await openai.createCompletion({
-        model: 'text-davinci-003',
-        prompt: openAIPrompt,
-        temperature,
+      const response = await openai.createChatCompletion({
+        model: 'gpt-3.5-turbo',
+        messages: [{ role: 'user', content: userPrompt, name: message.author.username }],
+        // temperature,
         max_tokens,
       });
-      completionText = response.data.choices[0].text;
+      completionText = response.data.choices[0].message.content;
     } catch (error: any) {
       if (error?.response) {
         message.channel.send(`🙀 Error: ${error.response.status}, ${error.response.data} 🙀`);
