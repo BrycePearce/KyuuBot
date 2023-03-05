@@ -42,7 +42,7 @@ const command: Command = {
     const userPrompt = isValidUserTemp ? args.slice(1).join(' ') : args.join(' ');
     const temperature = shouldUseDefaultTemp ? defaultSuggestedTemperature : temperatureArg;
 
-    const defaultPrompt = `In roughly ${max_tokens} words, answer or evaluate the following:`;
+    const defaultPrompt = `Using no more than ${max_tokens} words, answer or evaluate the following:`;
     const openAIPrompt = `${defaultPrompt} ${userPrompt}`;
     let completionText = '';
 
