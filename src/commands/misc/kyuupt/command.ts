@@ -48,7 +48,7 @@ const command: Command = {
         model: 'text-davinci-003',
         prompt: userPrompt,
         temperature,
-        max_tokens: 70,
+        max_tokens: 100,
       });
       completionText = response.data.choices[0].text;
     } catch (error: any) {
