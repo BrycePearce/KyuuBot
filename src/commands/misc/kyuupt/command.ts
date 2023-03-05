@@ -11,6 +11,7 @@ const invalidTempCodes = {
   invalid: -1,
   default: -2,
 };
+const max_tokens = 250;
 
 const command: Command = {
   name: 'KyuuPT',
@@ -41,14 +42,16 @@ const command: Command = {
     const userPrompt = isValidUserTemp ? args.slice(1).join(' ') : args.join(' ');
     const temperature = shouldUseDefaultTemp ? defaultSuggestedTemperature : temperatureArg;
 
+    const defaultPrompt = `In roughly ${max_tokens} words, answer or evaluate the following:`;
+    const openAIPrompt = `${defaultPrompt} ${userPrompt}`;
     let completionText = '';
 
     try {
       const response = await openai.createCompletion({
         model: 'text-davinci-003',
-        prompt: userPrompt,
+        prompt: openAIPrompt,
         temperature,
-        max_tokens: 100,
+        max_tokens,
       });
       completionText = response.data.choices[0].text;
     } catch (error: any) {
