@@ -41,14 +41,12 @@ const command: Command = {
     const userPrompt = isValidUserTemp ? args.slice(1).join(' ') : args.join(' ');
     const temperature = shouldUseDefaultTemp ? defaultSuggestedTemperature : temperatureArg;
 
-    const defaultPrompt = 'In roughly 40 words, answer the following:';
-    const openAIPrompt = `${defaultPrompt} ${userPrompt}`;
     let completionText = '';
 
     try {
       const response = await openai.createCompletion({
         model: 'text-davinci-003',
-        prompt: openAIPrompt,
+        prompt: userPrompt,
         temperature,
         max_tokens: 70,
       });
