@@ -11,12 +11,12 @@ const invalidTempCodes = {
   invalid: -1,
   default: -2,
 };
-const max_tokens = 250;
+// const max_tokens = 250;
 
 const command: Command = {
   name: 'KyuuPT',
   description: 'Integrates OpenAI Api',
-  invocations: ['g', 'kyuupt', 'ask', 'askJeeves'],
+  invocations: ['g', 'kyuupt', 'ask', 'askJeeves', 'chat'],
   args: false,
   enabled: true,
   usage: '[invocation] [temperature (percent or decimal e.g. 30, 30%, or 0.3)] [query]',
@@ -50,7 +50,7 @@ const command: Command = {
         model: 'gpt-3.5-turbo',
         messages: [{ role: 'user', content: userPrompt, name: message.author.username }],
         // temperature,
-        max_tokens,
+        // max_tokens,
       });
       completionText = response.data.choices[0].message.content;
     } catch (error: any) {
