@@ -46,7 +46,7 @@ const command: Command = {
     try {
       const response = await openai.createChatCompletion({
         model: 'gpt-3.5-turbo',
-        messages: [{ role: 'user', content: userPrompt, name: 'user' }],
+        messages: [{ role: 'user', content: userPrompt, name: message.author.username.replace(/[^a-zA-Z ]/g, '') }],
         ...(temperature && { temperature }),
         // temperature,
         // max_tokens,
