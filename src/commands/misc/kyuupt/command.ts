@@ -39,7 +39,7 @@ const command: Command = {
 
     const shouldUseDefaultTemp = temperatureArg === invalidTempCodes.default;
     const defaultPrompt =
-      'Your have a 2000 character count limit, so keep answers brief. Answer or evaluate the following:';
+      'You have a 2000 character count limit, so keep answers brief. Answer or evaluate the following:';
     const userPrompt = isValidUserTemp ? args.slice(1).join(' ') : args.join(' ');
     const temperature = shouldUseDefaultTemp ? undefined : temperatureArg;
 
