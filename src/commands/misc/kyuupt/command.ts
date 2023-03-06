@@ -28,35 +28,37 @@ const command: Command = {
       return;
     }
 
-    // const temperatureArg = parseValidTemperature(args[0]);
-    // const isValidUserTemp = temperatureArg !== invalidTempCodes.invalid;
-    // if (!isValidUserTemp) {
-    //   message.channel.send(
-    //     `🙀 Invalid temperature given. Valid temperatures are percentages, like: 30%, 0.3, or 30 🙀`
-    //   );
-    //   return;
-    // }
+    const temperatureArg = mapPercentToValue(args[0]);
+    const isValidUserTemp = temperatureArg !== invalidTempCodes.invalid;
+    if (!isValidUserTemp) {
+      message.channel.send(
+        `🙀 \nInvalid temperature given. Valid temperatures are percentages are between 0 and 100. \nHigher values like 50% will make the output more random, while lower values like 0% will make it more focused and deterministic \n🙀`
+      );
+      return;
+    }
 
-    // const defaultSuggestedTemperature = 0.5;
-    // const shouldUseDefaultTemp = temperatureArg === invalidTempCodes.default;
-    // const userPrompt = isValidUserTemp ? args.slice(1).join(' ') : args.join(' ');
-    // const temperature = shouldUseDefaultTemp ? defaultSuggestedTemperature : temperatureArg;
-    const userPrompt = args.join(' ');
+    const shouldUseDefaultTemp = temperatureArg === invalidTempCodes.default;
+    const userPrompt = isValidUserTemp ? args.slice(1).join(' ') : args.join(' ');
+    const temperature = shouldUseDefaultTemp ? undefined : temperatureArg;
 
     let completionText = '';
 
     try {
       const response = await openai.createChatCompletion({
         model: 'gpt-3.5-turbo',
-        messages: [{ role: 'user', content: userPrompt, name: message.author.username }],
+        messages: [{ role: 'user', content: userPrompt, name: 'user' }],
+        ...(temperature && { temperature }),
         // temperature,
         // max_tokens,
       });
       completionText = response.data.choices[0].message.content;
     } catch (error: any) {
+      console.log(error);
       if (error?.response) {
-        message.channel.send(`🙀 Error: ${error.response.status}, ${error.response.data} 🙀`);
+        console.log(error.response.data);
+        message.channel.send(`🙀 Error: ${error.response.status}, ${JSON.stringify(error.response.data)} 🙀`);
       } else {
+        console.log(error.message);
         message.channel.send(`🙀 Error: ${error.message} 🙀`);
       }
       return;
@@ -66,19 +68,18 @@ const command: Command = {
   },
 };
 
-// valid:
-// '30%' -> 30
-//   '3' -> 0.03
-// '0.3' -> 0.3
+// valid: numbers 0 - 2
+// 30 -> 0.3
+// 30% -> 0.3
+// 100 -> 2
 // invalid:
 // see response codes
-function parseValidTemperature(str: string) {
-  const percent = parseFloat(str.replace(/%/g, ''));
-
-  if (isNaN(percent)) return invalidTempCodes.default;
-  if (percent < 0 || percent > 100) return invalidTempCodes.invalid;
-
-  return percent >= 1 ? percent / 100 : percent;
+function mapPercentToValue(percent: string): number {
+  const percentAsNumber = parseFloat(percent.replace(/%/g, ''));
+  if (isNaN(percentAsNumber)) return invalidTempCodes.default;
+  if (percentAsNumber < 0 || percentAsNumber > 100) return invalidTempCodes.invalid;
+  const value = (percentAsNumber / 100) * 2;
+  return Number(value.toFixed(2));
 }
 
 export default command;
