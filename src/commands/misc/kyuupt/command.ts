@@ -16,7 +16,7 @@ const invalidTempCodes = {
 const command: Command = {
   name: 'KyuuPT',
   description: 'Integrates OpenAI Api',
-  invocations: ['g', 'kyuupt', 'ask', 'askJeeves', 'chat'],
+  invocations: ['g', 'kyuupt', 'ask', 'askJeeves', 'chat', 'write'],
   args: false,
   enabled: true,
   usage: '[invocation] [temperature (percent or decimal e.g. 30, 30%, or 0.3)] [query]',
@@ -38,6 +38,8 @@ const command: Command = {
     }
 
     const shouldUseDefaultTemp = temperatureArg === invalidTempCodes.default;
+    const defaultPrompt =
+      'Your have a 2000 character count limit, so keep answers brief. Answer or evaluate the following:';
     const userPrompt = isValidUserTemp ? args.slice(1).join(' ') : args.join(' ');
     const temperature = shouldUseDefaultTemp ? undefined : temperatureArg;
 
@@ -46,7 +48,13 @@ const command: Command = {
     try {
       const response = await openai.createChatCompletion({
         model: 'gpt-3.5-turbo',
-        messages: [{ role: 'user', content: userPrompt, name: message.author.username.replace(/[^a-zA-Z ]/g, '') }],
+        messages: [
+          {
+            role: 'user',
+            content: `${defaultPrompt} ${userPrompt}`,
+            name: message.author.username.replace(/[^a-zA-Z ]/g, '').replace(/ /g, ''),
+          },
+        ],
         ...(temperature && { temperature }),
         // temperature,
         // max_tokens,
