@@ -38,8 +38,6 @@ const command: Command = {
     }
 
     const shouldUseDefaultTemp = temperatureArg === invalidTempCodes.default;
-    const defaultPrompt =
-      'You have a 2000 character count limit, so keep answers brief. Answer or evaluate the following:';
     const userPrompt = isValidUserTemp ? args.slice(1).join(' ') : args.join(' ');
     const temperature = shouldUseDefaultTemp ? undefined : temperatureArg;
 
@@ -50,14 +48,16 @@ const command: Command = {
         model: 'gpt-3.5-turbo',
         messages: [
           {
+            role: 'system',
+            content: 'You are a helpful assistant. You have a 2000 character count limit for your responses',
+          },
+          {
             role: 'user',
-            content: `${defaultPrompt} ${userPrompt}`,
+            content: userPrompt,
             name: message.author.username.replace(/[^a-zA-Z ]/g, '').replace(/ /g, ''),
           },
         ],
         ...(temperature && { temperature }),
-        // temperature,
-        // max_tokens,
       });
       completionText = response.data.choices[0].message.content;
     } catch (error: any) {
