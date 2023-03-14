@@ -1930,6 +1930,81 @@
       "question": "What Scandinavian legal office was obliged to memorize and recite the law at the `thing` (governing assembly)",
       "answer": "Lawspeaker",
       "difficulty": "moderate"
+    },
+    {
+      "question": "What is the largest mammal in the world?",
+      "answer": "Blue Whale",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the name for a group of lions?",
+      "answer": "A pride",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the only continent without bees?",
+      "answer": "Antarctica",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What is the name for a baby koala?",
+      "answer": "Joey",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What is the only bird that can fly backwards?",
+      "answer": "Hummingbird",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "What animal can sleep up to 3 years?",
+      "answer": "Snail",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the fastest land animal?",
+      "answer": "Cheetah",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What mammal has the longest lifespan?",
+      "answer": "Bowhead Whale",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What is the smallest mammal in the world?",
+      "answer": "Bumblebee Bat",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What is the only mammal that can fly?",
+      "answer": "Bat",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "What is the name of the villain in the first Scooby Doo movie?",
+      "answer": "Scrappy Doo",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "In the movie Scooby Doo on Zombie Island, what type of monster do the gang encounter?",
+      "answer": "Werecats",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "In the movie Air Bud: Seventh Inning Fetch, what sport does Buddy the Golden Retriever play?",
+      "answer": "Baseball",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "What is the name of the character who voices Scooby Doo in the original animated series?",
+      "answer": "Don Messick",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "What is the smallest bird in the world?",
+      "answer": "Bee Hummingbird",
+      "difficulty": "difficult"
     }
   ]
 }
