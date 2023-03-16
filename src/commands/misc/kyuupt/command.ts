@@ -1,4 +1,5 @@
 import { Configuration, OpenAIApi } from 'openai';
+import { Readable } from 'stream';
 
 import type { Command } from '../../../types/Command';
 
@@ -11,6 +12,7 @@ const invalidTempCodes = {
   invalid: -1,
   default: -2,
 };
+const discordMaxCharacterCount = 2000;
 // const max_tokens = 250;
 
 const command: Command = {
@@ -41,8 +43,6 @@ const command: Command = {
     const userPrompt = isValidUserTemp ? args.slice(1).join(' ') : args.join(' ');
     const temperature = shouldUseDefaultTemp ? undefined : temperatureArg;
 
-    let completionText = '';
-
     try {
       const response = await openai.createChatCompletion({
         model: 'gpt-3.5-turbo',
@@ -59,7 +59,26 @@ const command: Command = {
         ],
         ...(temperature && { temperature }),
       });
-      completionText = response.data.choices[0].message.content;
+      const completionText = response.data.choices[0].message.content;
+
+      if (completionText.length <= discordMaxCharacterCount) {
+        message.channel.send(completionText);
+        return;
+      }
+
+      const stream = new Readable();
+      stream.push(completionText);
+      stream.push(null); // end
+
+      message.channel.send({
+        files: [
+          {
+            attachment: stream,
+            name: 'response.txt',
+          },
+        ],
+        content: `The response was too long, so I've attached it as a file`,
+      });
     } catch (error: any) {
       console.log(error);
       if (error?.response) {
@@ -71,8 +90,6 @@ const command: Command = {
       }
       return;
     }
-
-    message.channel.send(completionText);
   },
 };
 
