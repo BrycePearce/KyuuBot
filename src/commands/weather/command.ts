@@ -1,7 +1,7 @@
 import { ColorResolvable, MessageEmbed } from 'discord.js';
 import got from 'got';
 import { User } from '../../database/entities';
-import { DarkSkyResponse } from '../../types/DarkSkyResponse';
+import { OpenWeatherResponse } from '../../types/OpenWeatherApi';
 import { getRandomEmotePath } from '../../utils/files';
 import { DI } from './../../database';
 import { Command } from './../../types/Command';
@@ -123,37 +123,46 @@ const updateOrCreateUser = async (
   await DI.userRepository.persistAndFlush(user);
 };
 
-const getWeather = async (location: Location): Promise<DarkSkyResponse> => {
+const getWeather = async (location: Location): Promise<OpenWeatherResponse> => {
+  const [lat, lng] = location.latlng.split(',');
   try {
     return (await got(
-      `https://api.darksky.net/forecast/${process.env.darkSkyToken}/${location.latlng}`
-    ).json()) as DarkSkyResponse;
+      `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lng}&appid=${process.env.openWeatherKey}`
+    ).json()) as OpenWeatherResponse;
   } catch (ex) {
     console.error(ex);
-    throw new Error('DarkSky is down');
+    throw new Error('Open weather map is down');
   }
 };
 
-const generateOutputEmbed = (weather: DarkSkyResponse, formattedAddress: string): MessageEmbed => {
-  const currentWeather = weather.currently;
-  const currentTemp = Number(currentWeather.temperature.toFixed(2));
-  const chanceRainToday = weather.daily.data[0].precipProbability;
+const generateOutputEmbed = (weather: OpenWeatherResponse, formattedAddress: string): MessageEmbed => {
+  const currentWeather = weather.current;
+  const currentTemp = kelvinToFahrenheit(currentWeather.temp);
+  const chanceRainToday = weather.daily[0].pop;
 
   const errors = weather?.alerts?.reduce((accum, alert) => {
-    const dateIssued = new Date(alert.time);
+    const dateIssued = new Date(alert.start);
     const timeIssued = dateIssued.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-    return (accum += `${alert.title} (${timeIssued})\n`);
+    return (accum += `${alert.event} (${timeIssued})\n`);
   }, '');
 
   const embed = new MessageEmbed();
-  embed.title = `${weatherIcons[currentWeather.icon] || ''} ${formattedAddress}`;
+  embed.author = {
+    iconURL: `https://openweathermap.org/img/wn/${currentWeather.weather[0].icon}.png`,
+    name: formattedAddress,
+  };
+
   embed.setDescription(`
         ${currentTemp}F / ${(((currentTemp - 32) * 5) / 9).toFixed(2)}C
-        **Cloud Cover**: ${convertDecimalToPercent(currentWeather.cloudCover).toFixed(0)}%
-        **Windspeed**: ${currentWeather.windSpeed}mph
-        **Humidity**: ${convertDecimalToPercent(currentWeather.humidity).toFixed(0)}%
+        **Cloud Cover**: ${currentWeather.clouds}%
+        **Windspeed**: ${currentWeather.wind_speed}mph
+        **Humidity**: ${currentWeather.humidity}%
         **Chance of Rain**: ${convertDecimalToPercent(chanceRainToday).toFixed(0)}%
-        **Forecast**: ${weather.daily.summary}
+        **UV index**: ${convertDecimalToPercent(chanceRainToday).toFixed(0)}% (${getUvIndexRisk(weather.current.uvi)})
+        **Forecast**: ${
+          !!currentWeather.weather[0].description &&
+          currentWeather.weather[0].description[0].toUpperCase() + currentWeather.weather[0].description.slice(1)
+        }
         ${errors ? `\n**Alerts**:\n ${errors}` : ''}
     `);
 
@@ -169,8 +178,28 @@ const generateOutputEmbed = (weather: DarkSkyResponse, formattedAddress: string)
   return embed;
 };
 
+function kelvinToFahrenheit(tempInKelvin: number) {
+  const KELVIN_CONSTANT = 273.15;
+  const tempInFahrenheit = (tempInKelvin - KELVIN_CONSTANT) * 1.8 + 32;
+  return Number(tempInFahrenheit.toFixed(0));
+}
+
 const convertDecimalToPercent = (decimal: number, fixed: number = 2): number => {
   return Number(decimal.toFixed(fixed)) * 100;
 };
+
+function getUvIndexRisk(uvIndex: number): string {
+  if (uvIndex < 2) {
+    return 'Low';
+  } else if (uvIndex >= 2 && uvIndex <= 5) {
+    return 'Moderate';
+  } else if (uvIndex >= 6 && uvIndex <= 7) {
+    return 'High';
+  } else if (uvIndex >= 8 && uvIndex <= 10) {
+    return 'Very high';
+  } else {
+    return 'Extreme';
+  }
+}
 
 export default command;
