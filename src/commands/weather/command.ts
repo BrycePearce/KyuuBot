@@ -158,7 +158,7 @@ const generateOutputEmbed = (weather: OpenWeatherResponse, formattedAddress: str
         **Windspeed**: ${currentWeather.wind_speed}mph
         **Humidity**: ${currentWeather.humidity}%
         **Chance of Rain**: ${convertDecimalToPercent(chanceRainToday).toFixed(0)}%
-        **UV index**: ${convertDecimalToPercent(chanceRainToday).toFixed(0)}% (${getUvIndexRisk(weather.current.uvi)})
+        **UV index**: ${weather.current.uvi} (${getUvIndexRisk(weather.current.uvi)})
         **Forecast**: ${
           !!currentWeather.weather[0].description &&
           currentWeather.weather[0].description[0].toUpperCase() + currentWeather.weather[0].description.slice(1)
