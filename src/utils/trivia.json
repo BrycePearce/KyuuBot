@@ -992,11 +992,6 @@
       "difficulty": "moderate"
     },
     {
-      "question": "Which animal can change direction midair?",
-      "answer": "Cheetah",
-      "difficulty": "moderate"
-    },
-    {
       "question": "What is the largest land animal alive today?",
       "answer": "African Elephant",
       "difficulty": "easy"
@@ -2186,7 +2181,7 @@
       "category": "Science: Computers",
       "difficulty": "easy",
       "question": "The numbering system with a radix of 16 is more commonly referred to as ",
-      "answer": "Hexidecimal",
+      "answer": "Hexadecimal",
       "incorrect_answers": ["Binary", "Duodecimal", "Octal"]
     },
     {
