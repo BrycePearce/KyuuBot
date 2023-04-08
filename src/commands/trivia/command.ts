@@ -137,9 +137,10 @@ function decodeHTMLEntities(text: string) {
     '&lt;': '<',
     '&gt;': '>',
     '&amp;': '&',
+    '&#039;': "'",
   };
 
-  return text.replace(/&\w+?;/g, (match) => entities[match] || match);
+  return text.replace(/&#?\w+?;/g, (match) => entities[match] || match);
 }
 
 export default command;
