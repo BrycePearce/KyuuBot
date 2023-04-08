@@ -131,7 +131,15 @@ const revealHint = (word: string, mask: string, percent: number) => {
 };
 
 function decodeHTMLEntities(text: string) {
-  return text.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec));
+  const entities = {
+    '&quot;': '"',
+    '&apos;': "'",
+    '&lt;': '<',
+    '&gt;': '>',
+    '&amp;': '&',
+  };
+
+  return text.replace(/&\w+?;/g, (match) => entities[match] || match);
 }
 
 export default command;
