@@ -47,7 +47,7 @@ const command: Command = {
     const startTime = new Date();
 
     // Ask the trivia question
-    message.channel.send(question);
+    message.channel.send(decodeHTMLEntities(question));
 
     const hintIntervals = [15000, 25000, 40000];
     let hintMask = generateStrMask(answer);
@@ -129,5 +129,9 @@ const revealHint = (word: string, mask: string, percent: number) => {
 
   return maskArray.join('');
 };
+
+function decodeHTMLEntities(text: string) {
+  return text.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec));
+}
 
 export default command;
