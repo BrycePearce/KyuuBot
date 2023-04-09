@@ -39,9 +39,11 @@ const command: Command = {
   async execute(message) {
     const {
       question,
-      answer,
+      answer: encodedAnswer,
       difficulty = 'easy', // easy, moderate, difficult
     } = triviaQuestions.misc[Math.floor(Math.random() * triviaQuestions.misc.length)] as TriviaQuestion;
+
+    const answer = decodeHTMLEntities(encodedAnswer);
 
     const collector = message.channel.createMessageCollector({ time: 65000 });
     const startTime = new Date();
@@ -138,6 +140,9 @@ function decodeHTMLEntities(text: string) {
     '&gt;': '>',
     '&amp;': '&',
     '&#039;': "'",
+    '&eacute;': 'é',
+    '&atilde;': 'ã',
+    '&micro;': 'µ',
   };
 
   return text.replace(/&#?\w+?;/g, (match) => entities[match] || match);
