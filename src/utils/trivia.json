@@ -191,8 +191,8 @@
       "difficulty": "easy"
     },
     {
-      "question": "What is the mathematical symbol for the constant pi?",
-      "answer": "π",
+      "question": "π What is the name of this mathematical symbol?",
+      "answer": "pi",
       "difficulty": "easy"
     },
     {
@@ -738,12 +738,12 @@
     },
     {
       "question": "What is the setting of the anime film Akira?",
-      "answer": "Neo Tokyo, a post-apocalyptic city in Japan",
+      "answer": "Neo Tokyo",
       "difficulty": "easy"
     },
     {
       "question": "What is the year in which the events of the anime film Akira take place?",
-      "answer": "The events of the film take place in the year 2019",
+      "answer": "2019",
       "difficulty": "moderate"
     },
     {
@@ -1013,7 +1013,7 @@
     },
     {
       "question": "Electron pairs, when shared between two atoms, help create what kind of bond?",
-      "answer": "A covalent bond",
+      "answer": "covalent",
       "difficulty": "difficult"
     },
     {
@@ -1094,11 +1094,6 @@
     {
       "question": "The mojave ground ________ found mainly in the American West hibernates for two-thirds of the year. What is it commonly called?",
       "answer": "Squirrel",
-      "difficulty": "easy"
-    },
-    {
-      "question": "What is the common name of the species of shark known to have a bite force of 18,000 newtons, the highest of any fish species?",
-      "answer": "Bull shark",
       "difficulty": "easy"
     },
     {
@@ -1247,7 +1242,7 @@
       "difficulty": "easy"
     },
     {
-      "question": "Gannymede is the largest moon of which planet?",
+      "question": "Ganymede is the largest moon of which planet?",
       "answer": "Jupiter",
       "difficulty": "moderate"
     },
@@ -1382,7 +1377,7 @@
       "difficulty": "moderate"
     },
     {
-      "question": "Which terran unit from the RTS game Starcraft was first introduced in the expansion Brood War?",
+      "question": "Which terran ground unit from the RTS game Starcraft was first introduced in the expansion Brood War?",
       "answer": "Medic",
       "difficulty": "moderate"
     },
@@ -1710,11 +1705,6 @@
       "difficulty": "easy",
       "question": "What superhero was born with the Curse of Kordax?",
       "answer": "Aquaman"
-    },
-    {
-      "difficulty": "easy",
-      "question": "What superhero grew up on the planet Tamaran?",
-      "answer": "Starfire"
     },
     {
       "difficulty": "easy",
@@ -2202,7 +2192,7 @@
     {
       "category": "Entertainment: Video Games",
       "difficulty": "easy",
-      "question": "Which of these is NOT a map included in the game Counter-Strike: Global Offensive?",
+      "question": "Which of these is NOT a map included in the game Counter-Strike: Global Offensive? Dust II, Train, Oilrig, Overpass",
       "answer": "Oilrig"
     },
     {
@@ -2244,8 +2234,8 @@
     {
       "category": "Entertainment: Television",
       "difficulty": "moderate",
-      "question": "Which character does voice actress Tara Strong NOT voice?",
-      "answer": "Bubbles (2016)"
+      "question": "Which character does voice actress Tara Strong NOT voice? Harley Quinn, Bubbles, Twilight Sparkle, Timmy Turner",
+      "answer": "Bubbles"
     },
     {
       "category": "History",
@@ -2382,25 +2372,25 @@
     {
       "category": "Entertainment: Video Games",
       "difficulty": "easy",
-      "question": "Which game did NOT get financed via Crowdfunding?",
+      "question": "Which game did NOT get financed via Crowdfunding? Tower Unite, Enter the Gungeon, Town of Salem, Undertale",
       "answer": "Enter the Gungeon"
     },
     {
       "category": "Entertainment: Video Games",
       "difficulty": "easy",
-      "question": "Which of these is NOT a player class in Team Fortress 2?",
+      "question": "Which of these is NOT a player class in Team Fortress 2? Spy, Pyro, Healer, Demoman",
       "answer": "Healer"
     },
     {
       "category": "Entertainment: Video Games",
       "difficulty": "moderate",
-      "question": "Which of these features was added in the 1994 game &quot;Heretic&quot; that the original &quot;DOOM&quot; could not add due to limitations?",
+      "question": "Which of these features was added in the 1994 game &quot;Heretic&quot; that the original &quot;DOOM&quot; could not add due to limitations? Increased room sizes, Highly detailed textures, Looking up and down, Unlimited weapons",
       "answer": "Looking up and down"
     },
     {
       "category": "Geography",
       "difficulty": "easy",
-      "question": "Which of the following former Yugoslavian states is landlocked?",
+      "question": "Which of the following former Yugoslavian states is landlocked? Serbia, Bosnia and Herzegovina, Montenegro, Croatia",
       "answer": "Serbia"
     },
     {
@@ -2418,7 +2408,7 @@
     {
       "category": "General Knowledge",
       "difficulty": "moderate",
-      "question": "Which of these companies does NOT manufacture automobiles?",
+      "question": "Which of these companies does NOT manufacture automobiles? GMC, Ducati, Nissan, Fiat",
       "answer": "Ducati"
     },
     {
@@ -2436,7 +2426,7 @@
     {
       "category": "Art",
       "difficulty": "moderate",
-      "question": "Which of these are the name of a famous marker brand?",
+      "question": "Which of these are the name of a famous marker brand? Marx, Copic, Dopix, Cofix",
       "answer": "Copic"
     },
     {
@@ -2448,7 +2438,7 @@
     {
       "category": "Entertainment: Music",
       "difficulty": "moderate",
-      "question": "Which of these is not an Ed Sheeran album?",
+      "question": "Which of these is the latest Ed Sheeran album? -, X, ÷, +",
       "answer": "-"
     },
     {
@@ -2479,7 +2469,7 @@
       "category": "Entertainment: Video Games",
       "difficulty": "moderate",
       "question": "Sean Bean voices the character of &quot;Martin Septim&quot; in which Elder Scrolls game?",
-      "answer": "The Elder Scrolls IV: Oblivion"
+      "answer": "Oblivion"
     },
     {
       "category": "Entertainment: Video Games",
@@ -2510,12 +2500,6 @@
       "difficulty": "easy",
       "question": "In &quot;To Love-Ru&quot;, Ren and Run are from what planet?",
       "answer": "Memorze"
-    },
-    {
-      "category": "Entertainment: Music",
-      "difficulty": "easy",
-      "question": "Which of the following songs did Elton John perform following Princess Diane&#039;s passing?",
-      "answer": "Candles in the Wind"
     },
     {
       "category": "Celebrities",
@@ -2653,7 +2637,7 @@
       "category": "Entertainment: Music",
       "type": "multiple",
       "difficulty": "moderate",
-      "question": "Which of these is NOT the name of an album released by American rapper Viper?",
+      "question": "Which of these is NOT the name of an album released by American rapper Viper? Yo Wife Handcuffin' Me, You'll Cowards Don't Even Smoke Crack, The Life of Pablo, Kill Urself My man",
       "answer": "The Life of Pablo"
     },
     {
@@ -2669,13 +2653,6 @@
       "difficulty": "easy",
       "question": "How many Harry Potter books are there?",
       "answer": "7"
-    },
-    {
-      "category": "Entertainment: Video Games",
-      "type": "multiple",
-      "difficulty": "easy",
-      "question": "Who created the 2011 Video Game &quot;Minecraft&quot;?",
-      "answer": "Markus Persson"
     },
     {
       "category": "Entertainment: Video Games",
@@ -2709,8 +2686,8 @@
       "category": "Entertainment: Video Games",
       "type": "multiple",
       "difficulty": "difficult",
-      "question": "Which of these weapon classes DO NOT appear in the first Monster Hunter game?",
-      "answer": "Bow "
+      "question": "Which of these weapon classes DO NOT appear in the first Monster Hunter game? Heavy Bowgun, Bow, Hammer, Light Bowgun",
+      "answer": "Bow"
     },
     {
       "category": "Entertainment: Japanese Anime & Manga",
@@ -2772,7 +2749,7 @@
       "category": "Entertainment: Japanese Anime & Manga",
       "type": "multiple",
       "difficulty": "moderate",
-      "question": "In the &quot;Re:Zero&quot; manga series, which of the following Sin Archbishops eats Rem&#039;s existence?",
+      "question": "In the &quot;Re:Zero&quot; manga series, which of the Sin Archbishops eats Rem&#039;s existence?",
       "answer": "Ley Batenkaitos"
     },
     {
@@ -2821,7 +2798,7 @@
       "category": "Geography",
       "type": "multiple",
       "difficulty": "difficult",
-      "question": "Which of these is NOT a real tectonic plate?",
+      "question": "Which of these is NOT a real tectonic plate? Eurasian Plate, Atlantic Plate, African Plate, Pacific Plate",
       "answer": "Atlantic Plate"
     },
     {
@@ -2837,27 +2814,6 @@
       "difficulty": "easy",
       "question": "What was James Coburn&#039;s last film role before his death?",
       "answer": "American Gun"
-    },
-    {
-      "category": "Sports",
-      "type": "multiple",
-      "difficulty": "moderate",
-      "question": "Which of these countries&#039; national teams qualified for the 2018 FIFA World Cup in Russia?",
-      "answer": "Tunisia"
-    },
-    {
-      "category": "Sports",
-      "type": "multiple",
-      "difficulty": "difficult",
-      "question": "Which of these Russian cities did NOT contain a stadium that was used in the 2018 FIFA World Cup?",
-      "answer": "Vladivostok"
-    },
-    {
-      "category": "Entertainment: Music",
-      "type": "multiple",
-      "difficulty": "difficult",
-      "question": "Which of these artists did NOT feature in the fitfh studio album &quot;Humanz&quot; by British virtual band Gorillaz?",
-      "answer": "Snoop Dogg"
     },
     {
       "category": "Entertainment: Board Games",
@@ -2923,13 +2879,6 @@
       "answer": "1867"
     },
     {
-      "category": "Vehicles",
-      "type": "multiple",
-      "difficulty": "moderate",
-      "question": "Which of the following is NOT a Russian car manufacturer?",
-      "answer": "BYD"
-    },
-    {
       "category": "Entertainment: Video Games",
       "type": "multiple",
       "difficulty": "easy",
@@ -2956,13 +2905,6 @@
       "difficulty": "difficult",
       "question": "What scientific suborder does the family Hyaenidae belong to?",
       "answer": "Feliformia"
-    },
-    {
-      "category": "Vehicles",
-      "type": "multiple",
-      "difficulty": "difficult",
-      "question": "Which of these is NOT a car model produced by Malaysian car manufacturer Proton?",
-      "answer": "Kelisa"
     },
     {
       "category": "Entertainment: Film",
@@ -3019,13 +2961,6 @@
       "difficulty": "difficult",
       "question": "In &quot;Halo&quot;, what is the name of the planet which Installation 04 orbits?",
       "answer": "Threshold"
-    },
-    {
-      "category": "Entertainment: Music",
-      "type": "multiple",
-      "difficulty": "difficult",
-      "question": "Which lyric is about Red Hot Chili Peppers frontman Anthony Kiedis?",
-      "answer": "&quot;A rainy Lithuanian / Is dancing as an Indian&quot;"
     },
     {
       "category": "Entertainment: Musicals & Theatres",
@@ -3157,7 +3092,7 @@
       "category": "Entertainment: Video Games",
       "type": "multiple",
       "difficulty": "moderate",
-      "question": "Which of these &quot;Worms&quot; games featured 3D gameplay?",
+      "question": "Which of these &quot;Worms&quot; games featured 3D gameplay? Worms Reloaded, Worms: Open Warfare 2, Worms 4: Mayhem, Worms W.M.D",
       "answer": "Worms 4: Mayhem"
     },
     {
@@ -3177,8 +3112,8 @@
     {
       "category": "Science & Nature",
       "type": "multiple",
-      "difficulty": "difficult",
-      "question": "Which of the following is NOT a real element?",
+      "difficulty": "easy",
+      "question": "Which of the following is NOT a real element? Titanium, Silicon, Vitrainium, Potassium",
       "answer": "Vitrainium"
     },
     {
@@ -3191,15 +3126,15 @@
     {
       "category": "Science & Nature",
       "type": "multiple",
-      "difficulty": "difficult",
-      "question": "Which of the following plastic is commonly used for window frames, gutters and drain pipes?",
-      "answer": "Polyvinylchloride (PVC) "
+      "difficulty": "moderate",
+      "question": "Which of the following plastic is commonly used for window frames, gutters and drain pipes? PVC (polyvinylchloride), PS (polystyrene), PE (polyethylene), PP (polypropylene)",
+      "answer": "PVC"
     },
     {
       "category": "General Knowledge",
       "type": "multiple",
       "difficulty": "easy",
-      "question": "Which one of these is not a typical European sword design?",
+      "question": "Which one of these is not a typical European sword design? Scimitar, Falchion, Flamberge, Ulfberht",
       "answer": "Scimitar"
     },
     {
@@ -3248,7 +3183,7 @@
       "category": "Science: Computers",
       "type": "multiple",
       "difficulty": "easy",
-      "question": "The C programming language was created by this American computer scientist. ",
+      "question": "The C programming language was created by this American computer scientist.",
       "answer": "Dennis Ritchie"
     },
     {
@@ -3276,7 +3211,7 @@
       "category": "General Knowledge",
       "type": "multiple",
       "difficulty": "easy",
-      "question": "Which candy is NOT made by Mars?",
+      "question": "Which candy is NOT made by Mars? Snickers, Twix, Almond Joy, M&M's",
       "answer": "Almond Joy"
     },
     {
@@ -3306,13 +3241,6 @@
       "difficulty": "moderate",
       "question": "Directly between the Washington Monument and the Reflecting Pool is a memorial to which war?",
       "answer": "World War II"
-    },
-    {
-      "category": "History",
-      "type": "multiple",
-      "difficulty": "moderate",
-      "question": "Which of these facilities was not present on the Titanic?",
-      "answer": "Fainting room"
     },
     {
       "category": "Entertainment: Comics",
