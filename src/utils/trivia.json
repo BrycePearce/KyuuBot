@@ -3248,6 +3248,86 @@
       "difficulty": "moderate",
       "question": "In the Hellboy universe, who founded the BPRD?",
       "answer": "Trevor Bruttenholm"
+    },
+    {
+      "question": "Who is the author and creator of the Moomin series?",
+      "answer": "Tove Jansson",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What is the name of the main character in the Moomin series?",
+      "answer": "Moomintroll",
+      "difficulty": "easy"
+    },
+    {
+      "question": "What kind of creatures are the Moomins?",
+      "answer": "Trolls",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What is the name of the Moomins' home?",
+      "answer": "Moominhouse",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What is the name of the Moomin's best friend?",
+      "answer": "Snufkin",
+      "difficulty": "easy"
+    },
+    {
+      "question": "Which country is Tove Jansson, the author and illustrator of the Moomins, from?",
+      "answer": "Sweden",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What colour is the tall, round house that the Moomins live in?",
+      "answer": "Blue",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "What do the Moomins usually do in the winter?",
+      "answer": "Hibernate",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "Where do the Moomins live?",
+      "answer": "Moominvalley",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "Moomin is generally a happy chap that likes an adventure. What one thing upsets Moomin?",
+      "answer": "Being alone",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "In the Lion King, what was the name of Simba's mother?",
+      "answer": "Sarabi",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "In the movie 'Aladdin,' what is the name of Jasmine's pet tiger?",
+      "answer": "Rajah",
+      "difficulty": "difficult"
+    },
+    {
+      "question": "What is the name of the villain in Disney's 'The Little Mermaid'?",
+      "answer": "Ursula",
+      "difficulty": "easy"
+    },
+    {
+      "question": "In the Disney movie 'Frozen,' what is the name of Elsa and Anna's kingdom?",
+      "answer": "Arendelle",
+      "difficulty": "easy"
+    },
+    {
+      "question": "In the movie 'Moana,' what is the name of Moana's demigod companion?",
+      "answer": "Maui",
+      "difficulty": "moderate"
+    },
+    {
+      "question": "Who is the main character in Disney's 'The Princess and the Frog'?",
+      "answer": "Tiana",
+      "difficulty": "moderate"
     }
   ]
 }

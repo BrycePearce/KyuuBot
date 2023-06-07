@@ -1,7 +1,7 @@
 import { ColorResolvable, MessageEmbed } from 'discord.js';
 import got from 'got';
 import { User } from '../../database/entities';
-import { OpenWeatherResponse } from '../../types/OpenWeatherApi';
+import { OpenWeatherAQI, OpenWeatherResponse } from '../../types/OpenWeatherApi';
 import { getRandomEmotePath } from '../../utils/files';
 import { DI } from './../../database';
 import { Command } from './../../types/Command';
@@ -74,7 +74,8 @@ const command: Command = {
       }
 
       const weather = await getWeather(requestedLocation);
-      const weatherEmbed = generateOutputEmbed(weather, requestedLocation.address);
+      const aqi = await getAirQualityIndex(requestedLocation);
+      const weatherEmbed = generateOutputEmbed(weather, aqi, requestedLocation.address);
       message.channel.send({ embeds: [weatherEmbed] });
     } catch (ex) {
       console.error(ex);
@@ -123,7 +124,7 @@ const updateOrCreateUser = async (
   await DI.userRepository.persistAndFlush(user);
 };
 
-const getWeather = async (location: Location): Promise<OpenWeatherResponse> => {
+const getWeather = async (location: Location) => {
   const [lat, lng] = location.latlng.split(',');
   try {
     return (await got(
@@ -135,7 +136,26 @@ const getWeather = async (location: Location): Promise<OpenWeatherResponse> => {
   }
 };
 
-const generateOutputEmbed = (weather: OpenWeatherResponse, formattedAddress: string): MessageEmbed => {
+const getAirQualityIndex = async (location: Location) => {
+  const [lat, lng] = location.latlng.split(',');
+  const unixCurrentTime = Math.floor(Date.now() / 1000);
+  const anHourFromNow = unixCurrentTime + 3600;
+
+  try {
+    return (await got(
+      `http://api.openweathermap.org/data/2.5/air_pollution/history?lat=${lat}&lon=${lng}&start=${unixCurrentTime}&end=${anHourFromNow}&appid=${process.env.openWeatherKey}`
+    ).json()) as OpenWeatherAQI;
+  } catch {
+    throw new Error('Open weather map AQI is down');
+  }
+};
+
+const generateOutputEmbed = (
+  weather: OpenWeatherResponse,
+  aqi: OpenWeatherAQI,
+  formattedAddress: string
+): MessageEmbed => {
+  const formattedAqi = getFormattedAirQualityLabel(aqi.list[0].main.aqi);
   const currentWeather = weather.current;
   const currentTemp = kelvinToFahrenheit(currentWeather.temp);
   const chanceRainToday = weather.daily[0].pop;
@@ -159,6 +179,7 @@ const generateOutputEmbed = (weather: OpenWeatherResponse, formattedAddress: str
         **Humidity**: ${currentWeather.humidity}%
         **Chance of Rain**: ${convertDecimalToPercent(chanceRainToday).toFixed(0)}%
         **UV index**: ${weather.current.uvi} (${getUvIndexRisk(weather.current.uvi)})
+        **AQI**: ${formattedAqi}
         **Forecast**: ${
           !!currentWeather.weather[0].description &&
           currentWeather.weather[0].description[0].toUpperCase() + currentWeather.weather[0].description.slice(1)
@@ -199,6 +220,23 @@ function getUvIndexRisk(uvIndex: number): string {
     return 'Very high';
   } else {
     return 'Extreme';
+  }
+}
+
+function getFormattedAirQualityLabel(aqiIndex: 1 | 2 | 3 | 4 | 5) {
+  switch (aqiIndex) {
+    case 1:
+      return 'Good';
+    case 2:
+      return 'Fair';
+    case 3:
+      return 'Moderate';
+    case 4:
+      return 'Poor';
+    case 5:
+      return 'Very Poor';
+    default:
+      return '😮‍💨🏭 (something went wrong!)';
   }
 }
 
