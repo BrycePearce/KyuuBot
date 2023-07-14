@@ -50,3 +50,7 @@ export const getRandomEmotePath = async () => {
     return path.normalize(path.join(emoteDir, '/', randomImageName));
   });
 };
+
+export const getTmpPathWithFilename = (filename: string) => {
+  return path.normalize(path.join(require.main.filename, '../', '../', 'tmp', filename));
+};

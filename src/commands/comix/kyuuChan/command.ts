@@ -1,15 +1,17 @@
 import { Chapter, Manga } from 'mangadex-full-api';
-import path from 'path';
-import { Command } from '../../types/Command';
-import { PromiseResolver } from '../../types/PromiseResolver';
-import { writeTextOnMedia } from '../../utils/ffmpeg';
+import { retrieveComix } from '../../../comixPreloader';
+import { Command } from '../../../types/Command';
+import { PromiseResolver } from '../../../types/PromiseResolver';
+import { kyuuChanComixId } from '../../../utils/constants';
+import { writeTextOnMedia } from '../../../utils/ffmpeg';
 import {
   deleteFileFromTmp,
   getFileExtension,
   getRandomEmotePath,
+  getTmpPathWithFilename,
   isUrlExtensionStatic,
   saveImageToTmp,
-} from '../../utils/files';
+} from '../../../utils/files';
 
 interface ResolvedChapter {
   chapter: Chapter;
@@ -28,7 +30,7 @@ const command: Command = {
     let createdEntities: string[] = [];
 
     try {
-      const manga = await Manga.getByQuery({ ids: ['5b2c7a03-ca53-43f0-abc8-031c0c136ae6'] }); // todo: save and store this on init, then pass it here so don't have to fetch on every query
+      const manga = retrieveComix(kyuuChanComixId);
       const requestedChapter = await getRequestedChapter(manga, args);
       const chapterList = await manga.getFeed(
         {
@@ -148,10 +150,6 @@ const getChapterWithChapterInfo = async (
 
     resolve({ success: true, localChapterPath: processedMediaPath });
   });
-};
-
-const getTmpPathWithFilename = (filename: string) => {
-  return path.normalize(path.join(__dirname, '../../../tmp', filename));
 };
 
 export default command;

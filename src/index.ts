@@ -1,10 +1,12 @@
 import { ChannelType, Client, GatewayIntentBits } from 'discord.js';
 import Mangadex from 'mangadex-full-api';
 import 'reflect-metadata';
+import { initComix } from './comixPreloader';
 import { initCommands } from './commands';
 import { commandRegistry } from './commands/commandRegistry';
 import BindDatabase from './database';
 import { findCommand } from './utils/commandUtils';
+import { initializedComix } from './utils/constants';
 
 require('dotenv').config();
 
@@ -26,9 +28,16 @@ async function init() {
   ]);
 }
 
-client.on('ready', async () => {
+client.on('ready', async (asd) => {
   if (!USE_NEW_COMMAND_LOADER) {
-    initCommands();
+    try {
+      initCommands();
+      await initComix(initializedComix);
+    } catch (err) {
+      const errorMsg = 'Failed to initialize';
+      console.error(errorMsg, err);
+      throw new Error(errorMsg);
+    }
   }
 });
 
