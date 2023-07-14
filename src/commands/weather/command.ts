@@ -1,4 +1,4 @@
-import { ColorResolvable, MessageEmbed } from 'discord.js';
+import { ColorResolvable, EmbedBuilder } from 'discord.js';
 import got from 'got';
 import { User } from '../../database/entities';
 import { OpenWeatherAQI, OpenWeatherResponse } from '../../types/OpenWeatherApi';
@@ -154,7 +154,7 @@ const generateOutputEmbed = (
   weather: OpenWeatherResponse,
   aqi: OpenWeatherAQI,
   formattedAddress: string
-): MessageEmbed => {
+): EmbedBuilder => {
   const formattedAqi = getFormattedAirQualityLabel(aqi.list[0].main.aqi);
   const currentWeather = weather.current;
   const currentTemp = kelvinToFahrenheit(currentWeather.temp);
@@ -166,11 +166,11 @@ const generateOutputEmbed = (
     return (accum += `${alert.event} (${timeIssued})\n`);
   }, '');
 
-  const embed = new MessageEmbed();
-  embed.author = {
+  const embed = new EmbedBuilder();
+  embed.setAuthor({
     iconURL: `https://openweathermap.org/img/wn/${currentWeather.weather[0].icon}.png`,
     name: formattedAddress,
-  };
+  });
 
   embed.setDescription(`
         ${currentTemp}F / ${(((currentTemp - 32) * 5) / 9).toFixed(2)}C
@@ -188,12 +188,12 @@ const generateOutputEmbed = (
     `);
 
   let embedColor: ColorResolvable;
-  if (currentTemp <= 20) embedColor = 'DARK_BLUE';
-  else if (currentTemp <= 60) embedColor = 'AQUA';
-  else if (currentTemp <= 75) embedColor = 'GREEN';
-  else if (currentTemp <= 85) embedColor = 'ORANGE';
-  else if (currentTemp <= 150) embedColor = 'RED';
-  else embedColor = 'DARK_NAVY';
+  if (currentTemp <= 20) embedColor = 'DarkBlue';
+  else if (currentTemp <= 60) embedColor = 'Aqua';
+  else if (currentTemp <= 75) embedColor = 'Green';
+  else if (currentTemp <= 85) embedColor = 'Orange';
+  else if (currentTemp <= 150) embedColor = 'Red';
+  else embedColor = 'DarkNavy';
 
   embed.setColor(embedColor);
   return embed;

@@ -80,7 +80,7 @@ const command: Command = {
         collector.stop('success');
         const pointsEarned = difficultyPts[difficulty] ?? 1;
 
-        await addPoints(message.channelId, guess.author.id, pointsEarned);
+        await addPoints(message.guildId, guess.author.id, pointsEarned);
 
         const toalpts = await getPoints(message.channelId, guess.author.id);
         const elapsedTime = parseFloat(((endTime.valueOf() - startTime.valueOf()) / 1000).toFixed(3));
