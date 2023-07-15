@@ -92,7 +92,7 @@
     },
     {
       "question": "What is the longest river in the world?",
-      "answer": "The Nile",
+      "answer": "Nile",
       "difficulty": "easy"
     },
     {
@@ -1554,7 +1554,7 @@
     {
       "difficulty": "moderate",
       "question": "Name the spider, a fictional demon that Frodo fought bravely to recover the One Ring",
-      "answer": "Samwise Gamgee"
+      "answer": "Shelob"
     },
     {
       "difficulty": "moderate",
@@ -1822,14 +1822,14 @@
       "difficulty": "easy"
     },
     {
-      "question": "How long does it take for light to travel from the Sun's surface to the Earth?",
-      "answer": "8 minutes",
-      "difficulty": "easy"
+      "question": "How many minutes does it take for light to travel from the Sun's surface to the Earth?",
+      "answer": "8",
+      "difficulty": "moderate"
     },
     {
-      "question": "How long does it take an individual blood cell to make a complete circuit of the body?",
-      "answer": "60 seconds",
-      "difficulty": "easy"
+      "question": "How many seconds does it take an individual blood cell to make a complete circuit of the body?",
+      "answer": "20",
+      "difficulty": "moderate"
     },
     {
       "question": "What is the hottest planet in our solar system?",
@@ -1972,7 +1972,7 @@
       "difficulty": "difficult"
     },
     {
-      "question": "In the movie Scooby Doo on Zombie Island, what type of monster do the gang encounter?",
+      "question": "In the movie Scooby Doo on Zombie Island, the residents of Moonscar Mansion turned out to be which monster?",
       "answer": "Werecats",
       "difficulty": "difficult"
     },
@@ -2042,7 +2042,7 @@
     {
       "category": "Entertainment: Television",
       "difficulty": "easy",
-      "question": "Which of these characters in &quot;Stranger Things&quot; has the power of Telekinesis?",
+      "question": "Which character in &quot;Stranger Things&quot; has the power of Telekinesis?",
       "answer": "Eleven"
     },
     {
@@ -3328,6 +3328,66 @@
       "question": "Who is the main character in Disney's 'The Princess and the Frog'?",
       "answer": "Tiana",
       "difficulty": "moderate"
+    },
+    {
+      "category": "Kyuu Chan Trivia",
+      "difficulty": "difficult",
+      "question": "Who created the webcomic Wonder Cat Kyuu-chan?",
+      "answer": "Sasami Nitori"
+    },
+    {
+      "category": "Kyuu Chan Trivia",
+      "difficulty": "difficult",
+      "question": "What instrument can Hinata from the webcomic Wonder Cat Kyuu-chan play?",
+      "answer": "Guitar"
+    },
+    {
+      "category": "LOTR Trivia",
+      "difficulty": "moderate",
+      "question": "Who is the heir of Isildur and the rightful king of Gondor?",
+      "answer": "Aragorn"
+    },
+    {
+      "category": "LOTR Trivia",
+      "difficulty": "moderate",
+      "question": "Who forged the One Ring?",
+      "answer": "Sauron"
+    },
+    {
+      "category": "LOTR Trivia",
+      "difficulty": "difficult",
+      "question": "Which creature serves as the steed for the Nazgûl?",
+      "answer": "Fellbeast"
+    },
+    {
+      "category": "Spider-Man Trivia",
+      "difficulty": "difficult",
+      "question": "What newspaper does Peter Parker work for?",
+      "answer": "Daily Bugle"
+    },
+    {
+      "category": "LOTR Trivia",
+      "difficulty": "moderate",
+      "question": "What frightened the Orcs in the Mines of Moria?",
+      "answer": "Balrog"
+    },
+    {
+      "category": "Geography Trivia",
+      "difficulty": "easy",
+      "question": "Which country is both an island and a continent?",
+      "answer": "Australia"
+    },
+    {
+      "category": "Disney Trivia",
+      "difficulty": "moderate",
+      "question": "What is the name of Simba's father in Disney's 'The Lion King'?",
+      "answer": "Mufasa"
+    },
+    {
+      "category": "Disney Trivia",
+      "difficulty": "difficult",
+      "question": "In Disney's 'Beauty and the Beast', what is the name of Gaston's loyal sidekick?",
+      "answer": "LeFou"
     }
   ]
 }

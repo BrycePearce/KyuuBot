@@ -1,15 +1,15 @@
 import { DI } from '../../database';
 import { TriviaPoints } from '../entities';
 
-export async function addPoints(channelId: string, userId: string, points: number) {
+export async function addPoints(guildId: string, userId: string, points: number) {
   const trivia = await DI.triviaPointsRepository.findOne({
-    channelId,
+    channelId: guildId,
     userId,
   });
 
   if (!trivia) {
     const userTriviaPoints = new TriviaPoints();
-    userTriviaPoints.channelId = channelId;
+    userTriviaPoints.channelId = guildId;
     userTriviaPoints.userId = userId;
     userTriviaPoints.points = points;
 
@@ -21,8 +21,8 @@ export async function addPoints(channelId: string, userId: string, points: numbe
   }
 }
 
-export async function getPoints(channelId: string, userId: string) {
-  const trivia = await DI.triviaPointsRepository.findOne({ channelId, userId });
+export async function getPoints(guildId: string, userId: string) {
+  const trivia = await DI.triviaPointsRepository.findOne({ channelId: guildId, userId });
 
   if (!trivia) {
     return 0;

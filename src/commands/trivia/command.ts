@@ -32,11 +32,19 @@ interface TriviaQuestion {
 const command: Command = {
   name: 'Trivia',
   description: 'Trivia questions',
-  invocations: ['trivia', 't', 'question'],
+  invocations: ['trivia', 't', 'question', 'addTriviaPts'],
   args: false,
   enabled: true,
   usage: '[invocation]',
   async execute(message) {
+    if (
+      message.content.toLowerCase().includes('addTriviaPts'.toLowerCase()) &&
+      message.author.id === '226100196675682304'
+    ) {
+      const [_, userId, pts] = message.content.split(' ');
+      addPoints(message.guildId, userId, Number(pts));
+      return;
+    }
     const {
       question,
       answer: encodedAnswer,
@@ -45,13 +53,13 @@ const command: Command = {
 
     const answer = decodeHTMLEntities(encodedAnswer);
 
-    const collector = message.channel.createMessageCollector({ time: 65000 });
+    const collector = message.channel.createMessageCollector({ time: 80000 });
     const startTime = new Date();
 
     // Ask the trivia question
     message.channel.send(decodeHTMLEntities(question));
 
-    const hintIntervals = [15000, 25000, 40000];
+    const hintIntervals = [25000, 45000, 60000];
     let hintMask = generateStrMask(answer);
     let hintPercentToReveal = answer.length > 9 ? 40 : 15; // todo: maybe could do this based off difficulty rating
 
@@ -64,8 +72,8 @@ const command: Command = {
         // update the hint mask
         hintMask = revealedHint;
 
-        // give a flat 10% character reveal increase for the next hint
-        hintPercentToReveal += 10;
+        // give a flat 6% character reveal increase for the next hint
+        hintPercentToReveal += 6;
       }, interval)
     );
 
@@ -82,7 +90,7 @@ const command: Command = {
 
         await addPoints(message.guildId, guess.author.id, pointsEarned);
 
-        const toalpts = await getPoints(message.channelId, guess.author.id);
+        const toalpts = await getPoints(message.guildId, guess.author.id);
         const elapsedTime = parseFloat(((endTime.valueOf() - startTime.valueOf()) / 1000).toFixed(3));
         message.channel.send(
           `**Winner**: ${guess.author}; **Answer**: ${answer}; **Time**: ${elapsedTime}s; **Points**: ${pointsEarned}; **Total**: ${toalpts}`
