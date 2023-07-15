@@ -110,7 +110,7 @@ const getChapterWithChapterInfo = async (
   processedMediaPath: string
 ): Promise<PromiseResolver & { localChapterPath?: string }> => {
   return new Promise(async (resolve, reject) => {
-    const textToWrite = `Vol. ${chapter.volume} Ch. ${chapter.chapter}`;
+    const textToWrite = `Vol. ${chapter.volume ?? '1'} Ch. ${chapter.chapter}`;
 
     try {
       // download url so we can process (add text) it
