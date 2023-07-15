@@ -1,12 +1,12 @@
 import { ComixError } from '../../../types/Comix';
 import { Command } from '../../../types/Command';
 import { isValidChapterArgs, retrieveAndSendComic } from '../../../utils/chapterUtils';
-import { kyuuChanComixId } from '../../../utils/constants';
+import { whiteTigerAndBlackTigerComixId } from '../../../utils/constants';
 
 const command: Command = {
-  name: 'Retrieve KyuuChan Chapter',
-  description: 'Returns the the kyuu comic number specified by the user',
-  invocations: ['k', 'kyute', 'kyuute', 'kyuuchan', 'kyuu'],
+  name: 'Retrieve White Tiger and Black Tiger Chapter',
+  description: 'Returns the the White Tiger and Black Tiger comic number specified by the user',
+  invocations: ['btwt', 'tigercomic', 'tiger', 'blacktigerandwhitetiger', 'bw', 'tigers', 'b'],
   enabled: true,
   args: true,
   usage: '[invocation] [chapterNumber]',
@@ -32,7 +32,7 @@ const command: Command = {
       }
     };
 
-    await retrieveAndSendComic(kyuuChanComixId, args, onSuccess, onFailure);
+    await retrieveAndSendComic(whiteTigerAndBlackTigerComixId, args, onSuccess, onFailure);
   },
 };
 
