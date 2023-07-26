@@ -3388,6 +3388,12 @@
       "difficulty": "difficult",
       "question": "In Disney's 'Beauty and the Beast', what is the name of Gaston's loyal sidekick?",
       "answer": "LeFou"
+    },
+    {
+      "category": "Misc",
+      "difficulty": "moderate",
+      "question": "In what year did Ruth Wakefield create the original chocolate chip cookie recipe?",
+      "answer": "1938"
     }
   ]
 }
