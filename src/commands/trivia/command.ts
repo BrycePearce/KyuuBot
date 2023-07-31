@@ -51,7 +51,7 @@ const command: Command = {
       difficulty = 'easy', // easy, moderate, difficult
     } = triviaQuestions.misc[Math.floor(Math.random() * triviaQuestions.misc.length)] as TriviaQuestion;
 
-    const answer = decodeHTMLEntities(encodedAnswer);
+    const answer = decodeHTMLEntities(encodedAnswer).trim();
 
     const collector = message.channel.createMessageCollector({ time: 80000 });
     const startTime = new Date();
