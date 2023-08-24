@@ -26,11 +26,15 @@ async function init() {
   if (USE_NEW_COMMAND_LOADER) {
     commandRegistry.discover();
   }
-  // todo: error handling, do not run if cannot connect
-  await Promise.all([
+
+  const res = await Promise.allSettled([
     client.login(process.env.token),
     Mangadex.login(process.env.mangadexUser, process.env.mangadexPassword, '../cache'),
   ]);
+
+  res.forEach((login, i) => {
+    if (login.status === 'rejected') console.warn(`Login failed for ${i === 0 ? 'Discord' : 'Mangadex'}`);
+  });
 }
 
 client.on('ready', async (asd) => {
@@ -41,7 +45,6 @@ client.on('ready', async (asd) => {
     } catch (err) {
       const errorMsg = 'Failed to initialize';
       console.error(errorMsg, err);
-      throw new Error(errorMsg);
     }
   }
 });
