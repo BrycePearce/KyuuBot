@@ -1,5 +1,5 @@
 import { addMilliseconds, formatDistanceToNow, isBefore } from 'date-fns';
-import { Message, TextChannel, User as DiscordUser } from 'discord.js';
+import { User as DiscordUser, Message, TextChannel } from 'discord.js';
 import parseDuration from 'parse-duration';
 import { client } from '../..';
 import { DI } from '../../database';
@@ -8,7 +8,7 @@ import { Command } from '../../types/Command';
 
 let reminderCache: Reminder[] = [];
 
-let reminderInterval: NodeJS.Timer = null;
+let reminderInterval = null;
 
 async function refreshRemindersCache() {
   reminderCache = await DI.reminderRepository.findAll(['user']);
