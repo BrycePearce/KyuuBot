@@ -49,7 +49,7 @@ const command: Command = {
         messages: [
           {
             role: 'system',
-            content: 'You are a helpful assistant. You have a 2000 character count limit for your responses',
+            content: 'You are a helpful assistant. Your response should be 50 words or less unless specified in the prompt.',
           },
           {
             role: 'user',
