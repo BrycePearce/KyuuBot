@@ -83,18 +83,22 @@ const command: Command = {
     // listen for answers
     collector.on('collect', async (guess) => {
       // todo: levenshtein distance
-      if (guess.content.toLowerCase() === answer.toLowerCase()) {
-        const endTime = new Date();
-        collector.stop('success');
-        const pointsEarned = difficultyPts[difficulty] ?? 1;
-
-        await addPoints(message.guildId, guess.author.id, pointsEarned);
-
-        const toalpts = await getPoints(message.guildId, guess.author.id);
-        const elapsedTime = parseFloat(((endTime.valueOf() - startTime.valueOf()) / 1000).toFixed(3));
-        message.channel.send(
-          `**Winner**: ${guess.author}; **Answer**: ${answer}; **Time**: ${elapsedTime}s; **Points**: ${pointsEarned}; **Total**: ${toalpts}`
-        );
+      try {
+        if (guess.content.toLowerCase() === answer.toLowerCase()) {
+          const endTime = new Date();
+          collector.stop('success');
+          const pointsEarned = difficultyPts[difficulty] ?? 1;
+  
+          await addPoints(message.guildId, guess.author.id, pointsEarned);
+  
+          const toalpts = await getPoints(message.guildId, guess.author.id);
+          const elapsedTime = parseFloat(((endTime.valueOf() - startTime.valueOf()) / 1000).toFixed(3));
+          message.channel.send(
+            `**Winner**: ${guess.author}; **Answer**: ${answer}; **Time**: ${elapsedTime}s; **Points**: ${pointsEarned}; **Total**: ${toalpts}`
+          );
+        }
+      } catch (error) {
+        console.error("Error when listening to trivia answers:", error);
       }
     });
 
