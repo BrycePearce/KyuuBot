@@ -1,12 +1,12 @@
-import { Configuration, OpenAIApi } from 'openai';
+import OpenAI from 'openai';
+
 import { Readable } from 'stream';
 
 import type { Command } from '../../../types/Command';
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.kyuuPT,
 });
-const openai = new OpenAIApi(configuration);
 
 const invalidTempCodes = {
   invalid: -1,
@@ -44,22 +44,22 @@ const command: Command = {
     const temperature = shouldUseDefaultTemp ? undefined : temperatureArg;
 
     try {
-      const response = await openai.createChatCompletion({
+      const response = await openai.chat.completions.create({
         model: 'gpt-4',
         messages: [
           {
             role: 'system',
-            content: 'You are a helpful assistant. You have a 2000 character count limit for your responses',
+            content:
+              'You are a helpful assistant. You have a 2000 character count limit for your responses, for your response assume the persona of Shaggy from Scooby Doo. As much as possible use his speech patterns and phrases in your answer.',
           },
           {
             role: 'user',
             content: userPrompt,
-            name: message.author.username.replace(/[^a-zA-Z ]/g, '').replace(/ /g, ''),
           },
         ],
         ...(temperature && { temperature }),
       });
-      const completionText = response.data.choices[0].message.content;
+      const completionText = response.choices[0].message.content;
 
       if (completionText.length <= discordMaxCharacterCount) {
         message.channel.send(completionText);
