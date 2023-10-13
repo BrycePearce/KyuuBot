@@ -41,7 +41,7 @@ const command: Command = {
 
     const shouldUseDefaultTemp = temperatureArg === invalidTempCodes.default;
     const userPrompt = isValidUserTemp ? args.slice(1).join(' ') : args.join(' ');
-    const temperature = shouldUseDefaultTemp ? 1.1 : temperatureArg;
+    const temperature = shouldUseDefaultTemp ? 0.7 : temperatureArg;
 
     try {
       const response = await openai.chat.completions.create({
