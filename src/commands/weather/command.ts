@@ -53,7 +53,7 @@ const command: Command = {
         const geoCoords = await getGeoLocation(parsedLocation);
 
         if (!geoCoords) {
-          message.channel.send({ content: 'No chapter was found', files: [await getRandomEmotePath()] });
+          message.channel.send({ content: 'Coordinates not found', files: [await getRandomEmotePath()] });
           return;
         }
         requestedLocation = {
@@ -155,7 +155,8 @@ const generateOutputEmbed = (
   aqi: OpenWeatherAQI,
   formattedAddress: string
 ): EmbedBuilder => {
-  const formattedAqi = getFormattedAirQualityLabel(aqi.list[0].main.aqi);
+  const hasAqi = aqi?.list[0]?.main?.aqi;
+  const formattedAqi = hasAqi ? getFormattedAirQualityLabel(aqi.list[0].main.aqi) : 'Error';
   const currentWeather = weather.current;
   const currentTemp = kelvinToFahrenheit(currentWeather.temp);
   const chanceRainToday = weather.daily[0].pop;
