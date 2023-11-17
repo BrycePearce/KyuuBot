@@ -29,7 +29,7 @@ const command: Command = {
       const response = await openai.images.generate({
         model: 'dall-e-3',
         prompt,
-        size: '1024x1024',
+        size: '1792x1024',
       });
 
       const responseUrl = response.data[0]?.url;
