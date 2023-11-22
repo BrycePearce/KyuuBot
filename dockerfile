@@ -10,7 +10,7 @@
 # docker rm 7d27 (manually delete image, 7d27 is id or container name)
 
 # Pull base image.
-FROM node:16
+FROM node:20
 
 RUN apt-get update -y
 RUN apt-get install ffmpeg -y
