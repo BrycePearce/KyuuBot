@@ -2,6 +2,8 @@ import OpenAI from 'openai';
 
 import { getRandomEmotePath } from '../../../../utils/files';
 
+import { AttachmentBuilder } from 'discord.js';
+import got from 'got';
 import type { Command } from '../../../../types/Command';
 
 const openai = new OpenAI({
@@ -33,16 +35,20 @@ const command: Command = {
       });
 
       const responseUrl = response.data[0]?.url;
-      if (!responseUrl || (responseUrl ?? '').length === 0) {
+      const responseBuffer = await got(responseUrl, { responseType: 'buffer' });
+
+      if (!responseBuffer || (responseBuffer?.body ?? '').length === 0) {
         message.channel.send({
           content: 'There was a problem generating your image',
           files: [await getRandomEmotePath()],
         });
         return;
       }
-      message.channel.send(response.data[0]?.url);
+
+      const attachment = new AttachmentBuilder(responseBuffer.body, { name: 'image.png' });
+      message.channel.send({ files: [attachment] });
     } catch (ex) {
-      message.channel.send('There was a problem generating your image:\n\n' + ex);
+      message.channel.send('Something really went wrong generating your image:\n\n' + ex);
     }
   },
 };
