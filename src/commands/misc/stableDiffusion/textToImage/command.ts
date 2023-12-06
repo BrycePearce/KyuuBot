@@ -1,4 +1,5 @@
 import got from 'got';
+import yargs from 'yargs';
 import { Command } from '../../../../types/Command';
 
 import type { SDTextToImg } from '../../../../types/StableDiffusion';
@@ -19,8 +20,7 @@ const command: Command = {
   usage: '[size] [model] [prompt]',
   async execute(message, args) {
     try {
-      const modifiedArgs = parseArgs(args);
-      const { model, prompt, size } = extractArgs(modifiedArgs);
+      const { model, prompt, size } = parseArgs(args);
       const sdImgResp: SDTextToImg = await got
         .post('https://stablediffusionapi.com/api/v3/text2img', {
           headers: {
@@ -29,20 +29,15 @@ const command: Command = {
           json: {
             key: process.env.stableDiffusion,
             prompt,
-            negative_prompt: null,
+            negative_prompt:
+              'painting, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, deformed, ugly, blurry, bad anatomy, bad proportions, extra limbs, cloned face, skinny, glitchy, double torso, extra arms, extra hands, mangled fingers, missing lips, ugly face, distorted face, extra legs',
             width: size.width,
             height: size.height,
             samples: '1',
-            num_inference_steps: '20',
-            safety_checker: 'no',
-            enhance_prompt: 'yes',
+            num_inference_steps: '30',
             seed: null,
             guidance_scale: 7.5,
-            multi_lingual: 'no',
-            panorama: 'no',
-            self_attention: 'no',
-            upscale: 'no',
-            embeddings_model: model, // what is model vs embeddings_model
+            model_id: model ?? 'anything-v3', // what is model vs embeddings_model
             webhook: null,
             track_id: null,
           },
@@ -103,32 +98,39 @@ const command: Command = {
 };
 
 const parseArgs = (args: string[]) => {
-  const initialArgs = args.slice(0, 2);
-  const promptArg = args.slice(2).join(' ');
-  const modifiedArray = [...initialArgs, promptArg];
-  return modifiedArray;
-};
+  // Define known flags
+  const knownFlags = ['-m', '-s'];
 
-const extractArgs = (args: string[]) => {
-  // Find and handle size param
-  const imgSizes: string[] = Object.values(ImageKeys);
-  const sizeParamIndex = args.findIndex((arg) => imgSizes.includes(arg.toLowerCase()));
-  const sizeParam = (args?.[sizeParamIndex] as ImageKeys) ?? ImageKeys.small;
+  // Find the index of the first known flag
+  const firstFlagIndex = args.findIndex((word) => knownFlags.includes(word));
 
-  // Remove the size parameter from args if it exists
-  if (sizeParamIndex !== -1) {
-    args.splice(sizeParamIndex, 1);
-  }
+  // Extract the prompt and the flag part of the input
+  const prompt = firstFlagIndex !== -1 ? args.slice(0, firstFlagIndex).join(' ') : args.join(' ');
+  const flagsString = firstFlagIndex !== -1 ? args.slice(firstFlagIndex).join(' ') : '';
 
-  // model will be the second-to-last item if it exists , undefined otherwise
-  const modelParam = args.length > 1 ? args[args.length - 2] : null;
+  // Parse the flags using yargs
+  const argv = yargs(flagsString.split(' '))
+    .option('m', {
+      alias: 'model',
+      type: 'string',
+      default: '',
+      describe: 'Model flag',
+    })
+    .option('s', {
+      alias: 'size',
+      type: 'string',
+      default: '',
+      describe: 'Size flag',
+    })
+    .help(false)
+    .version(false)
+    .parse();
 
-  // Prompt param should always be last
-  const promptParam = args[args.length - 1];
-
-  // For now assume a third parameter is the Embeddings model
-
-  return { prompt: promptParam, size: getImgSize(sizeParam), model: modelParam };
+  return {
+    prompt,
+    model: argv.m,
+    size: getImgSize(argv.s),
+  };
 };
 
 const getImgSize = (size: ImageKeys) => {
