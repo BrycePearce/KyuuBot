@@ -135,7 +135,7 @@ const parseArgs = (args: string[]) => {
 
   return {
     prompt,
-    model: argv.m.length ? argv.m : 'anything-v3',
+    model: argv.m.length ? argv.m : 'sdxl',
     size: getImgSize(argv.s),
   };
 };
