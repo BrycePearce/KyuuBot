@@ -10,6 +10,12 @@ export interface DreamboothResponse {
   webhook_status: string;
 }
 
+export interface DreamboothRetry {
+  status: string;
+  id: number;
+  output: string[];
+}
+
 export interface Meta {
   H: number;
   W: number;

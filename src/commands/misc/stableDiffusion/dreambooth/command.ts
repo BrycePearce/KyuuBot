@@ -1,9 +1,9 @@
 import got from 'got';
 import yargs from 'yargs';
 import { Command } from '../../../../types/Command';
-
-import type { DreamboothResponse } from '../../../../types/StableDiffusion';
 import { getRandomEmotePath } from '../../../../utils/files';
+
+import type { DreamboothResponse, DreamboothRetry } from '../../../../types/StableDiffusion';
 
 enum ImageKeys {
   small = 'sm',
@@ -21,7 +21,7 @@ const command: Command = {
   async execute(message, args) {
     try {
       const { model, prompt, size } = parseArgs(args);
-      const sdImgResp: DreamboothResponse = await got
+      let sdImgResp: DreamboothResponse | DreamboothRetry = await got
         .post('https://stablediffusionapi.com/api/v4/dreambooth', {
           headers: {
             'Content-Type': 'application/json',
@@ -44,12 +44,19 @@ const command: Command = {
         })
         .json();
 
-      if (sdImgResp?.status !== 'success') {
-        const hasErr = sdImgResp?.status === 'error';
-        throw new Error(JSON.stringify(hasErr ? sdImgResp : 'Processing image failed'));
+      let hasRetryFailed = false;
+      if (sdImgResp?.status == 'processing') {
+        const retryResponse = await handleProcessingImg(sdImgResp.id);
+        if (retryResponse?.output?.[0]?.length > 0) {
+          sdImgResp = retryResponse;
+        } else hasRetryFailed = true;
       }
 
-      const imgRespPath = sdImgResp?.output?.[0];
+      if (sdImgResp?.status === 'failed' || sdImgResp?.status === 'error' || hasRetryFailed) {
+        throw new Error(JSON.stringify('Processing image failed'));
+      }
+
+      const imgRespPath = sdImgResp.output[0];
       const nsfwImageResp: { has_nsfw_concept: boolean[]; status: 'error' } = await got
         .post('https://stablediffusionapi.com/api/v3/nsfw_image_check', {
           headers: {
@@ -145,6 +152,39 @@ const getImgSize = (size: ImageKeys) => {
       return { width: 1024, height: 1024 };
     }
   }
+};
+
+const handleProcessingImg = async (imgId: number) => {
+  try {
+    return await retryForProcessedImg(imgId);
+  } catch (error) {
+    return null;
+  }
+};
+
+const retryForProcessedImg = async (imgId: number, retries: number = 3, delays: number[] = [3, 7, 15]) => {
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      const response: DreamboothRetry = await got
+        .post(`https://stablediffusionapi.com/api/v3/dreambooth/fetch/${imgId}`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          json: {
+            key: process.env.stableDiffusion,
+            id: imgId,
+          },
+        })
+        .json();
+      if (response.status === 'success') {
+        return response;
+      }
+    } catch (error) {
+      if (attempt === retries - 1) throw error;
+    }
+    await new Promise((resolve) => setTimeout(resolve, delays[attempt] * 1000));
+  }
+  throw new Error('API call failed after maximum retries');
 };
 
 export default command;
