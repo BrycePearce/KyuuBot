@@ -2,7 +2,7 @@ import got from 'got';
 import yargs from 'yargs';
 import { Command } from '../../../../types/Command';
 
-import type { SDTextToImg } from '../../../../types/StableDiffusion';
+import type { DreamboothResponse } from '../../../../types/StableDiffusion';
 import { getRandomEmotePath } from '../../../../utils/files';
 
 enum ImageKeys {
@@ -14,32 +14,32 @@ enum ImageKeys {
 const command: Command = {
   name: 'SDText2Img',
   description: 'Generate art from text using Stable Diffusion',
-  invocations: ['art', 'a'],
+  invocations: ['art', 'a', 'sd'],
   enabled: true,
   args: true,
   usage: '[size] [model] [prompt]',
   async execute(message, args) {
     try {
       const { model, prompt, size } = parseArgs(args);
-      const sdImgResp: SDTextToImg = await got
-        .post('https://stablediffusionapi.com/api/v3/text2img', {
+      const sdImgResp: DreamboothResponse = await got
+        .post('https://stablediffusionapi.com/api/v4/dreambooth', {
           headers: {
             'Content-Type': 'application/json',
           },
           json: {
             key: process.env.stableDiffusion,
             prompt,
-            negative_prompt:
-              'painting, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, deformed, ugly, blurry, bad anatomy, bad proportions, extra limbs, cloned face, skinny, glitchy, double torso, extra arms, extra hands, mangled fingers, missing lips, ugly face, distorted face, extra legs',
-            width: size.width,
-            height: size.height,
-            samples: '1',
-            num_inference_steps: '30',
-            seed: null,
+            channel: 'dreambooth',
+            enhance_prompt: 'yes',
             guidance_scale: 7.5,
-            model_id: model ?? 'anything-v3', // what is model vs embeddings_model
-            webhook: null,
+            height: size.height,
+            width: size.width,
+            model_id: model,
+            samples: '1',
+            seed: null,
+            steps: 30,
             track_id: null,
+            webhook: null,
           },
         })
         .json();
@@ -128,7 +128,7 @@ const parseArgs = (args: string[]) => {
 
   return {
     prompt,
-    model: argv.m,
+    model: argv.m.length ? argv.m : 'anything-v3',
     size: getImgSize(argv.s),
   };
 };
