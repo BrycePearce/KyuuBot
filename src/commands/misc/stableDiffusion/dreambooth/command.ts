@@ -1,6 +1,7 @@
 import got from 'got';
 import yargs from 'yargs';
 import { Command } from '../../../../types/Command';
+import { sdModels } from '../../../../utils/constants';
 import { getRandomEmotePath } from '../../../../utils/files';
 
 import type { DreamboothResponse, DreamboothRetry } from '../../../../types/StableDiffusion';
@@ -20,7 +21,7 @@ const command: Command = {
   usage: '[size] [model] [prompt]',
   async execute(message, args) {
     try {
-      const { model, prompt, size } = parseArgs(args);
+      const { model, prompt, size, isRandomModel } = parseArgs(args);
       let sdImgResp: DreamboothResponse | DreamboothRetry = await got
         .post('https://stablediffusionapi.com/api/v4/dreambooth', {
           headers: {
@@ -53,7 +54,7 @@ const command: Command = {
       }
 
       if (sdImgResp?.status === 'failed' || sdImgResp?.status === 'error' || hasRetryFailed) {
-        throw new Error(JSON.stringify('Processing image failed'));
+        throw new Error(JSON.stringify(hasRetryFailed ? 'Request timed out' : 'Processing image failed'));
       }
 
       const imgRespPath = sdImgResp.output[0];
@@ -74,7 +75,7 @@ const command: Command = {
 
       if (isNsfwImageRespErr) {
         message.channel.send({
-          content: '**NSFW checker API is down, click at your own risk!**',
+          content: `**NSFW checker API is down, click at your own risk!**${isRandomModel ? ` [${model}]` : ''}`,
           files: [
             {
               name: 'SPOILER_FILE.png',
@@ -84,7 +85,7 @@ const command: Command = {
         });
       } else if (isMessageContentNSFW) {
         message.channel.send({
-          content: '-**NSFW**-',
+          content: `-**NSFW**${isRandomModel ? ` [${model}]` : ''}-`,
           files: [
             {
               name: 'SPOILER_FILE.png',
@@ -93,7 +94,7 @@ const command: Command = {
           ],
         });
       } else {
-        message.channel.send({ files: [imgRespPath] });
+        message.channel.send({ files: [imgRespPath], content: isRandomModel ? ` [${model}]` : '' });
       }
     } catch (err) {
       message.channel.send({
@@ -133,11 +134,22 @@ const parseArgs = (args: string[]) => {
     .version(false)
     .parse();
 
+  const isRandomModel = !argv.m || argv.m.toLowerCase() === 'random' || argv.m.toLowerCase() === 'r';
   return {
     prompt,
-    model: argv.m.length ? argv.m : 'sdxl',
+    model: findModelFromNameOrAlias(argv.m, isRandomModel),
     size: getImgSize(argv.s),
+    isRandomModel,
   };
+};
+
+const findModelFromNameOrAlias = (modelStr: string, isRandomModel: boolean) => {
+  if (isRandomModel) {
+    const nonRandomModels = sdModels.filter((model) => model.model !== 'random');
+    return nonRandomModels[Math.floor(Math.random() * nonRandomModels.length)];
+  } else {
+    return sdModels.find((model) => model.model === modelStr || model.modelAlts.includes(modelStr)) || modelStr;
+  }
 };
 
 const getImgSize = (size: ImageKeys) => {
@@ -162,7 +174,7 @@ const handleProcessingImg = async (imgId: number) => {
   }
 };
 
-const retryForProcessedImg = async (imgId: number, delays: number[] = [5, 10, 15, 30]) => {
+const retryForProcessedImg = async (imgId: number, delays: number[] = [5, 10, 15, 30, 45]) => {
   const retries = delays.length;
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
