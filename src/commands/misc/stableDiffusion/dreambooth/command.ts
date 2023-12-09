@@ -54,7 +54,15 @@ const command: Command = {
       }
 
       if (sdImgResp?.status === 'failed' || sdImgResp?.status === 'error' || hasRetryFailed) {
-        throw new Error(JSON.stringify(hasRetryFailed ? 'Request timed out' : 'Processing image failed'));
+        throw new Error(
+          JSON.stringify(
+            hasRetryFailed
+              ? 'Request timed out'
+              : (sdImgResp as any)?.messege
+              ? (sdImgResp as any)?.messege
+              : 'Processing image failed'
+          )
+        );
       }
 
       const imgRespPath = sdImgResp.output[0];
@@ -146,9 +154,11 @@ const parseArgs = (args: string[]) => {
 const findModelFromNameOrAlias = (modelStr: string, isRandomModel: boolean) => {
   if (isRandomModel) {
     const nonRandomModels = sdModels.filter((model) => model.model !== 'random');
-    return nonRandomModels[Math.floor(Math.random() * nonRandomModels.length)];
+    const randomModel = nonRandomModels[Math.floor(Math.random() * nonRandomModels.length)];
+    return randomModel.model;
   } else {
-    return sdModels.find((model) => model.model === modelStr || model.modelAlts.includes(modelStr)) || modelStr;
+    const selectedModel = sdModels.find((model) => model.model === modelStr || model.modelAlts.includes(modelStr));
+    return selectedModel?.model ?? modelStr;
   }
 };
 
