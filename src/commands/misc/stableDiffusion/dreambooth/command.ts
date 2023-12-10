@@ -67,7 +67,7 @@ const command: Command = {
 
       if (isNsfwImageRespErr) {
         message.channel.send({
-          content: `**NSFW checker API is down, click at your own risk!**${isRandomModel ? ` [${modelId}]` : ''}`,
+          content: `**NSFW checker API is down, click at your own risk!** ${modelId}`,
           files: [
             {
               name: 'SPOILER_FILE.png',
@@ -77,7 +77,7 @@ const command: Command = {
         });
       } else if (isMessageContentNSFW) {
         message.channel.send({
-          content: `-**NSFW**${isRandomModel ? ` [${modelId}]` : ''}-`,
+          content: `-**NSFW** ${modelId}-`,
           files: [
             {
               name: 'SPOILER_FILE.png',
@@ -86,11 +86,10 @@ const command: Command = {
           ],
         });
       } else {
-        message.channel.send({ files: [imgRespPath], content: isRandomModel ? ` [${modelId}]` : '' });
+        message.channel.send({ files: [imgRespPath], content: modelId });
       }
     } catch (err) {
       buttonModelList.delete();
-
       message.channel.send({
         content: `There was a problem generating your image. ${err}`,
         files: [await getRandomEmotePath()],

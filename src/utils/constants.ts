@@ -90,6 +90,6 @@ export const sdModels: SdDefaultModels[] = [
     model: 'custom',
     modelAlts: ['c'],
     description: 'Custom text prompt model',
-    buttonStyle: ButtonStyle.Danger,
+    buttonStyle: ButtonStyle.Primary,
   },
 ];
