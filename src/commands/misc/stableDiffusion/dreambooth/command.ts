@@ -88,8 +88,16 @@ const command: Command = {
       } else {
         message.channel.send({ files: [imgRespPath], content: `[${modelId}]` });
       }
-    } catch (err) {
-      buttonModelList.delete();
+    } catch (err: any) {
+      try {
+        if (err?.code === 'InteractionCollectorError') {
+          console.log('InteractionCollectorError');
+          buttonModelList.delete();
+          return;
+        }
+        buttonModelList.delete();
+      } catch (ex) {}
+
       message.channel.send({
         content: `There was a problem generating your image. ${err}`,
         files: [await getRandomEmotePath()],
@@ -223,7 +231,7 @@ const handleProcessingImg = async (imgId: number) => {
   }
 };
 
-const retryForProcessedImg = async (imgId: number, delays: number[] = [5, 10, 15, 30, 45]) => {
+const retryForProcessedImg = async (imgId: number, delays: number[] = [5, 10, 15, 30, 45, 60]) => {
   const retries = delays.length;
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
