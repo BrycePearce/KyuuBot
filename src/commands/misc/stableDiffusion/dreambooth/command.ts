@@ -27,42 +27,42 @@ const command: Command = {
     const prompt = args.join(' ');
 
     // First, send the message with the buttons
-    const sentMessage = await message.channel.send({
+    const buttonModelList = await message.channel.send({
       content: 'Choose a model:',
       components: generateModelButtonRows(),
     });
 
-    // Wait for the button interaction
-    const interaction = await sentMessage.awaitMessageComponent({
-      filter: (i: ButtonInteraction) => {
-        // Check if the button is not 'custom' before deferring
-        if (i.customId !== 'custom') {
-          i.deferUpdate();
-        }
-        return i.user.id === message.author.id && i.isButton();
-      },
-      componentType: ComponentType.Button,
-      time: 10000,
-    });
-
-    // Process the interaction
-    let modelId = interaction.customId;
-    const isCustomModel = modelId === 'custom';
-    const isRandomModel = modelId === 'random';
-
-    if (isCustomModel) {
-      modelId = await collectCustomModelId(interaction);
-    } else if (isRandomModel) {
-      const nonRandomModels = sdModels.filter((model) => model.model !== 'random');
-      const randomModel = nonRandomModels[Math.floor(Math.random() * nonRandomModels.length)];
-      modelId = randomModel.model;
-    }
-
-    // remove the buttons
-    await sentMessage.delete();
-
-    // attempt to display response
     try {
+      // Wait for the button interaction
+      const interaction = await buttonModelList.awaitMessageComponent({
+        filter: (i: ButtonInteraction) => {
+          // Check if the button is not 'custom' before deferring
+          if (i.customId !== 'custom') {
+            i.deferUpdate();
+          }
+          return i.user.id === message.author.id && i.isButton();
+        },
+        componentType: ComponentType.Button,
+        time: 30000,
+      });
+
+      // Process the interaction
+      let modelId = interaction.customId;
+      const isCustomModel = modelId === 'custom';
+      const isRandomModel = modelId === 'random';
+
+      if (isCustomModel) {
+        modelId = await collectCustomModelId(interaction);
+      } else if (isRandomModel) {
+        const nonRandomModels = sdModels.filter((model) => model.model !== 'random');
+        const randomModel = nonRandomModels[Math.floor(Math.random() * nonRandomModels.length)];
+        modelId = randomModel.model;
+      }
+
+      // remove the buttons
+      await buttonModelList.delete();
+
+      // attempt to display response
       const { isNsfwImageRespErr, imgRespPath, isMessageContentNSFW } = await getStableDiffusionData(prompt, modelId);
 
       if (isNsfwImageRespErr) {
@@ -89,6 +89,8 @@ const command: Command = {
         message.channel.send({ files: [imgRespPath], content: isRandomModel ? ` [${modelId}]` : '' });
       }
     } catch (err) {
+      buttonModelList.delete();
+
       message.channel.send({
         content: `There was a problem generating your image. ${err}`,
         files: [await getRandomEmotePath()],
