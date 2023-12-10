@@ -22,7 +22,7 @@ const command: Command = {
   invocations: ['art', 'a', 'sd'],
   enabled: true,
   args: true,
-  usage: '[size] [model] [prompt]',
+  usage: '[prompt]',
   async execute(message, args) {
     const prompt = args.join(' ');
 
@@ -45,6 +45,7 @@ const command: Command = {
         componentType: ComponentType.Button,
         time: 30000,
       });
+      console.log(interaction.replied);
 
       // Process the interaction
       let modelId = interaction.customId;
@@ -60,7 +61,7 @@ const command: Command = {
       }
 
       // remove the buttons
-      await buttonModelList.delete();
+      if (buttonModelList.deletable) buttonModelList.delete();
 
       // attempt to display response
       const { isNsfwImageRespErr, imgRespPath, isMessageContentNSFW } = await getStableDiffusionData(prompt, modelId);
@@ -89,15 +90,6 @@ const command: Command = {
         message.channel.send({ files: [imgRespPath], content: `[${modelId}]` });
       }
     } catch (err: any) {
-      try {
-        if (err?.code === 'InteractionCollectorError') {
-          console.log('InteractionCollectorError');
-          buttonModelList.delete();
-          return;
-        }
-        buttonModelList.delete();
-      } catch (ex) {}
-
       message.channel.send({
         content: `There was a problem generating your image. ${err}`,
         files: [await getRandomEmotePath()],
