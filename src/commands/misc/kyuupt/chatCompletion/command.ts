@@ -2,18 +2,16 @@ import OpenAI from 'openai';
 
 import { Readable } from 'stream';
 
-import type { Command } from '../../../types/Command';
+import type { Command } from '../../../../types/Command';
 
 const openai = new OpenAI({
-  apiKey: process.env.kyuuPT,
+  apiKey: process.env.gptChatCompletion,
 });
-
 const invalidTempCodes = {
   invalid: -1,
   default: -2,
 };
 const discordMaxCharacterCount = 2000;
-// const max_tokens = 250;
 
 const command: Command = {
   name: 'KyuuPT',
@@ -45,7 +43,7 @@ const command: Command = {
 
     try {
       const response = await openai.chat.completions.create({
-        model: 'gpt-4-1106-preview',
+        model: 'gpt-3.5-turbo',
         messages: [
           {
             role: 'system',

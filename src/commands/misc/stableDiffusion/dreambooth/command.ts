@@ -45,7 +45,6 @@ const command: Command = {
         componentType: ComponentType.Button,
         time: 30000,
       });
-      console.log(interaction.replied);
 
       // Process the interaction
       let modelId = interaction.customId;

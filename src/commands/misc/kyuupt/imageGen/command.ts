@@ -7,7 +7,7 @@ import got from 'got';
 import type { Command } from '../../../../types/Command';
 
 const openai = new OpenAI({
-  apiKey: process.env.kyuuPT,
+  apiKey: process.env.gptImageGen,
 });
 
 const command: Command = {
