@@ -43,7 +43,7 @@ const command: Command = {
 
     try {
       const response = await openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4-1106-preview',
         messages: [
           {
             role: 'system',
