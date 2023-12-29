@@ -59,7 +59,7 @@ const command: Command = {
       });
       const completionText = response.choices[0].message.content;
 
-      if (completionText.length <= discordMaxCharacterCount) {
+      if (completionText && completionText.length <= discordMaxCharacterCount) {
         message.channel.send(completionText);
         return;
       }
