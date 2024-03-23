@@ -154,7 +154,7 @@ const collectCustomModelId = async (interaction: ButtonInteraction): Promise<str
 
 const getStableDiffusionData = async (prompt: string, model: string) => {
   let sdImgResp: DreamboothResponse | DreamboothRetry = await got
-    .post('https://stablediffusionapi.com/api/v4/dreambooth', {
+    .post('https://modelslab.com/api/v4/dreambooth', {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -164,8 +164,8 @@ const getStableDiffusionData = async (prompt: string, model: string) => {
         channel: 'dreambooth',
         enhance_prompt: 'yes',
         guidance_scale: 7.5,
-        height: 1024,
-        width: 1024,
+        height: 512,
+        width: 512,
         model_id: model,
         samples: '1',
         seed: null,
@@ -198,7 +198,7 @@ const getStableDiffusionData = async (prompt: string, model: string) => {
 
   const imgRespPath = sdImgResp.output[0];
   const nsfwImageResp: { has_nsfw_concept: boolean[]; status: 'error' } = await got
-    .post('https://stablediffusionapi.com/api/v3/nsfw_image_check', {
+    .post('https://modelslab.com/api/v3/nsfw_image_check', {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -227,7 +227,7 @@ const retryForProcessedImg = async (imgId: number, delays: number[] = [5, 10, 15
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
       const response: DreamboothRetry = await got
-        .post(`https://stablediffusionapi.com/api/v3/dreambooth/fetch/${imgId}`, {
+        .post(`https://modelslab.com/api/v3/dreambooth/fetch/${imgId}`, {
           headers: {
             'Content-Type': 'application/json',
           },

@@ -16,7 +16,7 @@ const discordMaxCharacterCount = 2000;
 const command: Command = {
   name: 'KyuuPT',
   description: 'Integrates OpenAI Api',
-  invocations: ['g', 'kyuupt', 'ask', 'askJeeves', 'chat', 'write'],
+  invocations: ['kyuupt', 'ask', 'askJeeves', 'chat', 'write'],
   args: false,
   enabled: true,
   usage: '[invocation] [temperature (percent or decimal e.g. 30, 30%, or 0.3)] [query]',
