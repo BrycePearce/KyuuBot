@@ -78,12 +78,9 @@ const command: Command = {
         content: `The response was too long, so I've attached it as a file`,
       });
     } catch (error: any) {
-      console.log(error);
       if (error?.response) {
-        console.log(error.response.data);
         message.channel.send(`🙀 Error: ${error.response.status}, ${JSON.stringify(error.response.data)} 🙀`);
       } else {
-        console.log(error.message);
         message.channel.send(`🙀 Error: ${error.message} 🙀`);
       }
       return;

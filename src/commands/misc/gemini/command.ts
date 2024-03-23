@@ -16,10 +16,14 @@ const command: Command = {
       'You are a helpful assistant. Your response should be 80 words or less, unless necessary for a full answer.';
     const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
 
-    const result = await model.generateContent(`${role} ${userPrompt}`);
-    const response = await result.response;
-    const text = response.text();
-    message.channel.send(text);
+    try {
+      const result = await model.generateContent(`${role} ${userPrompt}`);
+      const response = await result.response;
+      const text = response.text();
+      message.channel.send(text);
+    } catch (error) {
+      message.channel.send(`🙀 Error: ${JSON.stringify(error)} 🙀`);
+    }
   },
 };
 
