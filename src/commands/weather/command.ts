@@ -213,11 +213,11 @@ const convertDecimalToPercent = (decimal: number, fixed: number = 2): number => 
 function getUvIndexRisk(uvIndex: number): string {
   if (uvIndex < 2) {
     return 'Low';
-  } else if (uvIndex >= 2 && uvIndex <= 5) {
+  } else if (uvIndex <= 5) {
     return 'Moderate';
-  } else if (uvIndex >= 6 && uvIndex <= 7) {
+  } else if (uvIndex <= 7) {
     return 'High';
-  } else if (uvIndex >= 8 && uvIndex <= 10) {
+  } else if (uvIndex <= 10) {
     return 'Very high';
   } else {
     return 'Extreme';
