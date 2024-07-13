@@ -10,7 +10,7 @@ export const saveImageToTmp = async (url: string, writePath: string): Promise<Pr
   return new Promise((resolve, reject) => {
     const fetchStream = got.stream(url);
 
-    fetchStream.pipe(createWriteStream(writePath));
+    fetchStream.pipe(createWriteStream(writePath) as unknown as NodeJS.WritableStream);
 
     fetchStream.on('error', () => {
       reject(new Error('Failed to download image'));
