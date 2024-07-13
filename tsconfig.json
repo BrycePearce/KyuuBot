@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "es6",
     "module": "commonjs",
+    "types": ["node", "googlemaps"],
     "sourceMap": true,
     "outDir": "./out",
     "rootDir": "./src",
@@ -9,8 +10,8 @@
     "noImplicitAny": false,
     "strictNullChecks": false,
     "esModuleInterop": true,
-    "skipLibCheck": true,
-    "lib": ["ES2021.String"],
+    "skipLibCheck": false,
+    "lib": ["ES2021"],
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,

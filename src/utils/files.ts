@@ -6,18 +6,22 @@ import { promisify } from 'util';
 import { PromiseResolver } from './../types/PromiseResolver';
 
 export const saveImageToTmp = async (url: string, writePath: string): Promise<PromiseResolver> => {
-  // todo: make a database and cache all chapters instead of getting them per request
   return new Promise((resolve, reject) => {
     const fetchStream = got.stream(url);
+    const writeStream: any = createWriteStream(writePath);
 
-    fetchStream.pipe(createWriteStream(writePath) as unknown as NodeJS.WritableStream);
+    fetchStream.pipe(writeStream);
 
-    fetchStream.on('error', () => {
-      reject(new Error('Failed to download image'));
+    writeStream.on('finish', () => {
+      resolve({ success: true });
     });
 
-    fetchStream.on('end', () => {
-      resolve({ success: true });
+    writeStream.on('error', (err) => {
+      reject(new Error(`Failed to write image: ${err.message}`));
+    });
+
+    fetchStream.on('error', (err) => {
+      reject(new Error(`Failed to download image: ${err.message}`));
     });
   });
 };

@@ -34,13 +34,14 @@
   "devDependencies": {
     "@mikro-orm/cli": "^4.5.9",
     "@types/fluent-ffmpeg": "^2.1.24",
-    "@types/google.maps": "^3.53.4",
+    "@types/google.maps": "^3.55.11",
+    "@types/googlemaps": "^3.43.3",
     "@types/node": "^20.4.2",
     "@types/uuid": "^9.0.2",
     "husky": "^8.0.3",
     "prettier": "^2.4.1",
     "pretty-quick": "^3.1.1",
-    "typescript": "^5.1.6"
+    "typescript": "^5.5.3"
   },
   "mikro-orm": {
     "useTsNode": true,
