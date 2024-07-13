@@ -20,7 +20,7 @@ export const writeTextOnMedia = async (
   const staticFilter = [`drawtext=text=${textToWrite}':fontcolor=black:fontsize=10:x=${width - 100}:y=${height - 20}`];
   const filter = isUrlExtensionStatic(mediaInputPath) ? staticFilter : gifFilter;
   return new Promise((resolve, reject) => {
-    const writeTextToMedia = ffmpeg(mediaInputPath);
+    const writeTextToMedia: any = ffmpeg(mediaInputPath);
     writeTextToMedia.complexFilter(filter); // todo: make it correct font
     writeTextToMedia.on('error', (err) => {
       console.log(err); // todo: add better error handling here
