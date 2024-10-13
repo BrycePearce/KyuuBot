@@ -9,6 +9,8 @@ class Dice implements ICommand {
 
   @Invoke()
   async DefaultRoll(args, message: Message) {
+    const channel = message.channel;
+    if (!channel.isSendable()) return;
     try {
       const rollParams = args.join('');
       if (!isValidArgs(rollParams)) return;
@@ -16,13 +18,13 @@ class Dice implements ICommand {
 
       const sumTotal = roll.input.sides * roll.input.quantity;
       const percentOfTotal = (100 * roll.result) / sumTotal;
-      message.channel.send(
+      channel.send(
         `:: Total ${roll.result} / ${sumTotal} [${Math.round(percentOfTotal)}%] :: Results [${roll.rolled.join(
           ', '
         )}] ::`
       );
     } catch (ex) {
-      message.channel.send(ex['message'] || 'Something went really wrong');
+      channel.send(ex['message'] || 'Something went really wrong');
     }
   }
 }

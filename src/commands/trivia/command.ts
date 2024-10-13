@@ -37,6 +37,8 @@ const command: Command = {
   enabled: true,
   usage: '[invocation]',
   async execute(message) {
+    const channel = message.channel;
+    if (!channel.isSendable()) return;
     if (
       message.content.toLowerCase().includes('addTriviaPts'.toLowerCase()) &&
       message.author.id === '226100196675682304'
@@ -49,15 +51,17 @@ const command: Command = {
       question,
       answer: encodedAnswer,
       difficulty = 'easy', // easy, moderate, difficult
-    } = triviaQuestions.misc[Math.floor(Math.random() * triviaQuestions.misc.length)] as TriviaQuestion;
+    } = (triviaQuestions as any).misc[
+      Math.floor(Math.random() * (triviaQuestions as any).misc.length)
+    ] as TriviaQuestion;
 
     const answer = decodeHTMLEntities(encodedAnswer).trim();
 
-    const collector = message.channel.createMessageCollector({ time: 80000 });
+    const collector = channel.createMessageCollector({ time: 80000 });
     const startTime = new Date();
 
     // Ask the trivia question
-    message.channel.send(decodeHTMLEntities(question));
+    channel.send(decodeHTMLEntities(question));
 
     const hintIntervals = [25000, 45000, 60000];
     let hintMask = generateStrMask(answer);
@@ -67,7 +71,7 @@ const command: Command = {
     const hintOutputTimers = hintIntervals.map((interval) =>
       setTimeout(() => {
         const revealedHint = revealHint(answer, hintMask, hintPercentToReveal);
-        message.channel.send(`Hint: ${revealedHint}`);
+        channel.send(`Hint: ${revealedHint}`);
 
         // update the hint mask
         hintMask = revealedHint;
@@ -93,7 +97,7 @@ const command: Command = {
 
           const toalpts = await getPoints(message.guildId, guess.author.id);
           const elapsedTime = parseFloat(((endTime.valueOf() - startTime.valueOf()) / 1000).toFixed(3));
-          message.channel.send(
+          channel.send(
             `**Winner**: ${guess.author}; **Answer**: ${answer}; **Time**: ${elapsedTime}s; **Points**: ${pointsEarned}; **Total**: ${toalpts}`
           );
         }
@@ -106,7 +110,7 @@ const command: Command = {
       // clear out any hint timers left
       hintOutputTimers.forEach((timer) => clearTimeout(timer));
 
-      if (msg.toLowerCase() === 'time') message.channel.send(`Time's up! The answer was **${answer}**`);
+      if (msg.toLowerCase() === 'time') channel.send(`Time's up! The answer was **${answer}**`);
     });
   },
 };

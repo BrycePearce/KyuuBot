@@ -25,6 +25,8 @@ const command: Command = {
   enabled: true,
   usage: '[invocation]',
   async execute(message, args) {
+    const channel = message.channel;
+    if (!channel.isSendable()) return;
     let comic: XKCD;
     try {
       if (args.length === 0) {
@@ -34,10 +36,10 @@ const command: Command = {
       } else {
         comic = await getRandomComic();
       }
-      await message.channel.send({ files: [comic.img] });
-      message.channel.send(`[${comic.alt}]`);
+      await channel.send({ files: [comic.img] });
+      channel.send(`[${comic.alt}]`);
     } catch (ex) {
-      message.channel.send(ex['message'] || 'Something went really wrong');
+      channel.send(ex['message'] || 'Something went really wrong');
     }
   },
 };

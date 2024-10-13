@@ -11,6 +11,8 @@ const command: Command = {
   enabled: true,
   usage: '[invocation]',
   async execute(message, args) {
+    const channel = message.channel;
+    if (!channel.isSendable()) return;
     const userPrompt = args.join(' ');
     const role =
       'You are a helpful assistant. Your response should be 80 words or less, unless necessary for a full answer.';
@@ -20,9 +22,9 @@ const command: Command = {
       const result = await model.generateContent(`${role} ${userPrompt}`);
       const response = await result.response;
       const text = response.text();
-      message.channel.send(text);
+      channel.send(text);
     } catch (error) {
-      message.channel.send(`🙀 Error: ${JSON.stringify(error)} 🙀`);
+      channel.send(`🙀 Error: ${JSON.stringify(error)} 🙀`);
     }
   },
 };

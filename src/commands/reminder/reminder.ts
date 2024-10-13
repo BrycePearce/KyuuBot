@@ -1,5 +1,5 @@
 import { addMilliseconds, formatDistanceToNow, isBefore } from 'date-fns';
-import { Message, TextChannel, User as DiscordUser } from 'discord.js';
+import { User as DiscordUser, Message, TextChannel } from 'discord.js';
 import parseDuration from 'parse-duration';
 import { client } from '../..';
 import { DI } from '../../database';
@@ -41,7 +41,9 @@ class ReminderCommand implements ICommand {
   }
 
   @Invoke('list')
-  async list(args: string[], message: Message) {
+  async list(_args: string[], message: Message) {
+    const channel = message.channel;
+    if (!channel.isSendable()) return;
     let user = await DI.userRepository.findOne(message.author.id, ['reminders']);
 
     let reminders = 'You have no reminders 😓';
@@ -59,7 +61,7 @@ class ReminderCommand implements ICommand {
       reminders = reminderStrings.join('\n');
     }
 
-    message.channel.send(
+    channel.send(
       `${message.author.toString()} Reminders:\n\n${reminders}\n ${
         user?.reminders.length > 4 ? "\nWow! You're a busy dude! 😅" : ''
       }${user?.reminders.length > 1 ? '\n You can delete some of these... `.reminder del #`' : ''}`
@@ -68,10 +70,12 @@ class ReminderCommand implements ICommand {
 
   @Invoke(['delete', 'del', 'remove', 'rm', 'rem'])
   async remove(args: string[], message: Message) {
+    const channel = message.channel;
+    if (!channel.isSendable()) return;
     const sortedIndexKey = args[0];
     const parsedSortedIndexKey = parseInt(sortedIndexKey);
     if (isNaN(parsedSortedIndexKey)) {
-      return message.channel.send('**Not a reminder number**');
+      return channel.send('**Not a reminder number**');
     }
 
     let user = await DI.userRepository.findOne(message.author.id, ['reminders']);
@@ -84,16 +88,18 @@ class ReminderCommand implements ICommand {
 
   @Invoke()
   async create(args: string[], message: Message) {
+    const channel = message.channel;
+    if (!channel.isSendable()) return;
     const duration = args.shift();
     const msg = args.join(' ');
     const reminderOffset = parseDuration(duration);
 
     if (msg.length < 1) {
-      return message.channel.send('**Invalid Parameters.** *Example:* `.reminder 1h30m Take out the trash`');
+      return channel.send('**Invalid Parameters.** *Example:* `.reminder 1h30m Take out the trash`');
     }
 
     if (reminderOffset === null) {
-      return message.channel.send('**Invalid duration.** *Example:* `.reminder 1h30m Take out the trash`');
+      return channel.send('**Invalid duration.** *Example:* `.reminder 1h30m Take out the trash`');
     }
 
     let user = await DI.userRepository.findOne(message.author.id);
@@ -110,13 +116,13 @@ class ReminderCommand implements ICommand {
     reminder.user = user;
     reminder.message = msg;
     reminder.triggerAt = addMilliseconds(new Date(), reminderOffset);
-    reminder.context = message.channel.id;
+    reminder.context = channel.id;
 
     user.reminders.add(reminder);
 
     await DI.userRepository.persistAndFlush(user);
 
-    message.channel.send(
+    channel.send(
       `${message.author.toString()} you will be reminded *${formatDistanceToNow(reminder.triggerAt, {
         addSuffix: true,
       })}*: ${msg}`

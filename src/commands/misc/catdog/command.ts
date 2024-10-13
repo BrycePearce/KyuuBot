@@ -14,17 +14,19 @@ const command: Command = {
   enabled: true,
   usage: '[invocation]',
   async execute(message) {
+    const channel = message.channel;
+    if (!channel.isSendable()) return;
     const shouldGiveOpposite = Math.random() * 100 <= percentOppositeChance;
     const animal = getAnimal(message.content, shouldGiveOpposite);
 
     try {
       const url = await getAnimalUrl(animal);
-      await message.channel.send({
+      await channel.send({
         content: shouldGiveOpposite ? `Have a ${animal} instead` : null,
         files: [url],
       });
     } catch (ex) {
-      message.channel.send((ex && ex['message']) || 'Something really went wrong');
+      channel.send((ex && ex['message']) || 'Something really went wrong');
     }
   },
 };

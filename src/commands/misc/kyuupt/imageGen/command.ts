@@ -18,8 +18,10 @@ const command: Command = {
   enabled: true,
   usage: '[invocation] [prompt]',
   async execute(message, args) {
+    const channel = message.channel;
+    if (!channel.isSendable()) return;
     if (args.length === 0) {
-      message.channel.send(
+      channel.send(
         '🙀 To use KyuuPT image generation, you need to add a prompt to your invocation. For example .generate [prompt] 🙀'
       );
       return;
@@ -38,7 +40,7 @@ const command: Command = {
       const responseBuffer = await got(responseUrl, { responseType: 'buffer' });
 
       if (!responseBuffer || (responseBuffer?.body ?? '').length === 0) {
-        message.channel.send({
+        channel.send({
           content: 'There was a problem generating your image',
           files: [await getRandomEmotePath()],
         });
@@ -46,9 +48,9 @@ const command: Command = {
       }
 
       const attachment = new AttachmentBuilder(responseBuffer.body, { name: 'image.png' });
-      message.channel.send({ files: [attachment] });
+      channel.send({ files: [attachment] });
     } catch (ex) {
-      message.channel.send('Something really went wrong generating your image:\n\n' + ex);
+      channel.send('Something really went wrong generating your image:\n\n' + ex);
     }
   },
 };

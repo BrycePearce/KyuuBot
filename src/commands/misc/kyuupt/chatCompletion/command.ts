@@ -21,10 +21,10 @@ const command: Command = {
   enabled: true,
   usage: '[invocation] [temperature (percent or decimal e.g. 30, 30%, or 0.3)] [query]',
   async execute(message, args) {
+    const channel = message.channel;
+    if (!channel.isSendable()) return;
     if (args.length === 0) {
-      message.channel.send(
-        '🙀 To use KyuuPT, you need to add a prompt to your invocation. For example .ask [question] 🙀'
-      );
+      channel.send('🙀 To use KyuuPT, you need to add a prompt to your invocation. For example .ask [question] 🙀');
       return;
     }
 
@@ -48,7 +48,7 @@ const command: Command = {
       const completionText = response.choices[0].message.content;
 
       if (completionText && completionText.length <= discordMaxCharacterCount) {
-        message.channel.send(completionText);
+        channel.send(completionText);
         return;
       }
 
@@ -56,7 +56,7 @@ const command: Command = {
       stream.push(completionText);
       stream.push(null); // end
 
-      message.channel.send({
+      channel.send({
         files: [
           {
             attachment: stream,
@@ -67,9 +67,9 @@ const command: Command = {
       });
     } catch (error: any) {
       if (error?.response) {
-        message.channel.send(`🙀 Error: ${error.response.status}, ${JSON.stringify(error.response.data)} 🙀`);
+        channel.send(`🙀 Error: ${error.response.status}, ${JSON.stringify(error.response.data)} 🙀`);
       } else {
-        message.channel.send(`🙀 Error: ${error.message} 🙀`);
+        channel.send(`🙀 Error: ${error.message} 🙀`);
       }
       return;
     }

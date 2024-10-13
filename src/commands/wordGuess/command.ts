@@ -10,14 +10,16 @@ const command: Command = {
   enabled: true,
   usage: '[invocation]',
   async execute(message) {
+    const channel = message.channel;
+    if (!channel.isSendable()) return;
     const word = wordlist[Math.floor(Math.random() * wordlist.length)];
     const scrambledWord = getshuffledWord(word);
 
     let hasAnswerBeenGuessed = false;
 
     // begin quiz
-    message.channel.send(`Unscramble this word: **${scrambledWord.join('')}**`);
-    const collector = message.channel.createMessageCollector({ time: 60000 });
+    channel.send(`Unscramble this word: **${scrambledWord.join('')}**`);
+    const collector = channel.createMessageCollector({ time: 60000 });
 
     // generate hints
     const numHints = Math.floor(word.length / 2);
@@ -33,7 +35,7 @@ const command: Command = {
     collector.on('collect', (guess) => {
       if (guess.content.toLowerCase() === word.toLowerCase()) {
         hasAnswerBeenGuessed = true;
-        message.channel.send(`${guess.author}'s answer ${word} was correct!`);
+        channel.send(`${guess.author}'s answer ${word} was correct!`);
         collector.stop();
       }
     });
@@ -41,7 +43,7 @@ const command: Command = {
     collector.on('end', () => {
       clearTimeout(firstHintTimeout);
       clearTimeout(secondHintTimeout);
-      if (!hasAnswerBeenGuessed) message.channel.send(`Time's up! The answer was ${word}`);
+      if (!hasAnswerBeenGuessed) channel.send(`Time's up! The answer was ${word}`);
     });
   },
 };
@@ -68,6 +70,8 @@ function shuffle<T>(list: Array<T>) {
 }
 
 const revealHintAtTime = (message: Message, answer: string, indexesToReveal: number[], interval: number) => {
+  const channel = message.channel;
+  if (!channel.isSendable()) return;
   // print hint at interval
   return setTimeout(() => {
     // generate hint string
@@ -81,7 +85,7 @@ const revealHintAtTime = (message: Message, answer: string, indexesToReveal: num
       .join('');
 
     const formattedHintString = hintString.replaceAll('*', '\\*');
-    message.channel.send(`hint: ${formattedHintString}`);
+    channel.send(`hint: ${formattedHintString}`);
   }, interval);
 };
 

@@ -11,7 +11,9 @@ const command: Command = {
   enabled: true,
   usage: '[invocation] [textToTransform]',
   async execute(message, args) {
-    message.channel.send(uwuifier.uwuifySentence(args.join(' ')));
+    const channel = message.channel;
+    if (!channel.isSendable()) return;
+    channel.send(uwuifier.uwuifySentence(args.join(' ')));
   },
 };
 

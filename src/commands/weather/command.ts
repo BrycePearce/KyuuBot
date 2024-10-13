@@ -34,13 +34,15 @@ const command: Command = {
   enabled: true,
   usage: '[invocation] [city | state | zip | etc]',
   async execute(message, args) {
+    const channel = message.channel;
+    if (!channel.isSendable()) return;
     try {
       const user = await DI.userRepository.findOne(message.author.id);
       const isUpdatingLocation = args[0]?.toLowerCase().trim() === 'set' && !!args[1]?.length;
       const isStoredLocation = args.length === 0;
 
       if (!user && isStoredLocation) {
-        message.channel.send('Set your default location with .weather set YOUR_LOCATION');
+        channel.send('Set your default location with .weather set YOUR_LOCATION');
         return;
       }
 
@@ -53,7 +55,7 @@ const command: Command = {
         const geoCoords = await getGeoLocation(parsedLocation);
 
         if (!geoCoords) {
-          message.channel.send({ content: 'Coordinates not found', files: [await getRandomEmotePath()] });
+          channel.send({ content: 'Coordinates not found', files: [await getRandomEmotePath()] });
           return;
         }
         requestedLocation = {
@@ -70,17 +72,17 @@ const command: Command = {
           isUpdatingLocation,
           requestedLocation
         );
-        message.channel.send(`Updated ${message.author.username}'s location to ${requestedLocation.address}`);
+        channel.send(`Updated ${message.author.username}'s location to ${requestedLocation.address}`);
       }
 
       const weather = await getWeather(requestedLocation);
       const aqi = await getAirQualityIndex(requestedLocation);
       const weatherEmbed = generateOutputEmbed(weather, aqi, requestedLocation.address);
-      message.channel.send({ embeds: [weatherEmbed] });
+      channel.send({ embeds: [weatherEmbed] });
     } catch (ex) {
       console.error(ex);
       const errmsg = ex && ex['message'] ? 'Something really went wrong' : '';
-      message.channel.send({ content: errmsg, files: [await getRandomEmotePath()] });
+      channel.send({ content: errmsg, files: [await getRandomEmotePath()] });
     }
   },
 };

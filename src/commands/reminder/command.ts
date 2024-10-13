@@ -73,12 +73,14 @@ const command: Command = {
 };
 
 async function createReminder(message: Message, args: string[]) {
+  const channel = message.channel;
+  if (!channel.isSendable()) return;
   const duration = args.shift();
   const msg = args.join(' ');
   const reminderOffset = parseDuration(duration);
 
   if (reminderOffset === null) {
-    return message.channel.send('**Invalid duration.** *Example:* `.reminder 1h30m Take out the trash`');
+    return channel.send('**Invalid duration.** *Example:* `.reminder 1h30m Take out the trash`');
   }
 
   let user = await DI.userRepository.findOne(message.author.id);
@@ -95,13 +97,13 @@ async function createReminder(message: Message, args: string[]) {
   reminder.user = user;
   reminder.message = msg;
   reminder.triggerAt = addMilliseconds(new Date(), reminderOffset);
-  reminder.context = message.channel.id;
+  reminder.context = channel.id;
 
   user.reminders.add(reminder);
 
   await DI.userRepository.persistAndFlush(user);
 
-  message.channel.send(
+  channel.send(
     `${message.author.toString()} you will be reminded *${formatDistanceToNow(reminder.triggerAt, {
       addSuffix: true,
     })}*: ${msg}`
@@ -110,6 +112,8 @@ async function createReminder(message: Message, args: string[]) {
 }
 
 async function listReminders(message: Message) {
+  const channel = message.channel;
+  if (!channel.isSendable()) return;
   let user = await DI.userRepository.findOne(message.author.id, ['reminders']);
 
   let reminders = 'You have no reminders 😓';
@@ -127,7 +131,7 @@ async function listReminders(message: Message) {
     reminders = reminderStrings.join('\n');
   }
 
-  message.channel.send(
+  channel.send(
     `${message.author.toString()} Reminders:\n\n${reminders}\n ${
       user?.reminders.length > 4 ? "\nWow! You're a busy dude! 😅" : ''
     }${user?.reminders.length > 1 ? '\n You can delete some of these... `.reminder del #`' : ''}`
@@ -135,9 +139,11 @@ async function listReminders(message: Message) {
 }
 
 async function deleteReminders(message: Message, sortedIndexKey: string) {
+  const channel = message.channel;
+  if (!channel.isSendable()) return;
   const parsedSortedIndexKey = parseInt(sortedIndexKey);
   if (isNaN(parsedSortedIndexKey)) {
-    return message.channel.send('**Not a reminder number**');
+    return channel.send('**Not a reminder number**');
   }
 
   let user = await DI.userRepository.findOne(message.author.id, ['reminders']);

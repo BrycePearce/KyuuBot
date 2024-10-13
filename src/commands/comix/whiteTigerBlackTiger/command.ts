@@ -12,10 +12,12 @@ const command: Command = {
   usage: '[invocation] [chapterNumber]',
   async execute(message, args) {
     if (!isValidChapterArgs(args)) return;
+    const channel = message.channel;
+    if (!channel.isSendable()) return;
 
     const onSuccess = (pages: string[]) => {
       for (const page of pages) {
-        message.channel.send({ files: [page] });
+        channel.send({ files: [page] });
       }
     };
 
@@ -23,11 +25,11 @@ const command: Command = {
       console.error(JSON.stringify(error));
       switch (error.type) {
         case 'chapterNotFound':
-          message.channel.send({ content: error.message, files: [error.emotePath] });
+          channel.send({ content: error.message, files: [error.emotePath] });
           break;
         case 'apiError':
         default:
-          message.channel.send(error.message || 'An unknown error occurred');
+          channel.send(error.message || 'An unknown error occurred');
           break;
       }
     };

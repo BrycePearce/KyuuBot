@@ -1,5 +1,5 @@
-import { client } from './../../../index';
 import { Command } from '../../../types/Command';
+import { client } from './../../../index';
 
 const responses = [
   'it is certain',
@@ -32,12 +32,14 @@ const command: Command = {
   enabled: true,
   usage: '[invocation]',
   async execute(message, _) {
+    const channel = message.channel;
+    if (!channel.isSendable()) return;
     const eightballResponse = responses[Math.floor(responses.length * Math.random())];
     const channelEmotes = client.emojis.cache; // note: this pulls emotes from any channel that Kyuubot is in
     const keys = Array.from(channelEmotes.keys());
     const randomEmojiKey = getRandomItemFromList(keys);
     const emote = channelEmotes.get(randomEmojiKey);
-    message.channel.send(`${emote} ${eightballResponse}`);
+    channel.send(`${emote} ${eightballResponse}`);
   },
 };
 
