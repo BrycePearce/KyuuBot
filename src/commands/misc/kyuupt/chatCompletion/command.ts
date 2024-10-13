@@ -28,22 +28,11 @@ const command: Command = {
       return;
     }
 
-    const temperatureArg = mapPercentToValue(args[0]);
-    const isValidUserTemp = temperatureArg !== invalidTempCodes.invalid;
-    if (!isValidUserTemp) {
-      message.channel.send(
-        `🙀 \nInvalid temperature given. Valid temperatures are percentages are between 0 and 100. \nHigher values like 50% will make the output more random, while lower values like 0% will make it more focused and deterministic \n🙀`
-      );
-      return;
-    }
-
-    const shouldUseDefaultTemp = temperatureArg === invalidTempCodes.default;
-    const userPrompt = isValidUserTemp ? args.slice(1).join(' ') : args.join(' ');
-    const temperature = shouldUseDefaultTemp ? 0.7 : temperatureArg;
+    const userPrompt = args.join(' ');
 
     try {
       const response = await openai.chat.completions.create({
-        model: 'gpt-4-1106-preview',
+        model: 'chatgpt-4o-latest',
         messages: [
           {
             role: 'system',
@@ -55,7 +44,6 @@ const command: Command = {
             content: userPrompt,
           },
         ],
-        ...(temperature && { temperature }),
       });
       const completionText = response.choices[0].message.content;
 
