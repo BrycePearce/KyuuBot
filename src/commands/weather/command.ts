@@ -6,21 +6,6 @@ import { getRandomEmotePath } from '../../utils/files';
 import { DI } from './../../database';
 import { Command } from './../../types/Command';
 
-const weatherIcons = {
-  'partly-cloudy-night': '☁️🌙',
-  'partly-cloudy-day': '⛅️',
-  'clear-night': '🌙',
-  'clear-day': '☀️',
-  thunderstorm: '⚡',
-  sleet: '❄️🌨️',
-  tornado: '🌪️',
-  cloudy: '☁️',
-  wind: '💨',
-  snow: '❄️',
-  rain: '☔️',
-  fog: '🌫️',
-};
-
 type Location = {
   latlng: string;
   address: string;
@@ -96,10 +81,10 @@ const getGeoLocation = async (userLocation: string): Promise<google.maps.Geocode
       const { results }: { results: google.maps.GeocoderResult[] } = await got(geoCodeUri).json();
 
       if (results?.length === 0) {
-        resolve(null);
+        return resolve(null);
       }
 
-      resolve(results[0]);
+      return resolve(results[0]);
     } catch (ex) {
       console.error(ex);
       reject(new Error('Failed to fetch coordinates'));
@@ -130,7 +115,7 @@ const getWeather = async (location: Location) => {
   const [lat, lng] = location.latlng.split(',');
   try {
     return (await got(
-      `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lng}&appid=${process.env.openWeatherKey}`
+      `https://api.openweathermap.org/data/3.0/onecall?units=imperial&lat=${lat}&lon=${lng}&appid=${process.env.openWeatherKey}`
     ).json()) as OpenWeatherResponse;
   } catch (ex) {
     console.error(ex);
@@ -160,14 +145,19 @@ const generateOutputEmbed = (
   const hasAqi = aqi?.list[0]?.main?.aqi;
   const formattedAqi = hasAqi ? getFormattedAirQualityLabel(aqi.list[0].main.aqi) : 'Error';
   const currentWeather = weather.current;
-  const currentTemp = kelvinToFahrenheit(currentWeather.temp);
-  const chanceRainToday = weather.daily[0].pop;
+  const currentTemp = currentWeather.temp;
+  const chanceRainToday = weather?.daily?.[0]?.pop ?? 0;
+  const chanceRainPercentage = (chanceRainToday * 100).toFixed(0);
 
-  const errors = weather?.alerts?.reduce((accum, alert) => {
-    const dateIssued = new Date(alert.start);
-    const timeIssued = dateIssued.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-    return (accum += `${alert.event} (${timeIssued})\n`);
-  }, '');
+  const alertsMessage = weather?.alerts
+    ? weather.alerts
+        .map((alert) => {
+          const dateIssued = new Date(alert.start);
+          const timeIssued = dateIssued.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+          return `${alert.event} (${timeIssued})`;
+        })
+        .join('\n')
+    : '';
 
   const embed = new EmbedBuilder();
   embed.setAuthor({
@@ -176,18 +166,18 @@ const generateOutputEmbed = (
   });
 
   embed.setDescription(`
-        ${currentTemp}F / ${(((currentTemp - 32) * 5) / 9).toFixed(2)}C
+        ${currentTemp}F / ${fahrenheitToCelsius(currentTemp)}C
         **Cloud Cover**: ${currentWeather.clouds}%
         **Windspeed**: ${currentWeather.wind_speed}mph
         **Humidity**: ${currentWeather.humidity}%
-        **Chance of Rain**: ${convertDecimalToPercent(chanceRainToday).toFixed(0)}%
+        **Chance of Rain**: ${chanceRainPercentage}%
         **UV index**: ${weather.current.uvi} (${getUvIndexRisk(weather.current.uvi)})
         **AQI**: ${formattedAqi}
         **Forecast**: ${
           !!currentWeather.weather[0].description &&
           currentWeather.weather[0].description[0].toUpperCase() + currentWeather.weather[0].description.slice(1)
         }
-        ${errors ? `\n**Alerts**:\n ${errors}` : ''}
+        ${alertsMessage ? `\n**Alerts**:\n ${alertsMessage}` : ''}
     `);
 
   let embedColor: ColorResolvable;
@@ -202,15 +192,9 @@ const generateOutputEmbed = (
   return embed;
 };
 
-function kelvinToFahrenheit(tempInKelvin: number) {
-  const KELVIN_CONSTANT = 273.15;
-  const tempInFahrenheit = (tempInKelvin - KELVIN_CONSTANT) * 1.8 + 32;
-  return Number(tempInFahrenheit.toFixed(0));
+function fahrenheitToCelsius(f: number) {
+  return ((f - 32) * (5 / 9)).toFixed(2);
 }
-
-const convertDecimalToPercent = (decimal: number, fixed: number = 2): number => {
-  return Number(decimal.toFixed(fixed)) * 100;
-};
 
 function getUvIndexRisk(uvIndex: number): string {
   if (uvIndex < 2) {
