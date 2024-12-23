@@ -123,3 +123,8 @@ export type OpenWeatherAQI = {
     };
   }[];
 };
+
+export type Location = {
+  latlng: string;
+  address: string;
+};

@@ -1,15 +1,10 @@
 import { ColorResolvable, EmbedBuilder } from 'discord.js';
-import got from 'got';
 import { User } from '../../database/entities';
-import { OpenWeatherAQI, OpenWeatherResponse } from '../../types/OpenWeatherApi';
+import { Location, OpenWeatherAQI, OpenWeatherResponse } from '../../types/OpenWeatherApi';
 import { getRandomEmotePath } from '../../utils/files';
+import { getAirQualityIndex, getGeoLocation, getWeather } from '../../utils/weather/utils';
 import { DI } from './../../database';
 import { Command } from './../../types/Command';
-
-type Location = {
-  latlng: string;
-  address: string;
-};
 
 const command: Command = {
   name: 'Weather',
@@ -72,26 +67,6 @@ const command: Command = {
   },
 };
 
-const getGeoLocation = async (userLocation: string): Promise<google.maps.GeocoderResult> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const geoCodeUri = encodeURI(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${userLocation}&key=${process.env.googleGeoToken}`
-      );
-      const { results }: { results: google.maps.GeocoderResult[] } = await got(geoCodeUri).json();
-
-      if (results?.length === 0) {
-        return resolve(null);
-      }
-
-      return resolve(results[0]);
-    } catch (ex) {
-      console.error(ex);
-      reject(new Error('Failed to fetch coordinates'));
-    }
-  });
-};
-
 const updateOrCreateUser = async (
   user: User,
   userId: string,
@@ -109,32 +84,6 @@ const updateOrCreateUser = async (
     user.address = location.address;
   }
   await DI.userRepository.persistAndFlush(user);
-};
-
-const getWeather = async (location: Location) => {
-  const [lat, lng] = location.latlng.split(',');
-  try {
-    return (await got(
-      `https://api.openweathermap.org/data/3.0/onecall?units=imperial&lat=${lat}&lon=${lng}&appid=${process.env.openWeatherKey}`
-    ).json()) as OpenWeatherResponse;
-  } catch (ex) {
-    console.error(ex);
-    throw new Error('Open weather map is down');
-  }
-};
-
-const getAirQualityIndex = async (location: Location) => {
-  const [lat, lng] = location.latlng.split(',');
-  const unixCurrentTime = Math.floor(Date.now() / 1000);
-  const anHourFromNow = unixCurrentTime + 3600;
-
-  try {
-    return (await got(
-      `http://api.openweathermap.org/data/2.5/air_pollution/history?lat=${lat}&lon=${lng}&start=${unixCurrentTime}&end=${anHourFromNow}&appid=${process.env.openWeatherKey}`
-    ).json()) as OpenWeatherAQI;
-  } catch {
-    throw new Error('Open weather map AQI is down');
-  }
 };
 
 const generateOutputEmbed = (
