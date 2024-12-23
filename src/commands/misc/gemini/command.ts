@@ -1,5 +1,7 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI, Part } from '@google/generative-ai';
+import got from 'got';
 import { Command } from '../../../types/Command';
+import { getRandomEmotePath } from '../../../utils/files';
 
 const genAI = new GoogleGenerativeAI(process.env.geminiApi);
 
@@ -13,18 +15,60 @@ const command: Command = {
   async execute(message, args) {
     const channel = message.channel;
     if (!channel.isSendable()) return;
+
     const userPrompt = args.join(' ');
     const role =
       'You are a helpful assistant. Your response should be 80 words or less, unless necessary for a full answer.';
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+
+    const imageAttachments: Array<{ url: string; contentType?: string }> = [];
+    message.attachments.forEach((attachment) => {
+      if (attachment.contentType?.startsWith('image/')) {
+        imageAttachments.push({
+          url: attachment.url,
+          contentType: attachment.contentType,
+        });
+      }
+    });
+
+    const prompts: Array<string | Part> = [`${role} ${userPrompt}`];
+    if (imageAttachments.length > 0) {
+      const imagesAsParts = await Promise.all(
+        imageAttachments.map(async (attachment) => {
+          try {
+            const response = await got(attachment.url, { responseType: 'buffer' });
+            const buffer = response.body;
+            const base64 = buffer.toString('base64');
+
+            const imagePart: Part = {
+              inlineData: {
+                data: base64,
+                mimeType: attachment.contentType || 'image/png',
+              },
+            };
+            return imagePart;
+          } catch (error) {
+            return channel.send({
+              content: 'There was a problem generating your response',
+              files: [await getRandomEmotePath()],
+            });
+          }
+        })
+      );
+
+      const validImages = imagesAsParts.filter((img) => img !== null) as Part[];
+      prompts.push(...validImages);
+    }
 
     try {
-      const result = await model.generateContent(`${role} ${userPrompt}`);
-      const response = await result.response;
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+      const result = await model.generateContent(prompts);
+
+      const response = result.response;
       const text = response.text();
-      channel.send(text);
+
+      return channel.send(text);
     } catch (error) {
-      channel.send(`🙀 Error: ${JSON.stringify(error)} 🙀`);
+      return channel.send(`🙀 Error: ${JSON.stringify(error)} 🙀`);
     }
   },
 };
