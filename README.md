@@ -18,6 +18,7 @@ defaultPrefix=.
 cache=./bin/.md_cache
 ./src/tmp
 googleGeoToken=[googleMapsToken]
+claude=[claudeToken]
 openWeatherKey=[openWeatherMapKey]
 gptImageGen=[chatgptKey]
 stableDiffusion=[stableDiffusionKey]
