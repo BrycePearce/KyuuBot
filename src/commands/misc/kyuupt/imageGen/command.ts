@@ -1,18 +1,15 @@
-import OpenAI from 'openai';
-
-import { getRandomEmotePath } from '../../../../utils/files';
-
 import { AttachmentBuilder } from 'discord.js';
 import got from 'got';
+import OpenAI, { toFile } from 'openai';
 import type { Command } from '../../../../types/Command';
+import { getRandomEmotePath } from '../../../../utils/files';
+import { extractImageUrls } from '../chatCompletion/extractImages';
 
-const openai = new OpenAI({
-  apiKey: process.env.gptImageGen,
-});
+const openai = new OpenAI({ apiKey: process.env.gptImageGen });
 
 const command: Command = {
   name: 'Kyuubot Images',
-  description: 'Integrates OpenAI Api to create images with dall-e',
+  description: 'Create new images or edit an existing image via OpenAI',
   invocations: ['i', 'image', 'generate'],
   args: true,
   enabled: true,
@@ -20,37 +17,77 @@ const command: Command = {
   async execute(message, args) {
     const channel = message.channel;
     if (!channel.isSendable()) return;
-    if (args.length === 0) {
-      channel.send(
-        '🙀 To use KyuuPT image generation, you need to add a prompt to your invocation. For example .generate [prompt] 🙀'
+
+    const imageUrls = extractImageUrls(message);
+    if (imageUrls.length > 1) {
+      await channel.send('🙀 Please attach only **one** image to edit. 🙀');
+      return;
+    }
+
+    const prompt = args.join(' ').trim();
+    if (!prompt) {
+      await channel.send(
+        '🙀 You need to provide a prompt! For example:\n' +
+          ' • `.image a neon cyberpunk city at night`  (new image)\n' +
+          ' • `.image add neon glow` + attach one image  (edit)'
       );
       return;
     }
 
-    const prompt = args.join('');
-
     try {
-      const response = await openai.images.generate({
-        model: 'dall-e-3',
-        prompt,
-        size: '1024x1024',
-      });
+      let response;
 
-      const responseUrl = response.data[0]?.url;
-      const responseBuffer = await got(responseUrl, { responseType: 'buffer' });
+      if (imageUrls.length === 1) {
+        // IMAGE EDIT MODE
 
-      if (!responseBuffer || (responseBuffer?.body ?? '').length === 0) {
-        channel.send({
-          content: 'There was a problem generating your image',
-          files: [await getRandomEmotePath()],
+        const imgRes = await got(imageUrls[0], { responseType: 'buffer' });
+        const buffer = imgRes.body;
+
+        const extMatch = imageUrls[0].match(/\.(png|jpg|jpeg|webp)$/i);
+        const ext = extMatch ? extMatch[1].toLowerCase() : 'png';
+        const mimeTypes = {
+          png: 'image/png',
+          jpg: 'image/jpeg',
+          jpeg: 'image/jpeg',
+          webp: 'image/webp',
+        };
+        const mimeType = mimeTypes[ext] || 'image/png';
+
+        const file = await toFile(buffer, `input.${ext}`, { type: mimeType });
+
+        response = await openai.images.edit({
+          model: 'gpt-image-1',
+          image: file,
+          prompt,
+          n: 1,
+          size: '1024x1024',
+          // DO NOT USE response_format HERE
         });
+      } else {
+        // TEXT → IMAGE MODE
+        response = await openai.images.generate({
+          prompt,
+          n: 1,
+          size: '1024x1024',
+          response_format: 'b64_json', // explicitly request base64 here only
+        });
+      }
+
+      const b64Image = response.data[0]?.b64_json;
+      if (!b64Image) {
+        await channel.send('🙀 Error: no image returned from OpenAI 🙀');
         return;
       }
 
-      const attachment = new AttachmentBuilder(responseBuffer.body, { name: 'image.png' });
-      channel.send({ files: [attachment] });
-    } catch (ex) {
-      channel.send('Something really went wrong generating your image:\n\n' + ex);
+      const imgBuf = Buffer.from(b64Image, 'base64');
+      const attachment = new AttachmentBuilder(imgBuf, { name: 'image.png' });
+      await channel.send({ files: [attachment] });
+    } catch (err: any) {
+      console.error(err);
+      await channel.send({
+        content: '😿 Something went wrong:\n' + err.message,
+        files: [await getRandomEmotePath()],
+      });
     }
   },
 };
