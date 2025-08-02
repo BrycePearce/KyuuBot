@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es6",
     "module": "commonjs",
-    "types": ["node", "googlemaps"],
+    "types": ["node", "google.maps"],
     "sourceMap": true,
     "outDir": "./out",
     "rootDir": "./src",

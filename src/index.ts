@@ -1,5 +1,5 @@
 import { ChannelType, Client, GatewayIntentBits } from 'discord.js';
-import Mangadex from 'mangadex-full-api';
+import { loginPersonal } from 'mangadex-full-api';
 import 'reflect-metadata';
 import { initComix } from './comixPreloader';
 import { initCommands } from './commands';
@@ -29,8 +29,14 @@ async function init() {
 
   const res = await Promise.allSettled([
     client.login(process.env.token),
-    Mangadex.login(process.env.mangadexUser, process.env.mangadexPassword, '../cache'),
+    loginPersonal({
+      username: process.env.mangadexUser,
+      password: process.env.mangadexPassword,
+      clientId: process.env.mangadexClientId,
+      clientSecret: process.env.mangadexSecret,
+    }),
   ]);
+  console.log('res', res);
 
   res.forEach((login, i) => {
     if (login.status === 'rejected') console.warn(`Login failed for ${i === 0 ? 'Discord' : 'Mangadex'}`);

@@ -32,15 +32,12 @@ export async function retrieveAndSendComic(
   try {
     const manga = retrieveComix(mangaId);
     const requestedChapter = await getRequestedChapter(manga, args);
-    const chapterList = await manga.getFeed(
-      {
-        translatedLanguage: ['en'],
-        offset: Math.max(Number(requestedChapter) - 5, 0),
-        limit: 25,
-        order: { chapter: 'asc', volume: 'asc' },
-      } as any,
-      false
-    );
+    const chapterList = await manga.getFeed({
+      translatedLanguage: ['en'],
+      offset: Math.max(Number(requestedChapter) - 5, 0),
+      limit: 25,
+      order: { chapter: 'asc', volume: 'asc' },
+    } as any);
     const matchingChapters = chapterList.filter((chapter) => chapter.chapter === requestedChapter);
     if (matchingChapters.length === 0) {
       onFailure({ message: 'No chapter was found', type: 'chapterNotFound', emotePath: await getRandomEmotePath() });
@@ -87,12 +84,8 @@ async function getRequestedChapter(manga: Manga, args: string[]): Promise<string
   if (args[0] && args[0].toLowerCase() !== 'r') return args[0];
 
   const latestChapter = (
-    await manga.getFeed(
-      { translatedLanguage: ['en'], limit: 1, order: { chapter: 'desc', volume: 'desc' } } as any,
-      false
-    )
+    await manga.getFeed({ translatedLanguage: ['en'], limit: 1, order: { chapter: 'desc', volume: 'desc' } })
   )[0].chapter;
-
   // if there are no arguments then fetch the latest chapter
   if (!args[0]) {
     return latestChapter;

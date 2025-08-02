@@ -1,4 +1,5 @@
 import ffmpeg from 'fluent-ffmpeg';
+import fs from 'fs';
 import { imageSize } from 'image-size';
 import path from 'path';
 import { PromiseResolver } from './../types/PromiseResolver';
@@ -11,7 +12,8 @@ export const writeTextOnMedia = async (
   mediaInputPath: string,
   mediaOutputPath: string
 ): Promise<PromiseResolver> => {
-  const { width, height } = imageSize(mediaInputPath);
+  const fileBuffer = fs.readFileSync(mediaInputPath);
+  const { width, height } = imageSize(fileBuffer);
   const gifFilter = [
     `drawtext=fontfile=${fontPath}:text=${textToWrite}:fontcolor=black:fontsize=10:x=${width - 100}:y=${
       height - 20
