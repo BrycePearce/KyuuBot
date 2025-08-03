@@ -1,4 +1,5 @@
 import { ColorResolvable, EmbedBuilder } from 'discord.js';
+import { findOrCreateUser } from '../../database/api/userApi';
 import { User } from '../../database/entities';
 import { Location, OpenWeatherAQI, OpenWeatherResponse } from '../../types/OpenWeatherApi';
 import { getRandomEmotePath } from '../../utils/files';
@@ -17,8 +18,7 @@ const command: Command = {
     const channel = message.channel;
     if (!channel.isSendable()) return;
     try {
-      const { userRepository } = getDbContext();
-      const user = await userRepository.findOne(message.author.id);
+      const user = await findOrCreateUser(message.author.id);
       const isUpdatingLocation = args[0]?.toLowerCase().trim() === 'set' && !!args[1]?.length;
       const isStoredLocation = args.length === 0;
 

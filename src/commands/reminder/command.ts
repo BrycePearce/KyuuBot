@@ -119,10 +119,11 @@ export async function createReminder(message: Message, args: string[]) {
   const user = await findOrCreateUser(message.author.id);
   const { em } = getDbContext();
 
+  const now = new Date();
   const reminder = new Reminder();
   reminder.user = user;
   reminder.message = reminderText;
-  reminder.remindAt = addMilliseconds(new Date(), reminderOffset);
+  reminder.remindAt = addMilliseconds(now, reminderOffset);
   reminder.channelId = channel.id;
 
   // Handle attachments
@@ -133,7 +134,7 @@ export async function createReminder(message: Message, args: string[]) {
   await em.persistAndFlush(reminder);
 
   const duration = intervalToDuration({
-    start: new Date(),
+    start: now,
     end: reminder.remindAt,
   });
   const formatted = formatDuration(duration, {
@@ -150,8 +151,7 @@ export async function listReminders(message: Message) {
   const channel = message.channel;
   if (!channel.isSendable()) return;
 
-  const { userRepository } = getDbContext();
-  const user = await userRepository.findOne(message.author.id, { populate: ['reminders'] });
+  const user = await findOrCreateUser(message.author.id);
 
   if (!user || user.reminders.length === 0) {
     channel.send(`🙀 ${message.author.toString()} You have no reminders 🙀`);

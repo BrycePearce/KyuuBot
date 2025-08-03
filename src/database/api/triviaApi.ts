@@ -44,7 +44,8 @@ export async function setPoints(channelId: string, userId: string, points: numbe
 }
 
 export async function getPointsForUser(channelId: string, winnerId: string) {
+  const user = await findOrCreateUser(winnerId);
   const { triviaStatsRepository } = getDbContext();
-  const trivia = await triviaStatsRepository.findOne({ channelId, user: { id: winnerId } }, { populate: ['user'] });
+  const trivia = await triviaStatsRepository.findOne({ channelId, user }, { populate: ['user'] });
   return trivia ? trivia.points : 0;
 }
