@@ -6,15 +6,15 @@ export class User extends BaseEntity {
   @PrimaryKey()
   id: string;
 
-  @OneToMany(() => Reminder, (reminder) => reminder.user, { cascade: [Cascade.ALL] })
-  reminders = new Collection<Reminder>(this);
-
-  @Property()
+  @Property({ nullable: true })
   username?: string;
 
-  @Property()
-  latlng: string;
+  @Property({ nullable: true })
+  latlng?: string;
 
-  @Property()
-  address!: string;
+  @Property({ nullable: true })
+  address?: string;
+
+  @OneToMany(() => Reminder, (r) => r.user, { cascade: [Cascade.ALL] })
+  reminders = new Collection<Reminder>(this);
 }

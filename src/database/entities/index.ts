@@ -1,4 +1,4 @@
 export * from './BaseEntity';
 export * from './Reminder';
-export * from './TriviaPoints';
+export * from './TriviaStats';
 export * from './User';

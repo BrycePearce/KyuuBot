@@ -3,7 +3,7 @@ import { User } from '../../database/entities';
 import { Location, OpenWeatherAQI, OpenWeatherResponse } from '../../types/OpenWeatherApi';
 import { getRandomEmotePath } from '../../utils/files';
 import { getAirQualityIndex, getGeoLocation, getWeather } from '../../utils/weather/utils';
-import { DI } from './../../database';
+import { getDbContext } from './../../database';
 import { Command } from './../../types/Command';
 
 const command: Command = {
@@ -17,7 +17,8 @@ const command: Command = {
     const channel = message.channel;
     if (!channel.isSendable()) return;
     try {
-      const user = await DI.userRepository.findOne(message.author.id);
+      const { userRepository } = getDbContext();
+      const user = await userRepository.findOne(message.author.id);
       const isUpdatingLocation = args[0]?.toLowerCase().trim() === 'set' && !!args[1]?.length;
       const isStoredLocation = args.length === 0;
 
@@ -74,6 +75,7 @@ const updateOrCreateUser = async (
   isUpdatingLocation: boolean,
   location: Location
 ) => {
+  const { em } = getDbContext();
   if (!user) {
     user = new User();
     user.id = userId;
@@ -83,7 +85,7 @@ const updateOrCreateUser = async (
     user.latlng = location.latlng;
     user.address = location.address;
   }
-  await DI.userRepository.persistAndFlush(user);
+  await em.persistAndFlush(user);
 };
 
 const generateOutputEmbed = (

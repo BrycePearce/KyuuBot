@@ -1,18 +1,6 @@
-import { addPoints, getPoints } from '../../database/api/triviaApi';
+import { addPoints, getPointsForUser, setPoints } from '../../database/api/triviaApi';
 import { Command } from '../../types/Command';
 import triviaQuestions from '../../utils/trivia.json';
-
-// :todo:
-// 1.) [x] up the hint percent shown based on the answer length
-// 2.) [x] make sure it shows spaces, special characters like ' by default. Currently blocks all
-// 3.) [x] Actually listen for responses/answers
-// 4.) [x] Clear hint timeouts on answer
-// 5.) [x] Time's up! Handling
-// 6.) Levenshtein distance on answer?
-// 7.) [x] Hints break on Batman answer
-// 8.) [x] Add tracked point totals
-// 9.) Question categories as optional second param?
-// 10.) Difficulty rating for questions?
 
 const maskCharacter = '∗';
 const difficultyPts = {
@@ -44,7 +32,7 @@ const command: Command = {
       message.author.id === '226100196675682304'
     ) {
       const [_, userId, pts] = message.content.split(' ');
-      addPoints(message.guildId, userId, Number(pts));
+      setPoints(channel.id, userId, Number(pts));
       return;
     }
     const {
@@ -93,12 +81,12 @@ const command: Command = {
           collector.stop('success');
           const pointsEarned = difficultyPts[difficulty] ?? 1;
 
-          await addPoints(message.guildId, guess.author.id, pointsEarned);
+          await addPoints(message.channelId, guess.author.id, pointsEarned);
 
-          const toalpts = await getPoints(message.guildId, guess.author.id);
+          const totalpts = await getPointsForUser(channel.id, guess.author.id);
           const elapsedTime = parseFloat(((endTime.valueOf() - startTime.valueOf()) / 1000).toFixed(3));
           channel.send(
-            `**Winner**: ${guess.author}; **Answer**: ${answer}; **Time**: ${elapsedTime}s; **Points**: ${pointsEarned}; **Total**: ${toalpts}`
+            `**Winner**: ${guess.author}; **Answer**: ${answer}; **Time**: ${elapsedTime}s; **Points**: ${pointsEarned}; **Total**: ${totalpts}`
           );
         }
       } catch (error) {

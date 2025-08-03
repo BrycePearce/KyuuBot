@@ -1,32 +1,51 @@
-import { DI } from '../../database';
-import { TriviaPoints } from '../entities';
+import { getDbContext } from '..';
+import { TriviaStats } from '../entities';
+import { findOrCreateUser } from './userApi';
 
-export async function addPoints(guildId: string, userId: string, points: number) {
-  const trivia = await DI.triviaPointsRepository.findOne({
-    channelId: guildId,
-    userId,
-  });
+export async function addPoints(channelId: string, authorId: string, pointsEarned: number) {
+  const { em, triviaStatsRepository } = getDbContext();
+  const user = await findOrCreateUser(authorId);
+  const trivia = await triviaStatsRepository.findOne({ channelId, user }, { populate: ['user'] });
 
   if (!trivia) {
-    const userTriviaPoints = new TriviaPoints();
-    userTriviaPoints.channelId = guildId;
-    userTriviaPoints.userId = userId;
-    userTriviaPoints.points = points;
-
-    await DI.triviaPointsRepository.persistAndFlush(userTriviaPoints);
+    const userTriviaPoints = new TriviaStats();
+    userTriviaPoints.channelId = channelId;
+    userTriviaPoints.user = user;
+    userTriviaPoints.points = pointsEarned;
+    await em.persistAndFlush(userTriviaPoints);
   } else {
-    trivia.points += points;
-
-    await DI.triviaPointsRepository.persistAndFlush(trivia);
+    trivia.points += pointsEarned;
+    await em.persistAndFlush(trivia);
   }
 }
 
-export async function getPoints(guildId: string, userId: string) {
-  const trivia = await DI.triviaPointsRepository.findOne({ channelId: guildId, userId });
+export async function setPoints(channelId: string, userId: string, points: number) {
+  const { em, triviaStatsRepository } = getDbContext();
+  const user = await findOrCreateUser(userId);
+  const trivia = await triviaStatsRepository.findOne(
+    {
+      channelId,
+      user,
+    },
+    { populate: ['user'] }
+  );
 
   if (!trivia) {
-    return 0;
-  }
+    const newStats = new TriviaStats();
+    newStats.channelId = channelId;
+    newStats.user = user;
+    newStats.points = points;
 
-  return trivia.points;
+    await em.persistAndFlush(newStats);
+  } else {
+    trivia.points = points;
+
+    await em.persistAndFlush(trivia);
+  }
+}
+
+export async function getPointsForUser(channelId: string, winnerId: string) {
+  const { triviaStatsRepository } = getDbContext();
+  const trivia = await triviaStatsRepository.findOne({ channelId, user: { id: winnerId } }, { populate: ['user'] });
+  return trivia ? trivia.points : 0;
 }
