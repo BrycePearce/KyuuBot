@@ -1,28 +1,21 @@
-# Build/Run Instructions
-# docker build . -t [image_name]
-# docker run -it [image_name] (this is for testing)
-# docker run --name [image_name] -d bryce
-
-# List Docker processes
-# docker ps -a
-
-# Cleaning up
-# docker rm 7d27 (manually delete image, 7d27 is id or container name)
-
 # Pull base image.
-FROM node:20
+FROM node:lts-slim
 
-RUN apt-get update -y
-RUN apt-get install ffmpeg -y
+# Install ffmpeg and clean up
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends ffmpeg \
+  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-COPY package.json .
-# copy source to container
+# Copy package files and install dependencies first (leverage cache)
+COPY package*.json ./
+RUN npm install --production
 
-# install dependencies
-RUN npm install
+# Copy the rest of the source code
+COPY . .
 
-COPY . ./
+# Set environment variable for production
+ENV NODE_ENV=production
 
 CMD ["npm", "start"]
