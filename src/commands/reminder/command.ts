@@ -1,44 +1,29 @@
-import { addMilliseconds, formatDistanceToNow, formatDuration, intervalToDuration, isBefore } from 'date-fns';
-import { AttachmentBuilder, Channel, User as DiscordUser, Message } from 'discord.js';
+import { addMilliseconds, formatDistanceToNow, formatDuration, intervalToDuration } from 'date-fns';
+import { AttachmentBuilder, Message } from 'discord.js';
 import parseDuration from 'parse-duration';
 import { client } from '../..';
-import { getDbContext } from '../../database';
-import { findOrCreateUser } from '../../database/api/userApi';
-import { Reminder } from '../../database/entities';
+import {
+  addReminder,
+  getDueReminders,
+  getUserReminders,
+  refreshRemindersCache,
+  removeReminder,
+  startReminderLoop,
+  stopReminderLoop,
+} from '../../database/api/reminderApi';
 import { Command } from '../../types/Command';
 
-let reminderCache: Reminder[] = [];
-let reminderInterval: NodeJS.Timeout | null = null;
-
-export async function refreshRemindersCache() {
-  const { reminderRepository } = getDbContext();
-  reminderCache = await reminderRepository.findAll({ populate: ['user'] });
-}
-
-async function removeReminder(reminder: Reminder) {
-  // remove from db
-  const { em } = getDbContext();
-  em.remove(reminder);
-  await em.flush();
-
-  // remove from cache
-  reminderCache = reminderCache.filter((r) => r.id !== reminder.id);
-}
-
 async function processDueReminders() {
-  const { em } = getDbContext();
-  const now = Date.now();
-  let channel: Channel = null;
-
-  const dueReminders = reminderCache.filter((r) => r.remindAt.getTime() <= now);
-  reminderCache = reminderCache.filter((r) => !isBefore(r.remindAt, now));
+  const dueReminders = await getDueReminders();
 
   for (const reminder of dueReminders) {
+    let channel = client.channels.cache.get(reminder.channelId);
+
     try {
-      channel = client.channels.cache.get(reminder.channelId);
       if (!channel?.isSendable()) continue;
 
-      const user = await getUser(reminder.user.id);
+      const user =
+        client.users.cache.get(reminder.user.id) ?? (await client.users.fetch(reminder.user.id, { force: true }));
       const messageContent = `${user.toString()}, here's your reminder:\n> ${reminder.message}`;
       const files = reminder.attachments?.length ? reminder.attachments.map((url) => new AttachmentBuilder(url)) : [];
 
@@ -56,25 +41,6 @@ async function processDueReminders() {
       }
     }
   }
-
-  // Flush once after all removals
-  await em.flush();
-}
-
-export function startReminderLoop() {
-  reminderInterval = setInterval(processDueReminders, 1000);
-}
-
-export function stopReminderLoop() {
-  if (reminderInterval) {
-    clearInterval(reminderInterval);
-    reminderInterval = null;
-  }
-}
-
-// TODO: move this function to a client utils file
-async function getUser(id: string): Promise<DiscordUser> {
-  return client.users.cache.get(id) ?? (await client.users.fetch(id, { force: true }));
 }
 
 const command: Command = {
@@ -88,7 +54,7 @@ const command: Command = {
   async onload() {
     await refreshRemindersCache();
     if (this.enabled) {
-      startReminderLoop();
+      startReminderLoop(processDueReminders);
     }
   },
   unload() {
@@ -116,22 +82,15 @@ export async function createReminder(message: Message, args: string[]) {
     return;
   }
 
-  const user = await findOrCreateUser(message.author.id);
-  const { em } = getDbContext();
-
   const now = new Date();
-  const reminder = new Reminder();
-  reminder.user = user;
-  reminder.message = reminderText;
-  reminder.remindAt = addMilliseconds(now, reminderOffset);
-  reminder.channelId = channel.id;
+  const remindAt = addMilliseconds(now, reminderOffset);
 
-  // Handle attachments
-  if (message.attachments.size > 0) {
-    reminder.attachments = message.attachments.map((a) => a.url);
-  }
-
-  await em.persistAndFlush(reminder);
+  const reminder = await addReminder(message.author.id, {
+    message: reminderText,
+    remindAt,
+    channelId: channel.id,
+    attachments: message.attachments.map((a) => a.url),
+  });
 
   const duration = intervalToDuration({
     start: now,
@@ -143,29 +102,24 @@ export async function createReminder(message: Message, args: string[]) {
   });
   const reminderMsg = `${message.author} you will be reminded in ${formatted}: ${reminderText}`;
   await channel.send(reminderMsg);
-
-  await refreshRemindersCache();
 }
 
 export async function listReminders(message: Message) {
   const channel = message.channel;
   if (!channel.isSendable()) return;
 
-  const user = await findOrCreateUser(message.author.id);
+  const reminders = await getUserReminders(message.author.id);
 
-  if (!user || user.reminders.length === 0) {
+  if (!reminders.length) {
     channel.send(`🙀 ${message.author.toString()} You have no reminders 🙀`);
     return;
   }
 
-  const reminderStrings = user.reminders
-    .getItems()
-    .sort((a, b) => a.remindAt.getTime() - b.remindAt.getTime())
-    .map((reminder, index) => {
-      return `${index + 1}) \`${reminder.message}\` **${formatDistanceToNow(reminder.remindAt, {
-        addSuffix: true,
-      })}**`;
-    });
+  const reminderStrings = reminders.map((reminder, index) => {
+    return `${index + 1}) \`${reminder.message}\` **${formatDistanceToNow(reminder.remindAt, {
+      addSuffix: true,
+    })}**`;
+  });
 
   const response = `${message.author.toString()} Reminders:\n\n${reminderStrings.join('\n')}`;
   channel.send(response);
