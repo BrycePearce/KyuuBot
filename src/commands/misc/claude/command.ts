@@ -1,6 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { ContentBlock } from '@anthropic-ai/sdk/resources/messages';
 import { Command } from '../../../types/Command';
+import { getRandomEmotePath } from '../../../utils/files';
 
 const client = new Anthropic({
   apiKey: process.env.claude,
@@ -27,6 +28,7 @@ function processMessageContent(content: ContentBlock[]): string {
 
   return processedContent.join('\n');
 }
+
 const command: Command = {
   name: 'Claude',
   description: 'Implements Claude AI',
@@ -42,17 +44,46 @@ const command: Command = {
     const role =
       'You are a helpful assistant. Your response should be 80 words or less, unless necessary for a full answer.';
 
+    const imageAttachments = [...message.attachments.values()].filter((attachment) =>
+      attachment.contentType?.startsWith('image/')
+    );
+
+    const contentBlocks: Anthropic.Messages.ContentBlockParam[] = [];
+
+    // Add image blocks first
+    for (const attachment of imageAttachments) {
+      contentBlocks.push({
+        type: 'image',
+        source: {
+          type: 'url',
+          url: attachment.url,
+        },
+      });
+    }
+
+    // Add the text part
+    if (userPrompt) {
+      contentBlocks.push({
+        type: 'text',
+        text: userPrompt,
+      });
+    }
+
+    if (contentBlocks.length === 0) {
+      return channel.send('Please provide a question or image for Claude.');
+    }
+
     try {
       const model = await client.messages.create({
-        model: 'claude-3-5-sonnet-latest',
+        model: 'claude-sonnet-4-20250514',
         system: role,
         messages: [
           {
             role: 'user',
-            content: userPrompt,
+            content: contentBlocks,
           },
         ],
-        max_tokens: 100,
+        max_tokens: 300,
       });
 
       const response = processMessageContent(model.content);
@@ -64,7 +95,10 @@ const command: Command = {
       return channel.send(response);
     } catch (error) {
       console.error('Claude API Error:', error);
-      return channel.send(`🙀 An error occurred while processing your request. Please try again later.`);
+      return channel.send({
+        content: `🙀 An error occurred while processing your request.`,
+        files: [await getRandomEmotePath()],
+      });
     }
   },
 };
