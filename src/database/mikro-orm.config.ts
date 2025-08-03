@@ -1,5 +1,5 @@
 import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
-import { defineConfig } from '@mikro-orm/sqlite'; // even in v5
+import { defineConfig } from '@mikro-orm/sqlite';
 import path from 'path';
 import { BaseEntity } from './entities/BaseEntity';
 import { Reminder } from './entities/Reminder';
