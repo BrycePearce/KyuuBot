@@ -1,14 +1,27 @@
 import { Collection } from 'discord.js';
 import { Command } from '../types/Command';
 
-// this should really probably be handled by a class, todo: make it so
-export const commands: Collection<string, Command> = new Collection(); // https://discordjs.guide/additional-info/collections.html#collections (Map with neato helper functions)
+export const CommandRegistry = {
+  commands: new Collection<string, Command>(),
 
-export function findCommand(query: string): Command {
-  let command = commands.get(query.toLowerCase());
-  if (!command) {
-    const cmdArray = [...commands.values()];
-    command = cmdArray.find((cmd) => cmd.invocations.find((alias) => alias.toLowerCase() === query.toLowerCase()));
-  }
-  return command;
-}
+  add(command: Command) {
+    this.commands.set(command.name.toLowerCase(), command);
+  },
+
+  find(query: string): Command | undefined {
+    let command = this.commands.get(query.toLowerCase());
+    if (!command) {
+      const cmdArray = [...this.commands.values()];
+      command = cmdArray.find((cmd) => cmd.invocations?.find((alias) => alias.toLowerCase() === query.toLowerCase()));
+    }
+    return command;
+  },
+
+  getAll(): Command[] {
+    return [...this.commands.values()];
+  },
+
+  clear() {
+    this.commands.clear();
+  },
+};

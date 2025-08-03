@@ -3,8 +3,6 @@ import { Command } from '../../../../types/Command';
 import openaiClient from '../../../../utils/clients/openaiClient';
 import { buildContentArray } from './buildContentArray';
 import { extractImageUrls } from './extractImages';
-// import { weatherTool } from './tools/weatherTool/weatherCompletionTool';
-
 const discordMaxCharacterCount = 2000;
 
 const command: Command = {
@@ -48,10 +46,7 @@ const command: Command = {
             content: contentArray,
           },
         ],
-        // todo
-        // tools,
-        // tool_choice: 'auto',
-        max_tokens: 300,
+        max_tokens: 500,
       });
 
       const completionText = response.choices?.[0]?.message?.content ?? '';

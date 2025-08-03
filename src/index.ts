@@ -1,14 +1,13 @@
 import { ChannelType, Client, GatewayIntentBits } from 'discord.js';
 import { loginPersonal } from 'mangadex-full-api';
-import 'reflect-metadata';
 import { initComix } from './comixPreloader';
 import { initCommands } from './commands';
-import { commandRegistry } from './commands/commandRegistry';
 import BindDatabase from './database';
-import { findCommand } from './utils/commandUtils';
+import { CommandRegistry } from './utils/commandUtils';
 import { initializedComix } from './utils/constants';
 
-require('dotenv').config();
+const dotenv = require('dotenv');
+dotenv.config();
 
 export const client = new Client({
   intents: [
@@ -19,13 +18,8 @@ export const client = new Client({
   ],
 });
 
-const USE_NEW_COMMAND_LOADER = false;
-
 async function init() {
   await BindDatabase();
-  if (USE_NEW_COMMAND_LOADER) {
-    commandRegistry.discover();
-  }
 
   const res = await Promise.allSettled([
     client.login(process.env.token),
@@ -36,22 +30,20 @@ async function init() {
       clientSecret: process.env.mangadexSecret,
     }),
   ]);
-  console.log('res', res);
 
   res.forEach((login, i) => {
     if (login.status === 'rejected') console.warn(`Login failed for ${i === 0 ? 'Discord' : 'Mangadex'}`);
   });
 }
 
-client.on('ready', async (asd) => {
-  if (!USE_NEW_COMMAND_LOADER) {
-    try {
-      initCommands();
-      await initComix(initializedComix);
-    } catch (err) {
-      const errorMsg = 'Failed to initialize';
-      console.error(errorMsg, err);
-    }
+client.on('ready', async () => {
+  try {
+    await initCommands();
+    await initComix(initializedComix);
+    console.log('😺 Kyuubot is ready! 😺');
+  } catch (err) {
+    const errorMsg = '😿 Failed to initialize Kyuubot 😿';
+    console.error(errorMsg, err);
   }
 });
 
@@ -62,14 +54,18 @@ client.on('messageCreate', async (message) => {
   }
 
   const commandArguments = message.content.slice(guildPrefix.length).trim().split(/ +/g);
-  const commandName = commandArguments.shift().toLowerCase();
-  if (USE_NEW_COMMAND_LOADER) {
-    commandRegistry.execute(commandName, commandArguments, message);
-  } else {
-    const command = findCommand(commandName); // todo: probably do a validate command & arguments method
-    if (!command) return;
-    command.execute(message, commandArguments);
-  }
+  const commandName = commandArguments.shift()?.toLowerCase();
+
+  const command = CommandRegistry.find(commandName);
+  if (!command) return;
+  command.execute(message, commandArguments);
 });
 
-init();
+(async () => {
+  try {
+    await init();
+  } catch (err) {
+    console.error('Fatal error during initialization:', err);
+    process.exit(1);
+  }
+})();

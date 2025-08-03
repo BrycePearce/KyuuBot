@@ -29,7 +29,7 @@ const command: Command = {
           break;
         case 'apiError':
         default:
-          channel.send(error.message || 'An unknown error occurred');
+          channel.send(`Kyuu chapter error: ${error.message || 'An unknown error occurred'}`);
           break;
       }
     };

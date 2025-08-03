@@ -1,11 +1,10 @@
 import { existsSync, mkdirSync } from 'fs';
 import { readdir } from 'fs/promises';
 import path from 'path';
-import { deprecate } from 'util';
 import { Command } from '../types/Command';
-import { commands } from '../utils/commandUtils';
+import { CommandRegistry } from '../utils/commandUtils';
 
-export const initCommands = deprecate(async function () {
+export const initCommands = async () => {
   // create a tmp directory for short lived files
   if (!existsSync('tmp')) {
     mkdirSync('tmp');
@@ -18,12 +17,12 @@ export const initCommands = deprecate(async function () {
 
     const command: Command = require(file.path).default;
     if (command.enabled) {
-      console.log('initialized', command.name);
-      command.onload?.(); // run onload function if present
-      commands.set(command.name, command);
+      console.log('initialized - ', command.name);
+      command.onload?.();
+      CommandRegistry.add(command);
     }
   }
-}, 'Using old command loader. Consider moving to the new system');
+};
 
 async function* getFiles(rootDirectory: string) {
   const entries = await readdir(rootDirectory, { withFileTypes: true });

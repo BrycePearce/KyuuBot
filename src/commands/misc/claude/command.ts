@@ -6,7 +6,6 @@ const client = new Anthropic({
   apiKey: process.env.claude,
 });
 
-// Helper function to process message content
 function processMessageContent(content: ContentBlock[]): string {
   const processedContent: string[] = [];
 
@@ -16,7 +15,6 @@ function processMessageContent(content: ContentBlock[]): string {
         processedContent.push(block.text);
         break;
       case 'thinking':
-        // Optionally include Claude's thinking process
         processedContent.push(`💭 ${block.thinking}`);
         break;
       case 'redacted_thinking':
