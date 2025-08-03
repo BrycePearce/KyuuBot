@@ -17,7 +17,7 @@ export const initCommands = async () => {
 
     const command: Command = require(file.path).default;
     if (command.enabled) {
-      console.log('initialized - ', command.name);
+      console.log('initialized -', command.name);
       command.onload?.();
       CommandRegistry.add(command);
     }

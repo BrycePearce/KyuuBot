@@ -20,9 +20,12 @@ export const client = new Client({
 
 async function init() {
   await BindDatabase();
+  await initCommands();
+  await initComix(initializedComix);
 
+  // Login to external services after all initialization is complete
+  const services = ['Mangadex'];
   const res = await Promise.allSettled([
-    client.login(process.env.token),
     loginPersonal({
       username: process.env.mangadexUser,
       password: process.env.mangadexPassword,
@@ -32,19 +35,14 @@ async function init() {
   ]);
 
   res.forEach((login, i) => {
-    if (login.status === 'rejected') console.warn(`Login failed for ${i === 0 ? 'Discord' : 'Mangadex'}`);
+    if (login.status === 'rejected') console.warn(`Login failed for ${services[i]}`);
   });
+
+  await client.login(process.env.token);
 }
 
-client.on('ready', async () => {
-  try {
-    await initCommands();
-    await initComix(initializedComix);
-    console.log('😺 Kyuubot is ready! 😺');
-  } catch (err) {
-    const errorMsg = '😿 Failed to initialize Kyuubot 😿';
-    console.error(errorMsg, err);
-  }
+client.on('ready', () => {
+  console.log('😺 Kyuubot is ready! 😺');
 });
 
 client.on('messageCreate', async (message) => {
