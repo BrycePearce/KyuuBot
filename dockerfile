@@ -10,7 +10,7 @@ WORKDIR /app
 
 # Copy package files and install dependencies first (leverage cache)
 COPY package*.json ./
-RUN npm install --production
+RUN npm install
 
 # Copy the rest of the source code
 COPY . .
