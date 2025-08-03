@@ -31,7 +31,7 @@ export async function addPoints(channelId: string, authorId: string, pointsEarne
     userTriviaPoints.points = pointsEarned;
     await em.persistAndFlush(userTriviaPoints);
   } else {
-    console.log({"else block"})
+    console.log('else block');
     trivia.points += pointsEarned;
     await em.persistAndFlush(trivia);
   }
