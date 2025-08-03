@@ -76,6 +76,7 @@ const command: Command = {
     collector.on('collect', async (guess) => {
       try {
         if (guess.content.toLowerCase() === answer.toLowerCase()) {
+          collector.stop('success');
           const endTime = new Date();
           const pointsEarned = difficultyPts[difficulty] ?? 1;
 

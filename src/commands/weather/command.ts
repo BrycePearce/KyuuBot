@@ -20,15 +20,16 @@ const command: Command = {
     try {
       const user = await findOrCreateUser(message.author.id);
       const isUpdatingLocation = args[0]?.toLowerCase().trim() === 'set' && !!args[1]?.length;
-      const isStoredLocation = args.length === 0;
+      const isStoredLocationRequest = args.length === 0;
+      const userHasNoLocation = !user?.latlng && !user?.address;
 
-      if (!user && isStoredLocation) {
+      if (userHasNoLocation && isStoredLocationRequest) {
         channel.send('Set your default location with .weather set YOUR_LOCATION');
         return;
       }
 
       let requestedLocation: Location = null;
-      if (isStoredLocation) {
+      if (isStoredLocationRequest) {
         const storedLocation = { latlng: user.latlng, address: user.address };
         requestedLocation = storedLocation;
       } else {
