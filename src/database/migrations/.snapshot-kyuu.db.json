@@ -32,85 +32,13 @@
           "length": 0,
           "mappedType": "datetime"
         },
-        "user_id": {
-          "name": "user_id",
-          "type": "text",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "text"
-        },
-        "channel_id": {
-          "name": "channel_id",
-          "type": "text",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "text"
-        },
-        "points": {
-          "name": "points",
-          "type": "integer",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "integer"
-        }
-      },
-      "name": "trivia_points",
-      "indexes": [
-        {
-          "keyName": "primary",
-          "columnNames": ["id"],
-          "composite": false,
-          "primary": true,
-          "unique": true
-        }
-      ],
-      "checks": [],
-      "foreignKeys": {}
-    },
-    {
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "text"
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "datetime",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 0,
-          "mappedType": "datetime"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "datetime",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 0,
-          "mappedType": "datetime"
-        },
         "username": {
           "name": "username",
           "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "mappedType": "text"
         },
         "latlng": {
@@ -119,7 +47,7 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "mappedType": "text"
         },
         "address": {
@@ -128,7 +56,7 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "mappedType": "text"
         }
       },
@@ -176,8 +104,8 @@
           "length": 0,
           "mappedType": "datetime"
         },
-        "message": {
-          "name": "message",
+        "user_id": {
+          "name": "user_id",
           "type": "text",
           "unsigned": false,
           "autoincrement": false,
@@ -185,8 +113,8 @@
           "nullable": false,
           "mappedType": "text"
         },
-        "context": {
-          "name": "context",
+        "channel_id": {
+          "name": "channel_id",
           "type": "text",
           "unsigned": false,
           "autoincrement": false,
@@ -194,8 +122,85 @@
           "nullable": false,
           "mappedType": "text"
         },
-        "trigger_at": {
-          "name": "trigger_at",
+        "points": {
+          "name": "points",
+          "type": "integer",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "0",
+          "mappedType": "integer"
+        },
+        "wins": {
+          "name": "wins",
+          "type": "integer",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "0",
+          "mappedType": "integer"
+        }
+      },
+      "name": "trivia_stats",
+      "indexes": [
+        {
+          "columnNames": ["user_id"],
+          "composite": false,
+          "keyName": "trivia_stats_user_id_index",
+          "primary": false,
+          "unique": false
+        },
+        {
+          "keyName": "trivia_stats_user_id_channel_id_unique",
+          "columnNames": ["user_id", "channel_id"],
+          "composite": true,
+          "primary": false,
+          "unique": true
+        },
+        {
+          "keyName": "primary",
+          "columnNames": ["id"],
+          "composite": false,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "trivia_stats_user_id_foreign": {
+          "constraintName": "trivia_stats_user_id_foreign",
+          "columnNames": ["user_id"],
+          "localTableName": "trivia_stats",
+          "referencedColumnNames": ["id"],
+          "referencedTableName": "user"
+        }
+      }
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "datetime",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 0,
+          "mappedType": "datetime"
+        },
+        "updated_at": {
+          "name": "updated_at",
           "type": "datetime",
           "unsigned": false,
           "autoincrement": false,
@@ -212,6 +217,53 @@
           "primary": false,
           "nullable": false,
           "mappedType": "text"
+        },
+        "message": {
+          "name": "message",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
+        "attachments": {
+          "name": "attachments",
+          "type": "json",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "json"
+        },
+        "channel_id": {
+          "name": "channel_id",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
+        "remind_at": {
+          "name": "remind_at",
+          "type": "datetime",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 0,
+          "mappedType": "datetime"
+        },
+        "delivered": {
+          "name": "delivered",
+          "type": "integer",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "false",
+          "mappedType": "integer"
         }
       },
       "name": "reminder",
