@@ -4,7 +4,7 @@ import { initComix } from './comixPreloader';
 import { initCommands } from './commands';
 import BindDatabase from './database';
 import { CommandRegistry } from './utils/commandUtils';
-import { initializedComix } from './utils/constants';
+import { supportedComixIds } from './utils/constants';
 
 const dotenv = require('dotenv');
 dotenv.config();
@@ -21,7 +21,7 @@ export const client = new Client({
 async function init() {
   await BindDatabase();
   await initCommands();
-  await initComix(initializedComix);
+  await initComix(supportedComixIds);
 
   // Login to external services after all initialization is complete
   const services = ['Mangadex'];

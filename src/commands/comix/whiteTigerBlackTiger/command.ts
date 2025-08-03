@@ -1,7 +1,7 @@
 import { ComixError } from '../../../types/Comix';
 import { Command } from '../../../types/Command';
 import { isValidChapterArgs, retrieveAndSendComic } from '../../../utils/chapterUtils';
-import { whiteTigerAndBlackTigerComixId } from '../../../utils/constants';
+import { comixIds } from '../../../utils/constants';
 
 const command: Command = {
   name: 'Retrieve White Tiger and Black Tiger Chapter',
@@ -34,7 +34,7 @@ const command: Command = {
       }
     };
 
-    await retrieveAndSendComic(whiteTigerAndBlackTigerComixId, args, onSuccess, onFailure);
+    await retrieveAndSendComic(comixIds.whiteTigerAndBlackTiger, args, onSuccess, onFailure);
   },
 };
 
