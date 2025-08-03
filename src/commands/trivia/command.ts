@@ -77,15 +77,17 @@ const command: Command = {
       // todo: levenshtein distance
       try {
         if (guess.content.toLowerCase() === answer.toLowerCase()) {
+          console.log('hi there we got a right answer!!!!!');
           const endTime = new Date();
           collector.stop('success');
           const pointsEarned = difficultyPts[difficulty] ?? 1;
+          console.log('about to add pts');
 
           await addPoints(message.channelId, guess.author.id, pointsEarned);
-
+          console.log('added pts!!!!!!!!!!!!!!!!!');
           const totalpts = await getPointsForUser(channel.id, guess.author.id);
           const elapsedTime = parseFloat(((endTime.valueOf() - startTime.valueOf()) / 1000).toFixed(3));
-          channel.send(
+          await channel.send(
             `**Winner**: ${guess.author}; **Answer**: ${answer}; **Time**: ${elapsedTime}s; **Points**: ${pointsEarned}; **Total**: ${totalpts}`
           );
         }
@@ -94,11 +96,11 @@ const command: Command = {
       }
     });
 
-    collector.on('end', (_, msg) => {
+    collector.on('end', async (_, msg) => {
       // clear out any hint timers left
       hintOutputTimers.forEach((timer) => clearTimeout(timer));
 
-      if (msg.toLowerCase() === 'time') channel.send(`Time's up! The answer was **${answer}**`);
+      if (msg.toLowerCase() === 'time') await channel.send(`Time's up! The answer was **${answer}**`);
     });
   },
 };
