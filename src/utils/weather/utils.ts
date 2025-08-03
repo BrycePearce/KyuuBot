@@ -1,13 +1,23 @@
 import got from 'got';
 import { Location, OpenWeatherAQI, OpenWeatherResponse } from '../../types/OpenWeatherApi';
 
-export const getGeoLocation = async (userLocation: string): Promise<google.maps.GeocoderResult> => {
+type GeocoderResult = {
+  formatted_address: string;
+  geometry: {
+    location: {
+      lat: number;
+      lng: number;
+    };
+  };
+};
+
+export const getGeoLocation = async (userLocation: string): Promise<GeocoderResult | null> => {
   return new Promise(async (resolve, reject) => {
     try {
       const geoCodeUri = encodeURI(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${userLocation}&key=${process.env.googleGeoToken}`
       );
-      const { results }: { results: google.maps.GeocoderResult[] } = await got(geoCodeUri).json();
+      const { results }: { results: GeocoderResult[] } = await got(geoCodeUri).json();
 
       if (results?.length === 0) {
         return resolve(null);
