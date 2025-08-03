@@ -31,7 +31,7 @@ const command: Command = {
       message.content.toLowerCase().includes('addTriviaPts'.toLowerCase()) &&
       message.author.id === '226100196675682304'
     ) {
-      const [_, userId, pts] = message.content.split(' ');
+      const [_, userId, pts] = message.content.split(' ').slice(1);
       setPoints(channel.id, userId, Number(pts));
       return;
     }

@@ -53,7 +53,7 @@ const command: Command = {
           isUpdatingLocation,
           requestedLocation
         );
-        channel.send(`Updated ${message.author.username}'s location to ${requestedLocation.address}`);
+        channel.send(`Updated ${message.author.displayName}'s location to ${requestedLocation.address}`);
       }
 
       const weather = await getWeather(requestedLocation);
