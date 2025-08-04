@@ -3,7 +3,7 @@ import { Command } from '../../types/Command';
 import triviaQuestions from '../../utils/trivia.json';
 
 const maskCharacter = '∗';
-const difficultyPts = {
+const difficultyPts: Record<string, number> = {
   easy: 1,
   moderate: 2,
   difficult: 3,
@@ -12,9 +12,12 @@ const difficultyPts = {
 type Difficulty = 'easy' | 'moderate' | 'difficult';
 
 interface TriviaQuestion {
-  question: string;
-  answer: string;
+  type: string;
   difficulty: Difficulty;
+  category: string;
+  question: string;
+  correct_answer: string;
+  incorrect_answers: string[];
 }
 
 const command: Command = {
@@ -27,63 +30,52 @@ const command: Command = {
   async execute(message) {
     const channel = message.channel;
     if (!channel.isSendable()) return;
-    if (
-      message.content.toLowerCase().includes('addTriviaPts'.toLowerCase()) &&
-      message.author.id === '226100196675682304'
-    ) {
-      const [_, userId, pts] = message.content.split(' ').slice(1);
-      setPoints(channel.id, userId, Number(pts));
+
+    if (message.content.toLowerCase().includes('addtriviapts') && message.author.id === '226100196675682304') {
+      const parts = message.content.split(' ').slice(1);
+      const [userId, ptsRaw] = parts;
+      const pts = Number(ptsRaw);
+      if (userId && !isNaN(pts)) {
+        setPoints(channel.id, userId, pts);
+      }
       return;
     }
-    const {
-      question,
-      answer: encodedAnswer,
-      difficulty = 'easy', // easy, moderate, difficult
-    } = (triviaQuestions as any).misc[
-      Math.floor(Math.random() * (triviaQuestions as any).misc.length)
-    ] as TriviaQuestion;
 
-    const answer = decodeHTMLEntities(encodedAnswer).trim();
+    const allQuestions = triviaQuestions as TriviaQuestion[];
+    if (!Array.isArray(allQuestions) || allQuestions.length === 0) return;
+
+    const picked = allQuestions[Math.floor(Math.random() * allQuestions.length)];
+    const { question: displayedQuestion, correct_answer: answer, difficulty = 'easy' } = picked;
 
     const collector = channel.createMessageCollector({ time: 80000 });
     const startTime = new Date();
 
-    // Ask the trivia question
-    channel.send(decodeHTMLEntities(question));
+    await channel.send(displayedQuestion);
 
     const hintIntervals = [25000, 45000, 60000];
     let hintMask = generateStrMask(answer);
-    let hintPercentToReveal = answer.length > 9 ? 40 : 15; // todo: maybe could do this based off difficulty rating
+    let hintPercentToReveal = answer.length > 9 ? 40 : 15;
 
-    // start the hint timers, they will reveal after an interval amount of time
     const hintOutputTimers = hintIntervals.map((interval) =>
       setTimeout(() => {
         const revealedHint = revealHint(answer, hintMask, hintPercentToReveal);
         channel.send(`Hint: ${revealedHint}`);
-
-        // update the hint mask
         hintMask = revealedHint;
-
-        // give a flat 6% character reveal increase for the next hint
         hintPercentToReveal += 6;
       }, interval)
     );
 
-    // start the timers for hints
-    hintOutputTimers.forEach((hintTimer) => hintTimer);
-
-    // listen for answers
     collector.on('collect', async (guess) => {
       try {
-        if (guess.content.toLowerCase() === answer.toLowerCase()) {
+        if (guess.content.trim().toLowerCase() === answer.toLowerCase()) {
           collector.stop('success');
           const endTime = new Date();
           const pointsEarned = difficultyPts[difficulty] ?? 1;
 
           await addPoints(message.channelId, guess.author.id, pointsEarned);
-
           const totalpts = await getPointsForUser(channel.id, guess.author.id);
           const elapsedTime = parseFloat(((endTime.valueOf() - startTime.valueOf()) / 1000).toFixed(3));
+
           await channel.send(
             `**Winner**: ${guess.author}; **Answer**: ${answer}; **Time**: ${elapsedTime}s; **Points**: ${pointsEarned}; **Total**: ${totalpts}`
           );
@@ -93,62 +85,38 @@ const command: Command = {
       }
     });
 
-    collector.on('end', async (_, msg) => {
-      // clear out any hint timers left
+    collector.on('end', async (_, reason) => {
       hintOutputTimers.forEach((timer) => clearTimeout(timer));
-
-      if (msg.toLowerCase() === 'time') await channel.send(`Time's up! The answer was **${answer}**`);
+      if (reason === 'time') {
+        await channel.send(`Time's up! The answer was **${answer}**`);
+      }
     });
   },
 };
 
 const generateStrMask = (str: string) => {
-  // change all characters except special characters and spaces to asterisks
   const specialChars = '!@#$%^&*()_+-=[]{}\\|;\':",./<>?';
   return [...str].map((char) => (specialChars.includes(char) || char === ' ' ? char : maskCharacter)).join('');
 };
 
 const revealHint = (word: string, mask: string, percent: number) => {
-  let wordArray = [...word];
-  let maskArray = [...mask];
+  const wordArray = [...word];
+  const maskArray = [...mask];
 
-  // generate indexes to that are not already revealed
-  let indexesRevealable: string[] = maskArray.reduce(
-    (accumulator, current, index) => (current === maskCharacter ? [index, ...accumulator] : accumulator),
-    []
-  );
+  const indexesRevealable = maskArray.map((c, idx) => (c === maskCharacter ? idx : -1)).filter((i) => i !== -1);
 
-  // based on percent chance, determine the number of characters to reveal
   let numCharactersToReveal = Math.ceil((indexesRevealable.length * percent) / 100);
-
   if (numCharactersToReveal <= 0) return maskArray.join('');
 
-  // if there are characters left to reveal, reveal them
-  while (numCharactersToReveal > 0) {
-    const indexToReveal = Math.floor(Math.random() * maskArray.length);
-    if (maskArray[indexToReveal] === maskCharacter) {
-      maskArray[indexToReveal] = wordArray[indexToReveal];
+  while (numCharactersToReveal > 0 && indexesRevealable.length > 0) {
+    const idx = indexesRevealable[Math.floor(Math.random() * indexesRevealable.length)];
+    if (maskArray[idx] === maskCharacter) {
+      maskArray[idx] = wordArray[idx];
       numCharactersToReveal--;
     }
   }
 
   return maskArray.join('');
 };
-
-function decodeHTMLEntities(text: string) {
-  const entities = {
-    '&quot;': '"',
-    '&apos;': "'",
-    '&lt;': '<',
-    '&gt;': '>',
-    '&amp;': '&',
-    '&#039;': "'",
-    '&eacute;': 'é',
-    '&atilde;': 'ã',
-    '&micro;': 'µ',
-  };
-
-  return text.replace(/&#?\w+?;/g, (match) => entities[match] || match);
-}
 
 export default command;

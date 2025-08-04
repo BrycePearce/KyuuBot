@@ -30163,8 +30163,8 @@
     "type": "multiple",
     "difficulty": "medium",
     "category": "Science: Mathematics",
-    "question": "Which of the following dice is not a platonic solid?",
-    "correct_answer": "10-sided die",
+    "question": "What multi sided dice is not a platonic solid given 10, 12, 20, 8",
+    "correct_answer": "10",
     "incorrect_answers": ["12-sided die", "20-sided die", "8-sided die"]
   },
   {
@@ -30227,8 +30227,8 @@
     "type": "multiple",
     "difficulty": "medium",
     "category": "Entertainment: Board Games",
-    "question": "Which of the following tabletop games is the oldest?",
-    "correct_answer": "Go",
+    "question": "What is the oldest board game that has been discovered and is still playable",
+    "correct_answer": "Ur",
     "incorrect_answers": ["Chess", "Mahjong", "Shogi"]
   },
   {
@@ -30281,18 +30281,6 @@
   },
   {
     "type": "multiple",
-    "difficulty": "medium",
-    "category": "Entertainment: Music",
-    "question": "Which of these songs did Jimi Hendrix cover?",
-    "correct_answer": "All of these songs",
-    "incorrect_answers": [
-      "Sgt. Pepper's Lonely Hearts Club Band",
-      "All Along the Watchtower",
-      "House of the Rising Sun"
-    ]
-  },
-  {
-    "type": "multiple",
     "difficulty": "hard",
     "category": "Science & Nature",
     "question": "If you planted the seeds of Quercus robur what would grow?",
@@ -30319,7 +30307,7 @@
     "type": "multiple",
     "difficulty": "hard",
     "category": "Science: Computers",
-    "question": "Which of the following is NOT a computer science algorithm?",
+    "question": "Which of the following is NOT a computer science algorithm? Float Sort, Bubble Sort, Merge Sort, Quick Sort, Heap Sort, Insertion Sort",
     "correct_answer": "Float Sort",
     "incorrect_answers": ["Bubble Sort", "Merge Sort", "Quick Sort"]
   },
@@ -30511,7 +30499,7 @@
     "type": "multiple",
     "difficulty": "medium",
     "category": "Entertainment: Video Games",
-    "question": "Which of these games takes place in the Irish town of Doolin, with the option to play as one of the characters, Ellen and Keats?",
+    "question": "Which game takes place in the Irish town of Doolin, with the option to play as one of the characters, Ellen and Keats?",
     "correct_answer": "Folklore",
     "incorrect_answers": ["Shadow of the Colossus", "ICO", "Beyond Good & Evil"]
   },
@@ -30629,14 +30617,6 @@
   },
   {
     "type": "multiple",
-    "difficulty": "medium",
-    "category": "Entertainment: Music",
-    "question": "Which of these is NOT an album released by The Beatles?",
-    "correct_answer": "The Wall",
-    "incorrect_answers": ["Abbey Road", "Magical Mystery Tour", "Revolver"]
-  },
-  {
-    "type": "multiple",
     "difficulty": "hard",
     "category": "Entertainment: Video Games",
     "question": "In “Call Of Duty: Zombies”, which weapon does NOT deal any damage?",
@@ -30727,7 +30707,7 @@
     "type": "multiple",
     "difficulty": "medium",
     "category": "Geography",
-    "question": "Which of these Japanese islands is the largest by area?",
+    "question": "Which of these Japanese islands is the largest by area? Iki, Odaiba, Okinawa, or Shikoku?",
     "correct_answer": "Shikoku",
     "incorrect_answers": ["Iki", "Odaiba", "Okinawa"]
   },
@@ -30795,7 +30775,7 @@
     "type": "multiple",
     "difficulty": "medium",
     "category": "Mythology",
-    "question": "Which of the following Mesopotamian mythological figures was NOT a deity?",
+    "question": "Which of the following Mesopotamian mythological figures was NOT a deity? Enkidu, Enki, Enlil, or Enkimdu?",
     "correct_answer": "Enkidu",
     "incorrect_answers": ["Enki", "Enlil", "Enkimdu"]
   },
@@ -30947,7 +30927,7 @@
     "type": "multiple",
     "difficulty": "medium",
     "category": "Entertainment: Japanese Anime & Manga",
-    "question": "The main antagonist of the second part of JoJo's Bizarre Adventure is which of the following?",
+    "question": "The main antagonist of the second part of JoJo's Bizarre Adventure is which of the following? Kars, Erina Joestar, Santana, or Wired Beck?",
     "correct_answer": "Kars",
     "incorrect_answers": ["Erina Joestar", "Santana", "Wired Beck"]
   },
@@ -30971,7 +30951,7 @@
     "type": "multiple",
     "difficulty": "easy",
     "category": "Entertainment: Cartoon & Animations",
-    "question": "Which of these is NOT a Disney cartoon character?",
+    "question": "Which of these is NOT a Disney cartoon character? Daffy Duck, Donald Duck, Daisy Duck, or Scrooge McDuck?",
     "correct_answer": "Daffy Duck",
     "incorrect_answers": ["Donald Duck", "Daisy Duck", "Scrooge McDuck"]
   },
@@ -31123,7 +31103,7 @@
     "type": "multiple",
     "difficulty": "hard",
     "category": "Entertainment: Music",
-    "question": "Which of these artists did NOT remix the song “Faded” by Alan Walker?",
+    "question": "Which of these artists did NOT remix the song “Faded” by Alan Walker? Skrillex, Tiësto, Slushii, or Dash Berlin?",
     "correct_answer": "Skrillex",
     "incorrect_answers": ["Tiësto", "Slushii", "Dash Berlin"]
   },
@@ -31147,7 +31127,7 @@
     "type": "multiple",
     "difficulty": "hard",
     "category": "Science: Computers",
-    "question": "Which of the following physical typologies are used with Ethernet Networks?",
+    "question": "Which of the following physical typologies are used with Ethernet Networks? Star, Ring, Mesh, or Hex?",
     "correct_answer": "Star",
     "incorrect_answers": ["Ring", "Mesh", "Hex"]
   },
@@ -31163,7 +31143,7 @@
     "type": "multiple",
     "difficulty": "medium",
     "category": "Entertainment: Film",
-    "question": "Which of the following James Bond villains is not affiliated with the SPECTRE organization?",
+    "question": "Which of the following James Bond villains is not affiliated with the SPECTRE organization? Dr. Julius No, Rosa Klebb, Emilio Largo, or Auric Goldfinger?",
     "correct_answer": "Auric Goldfinger",
     "incorrect_answers": ["Dr. Julius No", "Rosa Klebb", "Emilio Largo"]
   },
@@ -31275,7 +31255,7 @@
     "type": "multiple",
     "difficulty": "medium",
     "category": "Entertainment: Video Games",
-    "question": "Which of these is NOT a faction included in the game Counter-Strike: Global Offensive?",
+    "question": "Which of these is NOT a faction included in the game Counter-Strike: Global Offensive? Elite Crew, BOPE, GSG-9, or Phoenix Connexion?",
     "correct_answer": "BOPE",
     "incorrect_answers": ["GSG-9", "Elite Crew", "Phoenix Connexion"]
   },
@@ -31371,7 +31351,7 @@
     "type": "multiple",
     "difficulty": "medium",
     "category": "Entertainment: Video Games",
-    "question": "Which of these is not a DLC vehicle in “Mario Kart 8”?",
+    "question": "Which of these is not a DLC vehicle in “Mario Kart 8”? Wild Wiggler, Bone Rattler, B Dasher, or 300 SL Roadster?",
     "correct_answer": "Wild Wiggler",
     "incorrect_answers": ["Bone Rattler", "B Dasher", "300 SL Roadster"]
   },
@@ -31398,14 +31378,6 @@
     "question": "In the film “Interstellar”, how long did they spend on Miller's planet?",
     "correct_answer": "23 years, 4 months, and 8 days",
     "incorrect_answers": ["15 years, 2 months, and 15 days", "10 months and 6 days", "26 years, 4 months, and 10 days"]
-  },
-  {
-    "type": "multiple",
-    "difficulty": "medium",
-    "category": "Entertainment: Television",
-    "question": "Which of these television shows makes everyone look under their chair?",
-    "correct_answer": "Oprah",
-    "incorrect_answers": ["Jimmy Fallon", "Saturday Night Live", "Larry Rubert"]
   },
   {
     "type": "multiple",
@@ -31467,7 +31439,7 @@
     "type": "multiple",
     "difficulty": "medium",
     "category": "Science & Nature",
-    "question": "An organism described as “heliotropic” has a tendancy to move towards which of these things?",
+    "question": "An organism described as “heliotropic” has a tendancy to move towards which of these things? Water, Light, Trees, or Pollen?",
     "correct_answer": "Light",
     "incorrect_answers": ["Water", "Trees", "Pollen"]
   },
@@ -31559,7 +31531,7 @@
     "type": "multiple",
     "difficulty": "medium",
     "category": "Vehicles",
-    "question": "Which of the following vehicles featured a full glass roof at base model?",
+    "question": "Which of the following vehicles featured a full glass roof at base model? Renault Avantime, Chevy Volt, Mercedes-Benz A-Class, or Honda Odyssey?",
     "correct_answer": "Renault Avantime",
     "incorrect_answers": ["Chevy Volt", "Mercedes-Benz A-Class", "Honda Odyssey"]
   },
@@ -31567,7 +31539,7 @@
     "type": "multiple",
     "difficulty": "medium",
     "category": "Entertainment: Video Games",
-    "question": "Which of the following is not a prosecutor in the “Ace Attorney” video game series?",
+    "question": "Which of the following is not a prosecutor in the “Ace Attorney” video game series? Jake Marshall, Godot, Miles Edgeworth, or Jacques Portsman?",
     "correct_answer": "Jake Marshall",
     "incorrect_answers": ["Godot", "Miles Edgeworth", "Jacques Portsman"]
   },
@@ -31845,14 +31817,6 @@
   },
   {
     "type": "multiple",
-    "difficulty": "easy",
-    "category": "Entertainment: Film",
-    "question": "Which of the following actors has only been in a Quentin Tarantino directed film once?",
-    "correct_answer": "John Travolta",
-    "incorrect_answers": ["Christoph Waltz", "Harvey Keitel", "Samuel L. Jackson"]
-  },
-  {
-    "type": "multiple",
     "difficulty": "hard",
     "category": "History",
     "question": "When was Adolf Hitler appointed as Chancellor of Germany?",
@@ -31874,14 +31838,6 @@
     "question": "Which game won the “Games for Impact” award in The Game Awards 2015?",
     "correct_answer": "Life is Strange",
     "incorrect_answers": ["Ori and the Blind Forest", "Rocket League", "Metal Gear Solid V: The Phantom Pain"]
-  },
-  {
-    "type": "multiple",
-    "difficulty": "medium",
-    "category": "Entertainment: Video Games",
-    "question": "Which of these is NOT a terrorist faction in Counter-Strike (2000)?",
-    "correct_answer": "Midwest Militia",
-    "incorrect_answers": ["Phoenix Connection", "Elite Crew", "Guerrilla Warfare"]
   },
   {
     "type": "multiple",
@@ -31935,7 +31891,7 @@
     "type": "multiple",
     "difficulty": "medium",
     "category": "Entertainment: Video Games",
-    "question": "Which of these champions from the MOBA 'League of Legends' is NOT a Yordle?",
+    "question": "Which of these champions from the MOBA 'League of Legends' is NOT a Yordle? Veigar, Tristana, Lulu, or Annie?",
     "correct_answer": "Annie",
     "incorrect_answers": ["Veigar", "Tristana", "Lulu"]
   },
@@ -32071,7 +32027,7 @@
     "type": "multiple",
     "difficulty": "hard",
     "category": "Art",
-    "question": "Which of these is not an additional variation of the color purple?",
+    "question": "Which of these is not an additional variation of the color purple? Byzantium, Pomp and Power, Palatinate, or Kobicha?",
     "correct_answer": "Kobicha",
     "incorrect_answers": ["Byzantium", "Pomp and Power", "Palatinate"]
   },
@@ -32119,7 +32075,7 @@
     "type": "multiple",
     "difficulty": "medium",
     "category": "Entertainment: Comics",
-    "question": "In Marvel comics, which of the following is not one of the infinity stones?",
+    "question": "In Marvel comics, which of the following is not one of the infinity stones? Time, Power, Soul, or Energy?",
     "correct_answer": "Energy",
     "incorrect_answers": ["Time", "Power", "Soul"]
   },
@@ -32151,7 +32107,7 @@
     "type": "multiple",
     "difficulty": "medium",
     "category": "Entertainment: Music",
-    "question": "Which of these bands is the oldest?",
+    "question": "Which of these bands is the oldest? Pink Floyd, AC/DC, Metallica, or Red Hot Chili Peppers?",
     "correct_answer": "Pink Floyd",
     "incorrect_answers": ["AC/DC", "Metallica", "Red Hot Chili Peppers"]
   },
@@ -32311,7 +32267,7 @@
     "type": "multiple",
     "difficulty": "medium",
     "category": "Entertainment: Video Games",
-    "question": "In Super Smash Bros. Ultimate, which of the following pair of characters are NOT considered “Echo Fighters”?",
+    "question": "In Super Smash Bros. Ultimate, which of the following pair of characters are NOT considered “Echo Fighters”? Marth & Lucina, Richter & Simon, Peach & Daisy, or Link & Young Link?",
     "correct_answer": "Link & Young Link",
     "incorrect_answers": ["Marth & Lucina", "Richter & Simon", "Peach & Daisy"]
   },
@@ -32319,7 +32275,7 @@
     "type": "multiple",
     "difficulty": "easy",
     "category": "Entertainment: Video Games",
-    "question": "Which of these characters is the mascot of the video game company SEGA?",
+    "question": "Which of these characters is the mascot of the video game company SEGA? Dynamite Headdy, Alex Kidd, Sonic the Hedgehog, or Opa-Opa?",
     "correct_answer": "Sonic the Hedgehog",
     "incorrect_answers": ["Dynamite Headdy", "Alex Kidd", "Opa-Opa"]
   },
@@ -32365,14 +32321,6 @@
   },
   {
     "type": "multiple",
-    "difficulty": "medium",
-    "category": "Science: Computers",
-    "question": "In the programming language “Python”, which of these statements would display the string “Hello World” correctly?",
-    "correct_answer": "print(“Hello World”)",
-    "incorrect_answers": ["console.log(“Hello World”)", "echo “Hello World”", "printf(“Hello World”)"]
-  },
-  {
-    "type": "multiple",
     "difficulty": "hard",
     "category": "Politics",
     "question": "Who was the longest-serving senator in US history, serving from 1959 to 2010?",
@@ -32391,7 +32339,7 @@
     "type": "multiple",
     "difficulty": "easy",
     "category": "Mythology",
-    "question": "The ancient Roman god of war was commonly known as which of the following?",
+    "question": "The ancient Roman god of war was commonly known as?",
     "correct_answer": "Mars",
     "incorrect_answers": ["Jupiter", "Juno", "Ares"]
   },
@@ -32399,7 +32347,7 @@
     "type": "multiple",
     "difficulty": "easy",
     "category": "Vehicles",
-    "question": "Which of the following collision avoidance systems helps airplanes avoid colliding with each other?",
+    "question": "Which of the following collision avoidance systems helps airplanes avoid colliding with each other? GPWS, OCAS, TCAS, or TAWS?",
     "correct_answer": "TCAS",
     "incorrect_answers": ["GPWS", "OCAS", "TAWS"]
   },
@@ -32407,7 +32355,7 @@
     "type": "multiple",
     "difficulty": "medium",
     "category": "Geography",
-    "question": "Which of these countries is located the FURTHEST away from the South China Sea?",
+    "question": "Which of these countries is located the FURTHEST away from the South China Sea? Malaysia, Vietnam, Philippines, or Bangladesh?",
     "correct_answer": "Bangladesh",
     "incorrect_answers": ["Malaysia", "Vietnam", "Philippines"]
   },
@@ -32547,7 +32495,7 @@
     "type": "multiple",
     "difficulty": "medium",
     "category": "Entertainment: Japanese Anime & Manga",
-    "question": "In “Toriko”, which of the following foods is knowingly compatible with Toriko?",
+    "question": "In “Toriko”, which of the following foods is knowingly compatible with Toriko? Mors Oil, Alpacookie, Poison Potato, or Parmesansho Fruit?",
     "correct_answer": "Poison Potato",
     "incorrect_answers": ["Mors Oil", "Alpacookie", "Parmesansho Fruit"]
   },
@@ -32619,7 +32567,7 @@
     "type": "multiple",
     "difficulty": "medium",
     "category": "Entertainment: Video Games",
-    "question": "Which of these is NOT the name of a playable map in PUBG: Battlegrounds?",
+    "question": "Which of these is NOT the name of a playable map in PUBG: Battlegrounds? Orinocco, Miramar, Sanhok, or Vikendi?",
     "correct_answer": "Orinocco",
     "incorrect_answers": ["Miramar", "Sanhok", "Vikendi"]
   },
@@ -32659,7 +32607,7 @@
     "type": "multiple",
     "difficulty": "medium",
     "category": "Entertainment: Japanese Anime & Manga",
-    "question": "In “To Love-Ru: Darkness”, which of the girls attempt making a harem for Rito Yuuki?",
+    "question": "In “To Love-Ru: Darkness”, which of the girls attempt making a harem for Rito Yuuki? Momo Deviluke, Yami (Golden Darkness), Haruna Sairenji, or Mea Kurosaki?",
     "correct_answer": "Momo Deviluke",
     "incorrect_answers": ["Yami (Golden Darkness)", "Haruna Sairenji", "Mea Kurosaki"]
   },
@@ -32667,7 +32615,7 @@
     "type": "multiple",
     "difficulty": "hard",
     "category": "Entertainment: Television",
-    "question": "Which of these in the Star Trek series is NOT Klingon food?",
+    "question": "Which of these in the Star Trek series is NOT Klingon food? Hors d'oeuvre, Racht, Gagh, or Bloodwine?",
     "correct_answer": "Hors d'oeuvre",
     "incorrect_answers": ["Racht", "Gagh", "Bloodwine"]
   },
@@ -32823,7 +32771,7 @@
     "type": "multiple",
     "difficulty": "medium",
     "category": "Entertainment: Video Games",
-    "question": "Which of these “Worms” games featured 3D gameplay?",
+    "question": "Which of these “Worms” games featured 3D gameplay? Worms 4: Mayhem, Worms W.M.D, Worms Reloaded, or Worms: Open Warfare 2?",
     "correct_answer": "Worms 4: Mayhem",
     "incorrect_answers": ["Worms W.M.D", "Worms Reloaded", "Worms: Open Warfare 2"]
   },
@@ -32831,7 +32779,7 @@
     "type": "multiple",
     "difficulty": "hard",
     "category": "Science & Nature",
-    "question": "Which of the following is a major muscle of the back?",
+    "question": "Which of the following is a major muscle of the back? Trapezius, Trapezium, Trapezoid, or Triquetrum?",
     "correct_answer": "Trapezius",
     "incorrect_answers": ["Trapezium", "Trapezoid", "Triquetrum"]
   },
@@ -32866,18 +32814,6 @@
     "question": "What is rapper Drake's real name?",
     "correct_answer": "Aubrey Graham",
     "incorrect_answers": ["Shaun Carter", "Dwayne Carter", "Andre Young"]
-  },
-  {
-    "type": "multiple",
-    "difficulty": "medium",
-    "category": "Science & Nature",
-    "question": "Which of these two plates are best know for forming earthquakes and tsunami's?",
-    "correct_answer": "Convergent Plate Boundaries/Oceanic Crust",
-    "incorrect_answers": [
-      "Divergent Plate Boundaries/Convergent/Oceanic Crust",
-      "Transform Plate Boundaries/Divergent Plate Boundaries",
-      "Oceanic & Continental Crust/Transform Plate Boundaries"
-    ]
   },
   {
     "type": "multiple",
@@ -32947,7 +32883,7 @@
     "type": "multiple",
     "difficulty": "medium",
     "category": "General Knowledge",
-    "question": "Which of these companies does NOT manufacture automobiles?",
+    "question": "Which of these companies does NOT manufacture automobiles? Fiat, Nissan, GMC, or Ducati?",
     "correct_answer": "Ducati",
     "incorrect_answers": ["Nissan", "GMC", "Fiat"]
   },
@@ -32963,7 +32899,7 @@
     "type": "multiple",
     "difficulty": "medium",
     "category": "Entertainment: Video Games",
-    "question": "Which of the following has Jennifer Taylor NOT voiced?",
+    "question": "Which of the following has Jennifer Taylor NOT voiced? Sarah Kerrigan, Princess Peach, Zoey, or Cortana?",
     "correct_answer": "Sarah Kerrigan",
     "incorrect_answers": ["Princess Peach", "Zoey", "Cortana"]
   },
@@ -33011,7 +32947,7 @@
     "type": "multiple",
     "difficulty": "medium",
     "category": "Entertainment: Video Games",
-    "question": "One of the early prototypes of the Sega Dreamcast controller resembled which of the following?",
+    "question": "One of the early prototypes of the Sega Dreamcast controller resembled which of the following? Hairdryer, Flip Phone, Tablet, or Television Remote?",
     "correct_answer": "Television Remote",
     "incorrect_answers": ["Tablet", "Hairdryer", "Flip Phone"]
   },
@@ -33019,7 +32955,7 @@
     "type": "multiple",
     "difficulty": "easy",
     "category": "Entertainment: Video Games",
-    "question": "Which of the following is not a faction in Tom Clancy's The Division?",
+    "question": "Which of the following is not a faction in Tom Clancy's The Division? CDC, Cleaners, Last Man Batallion, or Rikers?",
     "correct_answer": "CDC",
     "incorrect_answers": ["Cleaners", "Last Man Batallion", "Rikers"]
   },
@@ -33179,7 +33115,7 @@
     "type": "multiple",
     "difficulty": "hard",
     "category": "Science: Computers",
-    "question": "Which of these is not a key value of Agile software development?",
+    "question": "Which of these is not a key value of Agile software development? Responding to change, Individuals and interactions, Customer collaboration, or Comprehensive documentation?",
     "correct_answer": "Comprehensive documentation",
     "incorrect_answers": ["Individuals and interactions", "Customer collaboration", "Responding to change"]
   },
@@ -33187,7 +33123,7 @@
     "type": "multiple",
     "difficulty": "hard",
     "category": "Animals",
-    "question": "Which of these animals is NOT a lizard?",
+    "question": "Which of these animals is NOT a lizard? Gila Monster, Tuatara, Komodo Dragon, or Green Iguana?",
     "correct_answer": "Tuatara",
     "incorrect_answers": ["Komodo Dragon", "Gila Monster", "Green Iguana"]
   },
@@ -33307,7 +33243,7 @@
     "type": "multiple",
     "difficulty": "hard",
     "category": "Geography",
-    "question": "Which of these cities is NOT in England?",
+    "question": "Which of these cities is NOT in England? Edinburgh, Oxford, Manchester, or Southampton?",
     "correct_answer": "Edinburgh",
     "incorrect_answers": ["Oxford", "Manchester", "Southampton"]
   },
@@ -33323,7 +33259,7 @@
     "type": "multiple",
     "difficulty": "medium",
     "category": "Entertainment: Video Games",
-    "question": "Which of the following created and directed the Katamari Damacy series?",
+    "question": "Which of the following created and directed the Katamari Damacy series? Shinji Mikami, Keita Takahashi, Hideki Kamiya, or Shu Takumi?",
     "correct_answer": "Keita Takahashi",
     "incorrect_answers": ["Hideki Kamiya", "Shu Takumi", "Shinji Mikami"]
   },
@@ -33427,7 +33363,7 @@
     "type": "multiple",
     "difficulty": "hard",
     "category": "Sports",
-    "question": "Which of these European cities was the first to host the modern Summer Olympic Games three times?",
+    "question": "Which of these European cities was the first to host the modern Summer Olympic Games three times? Paris, London, Athens, or Rome?",
     "correct_answer": "London",
     "incorrect_answers": ["Paris", "Athens", "Rome"]
   },
