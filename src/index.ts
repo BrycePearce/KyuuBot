@@ -3,6 +3,7 @@ import { loginPersonal } from 'mangadex-full-api';
 import { initComix } from './comixPreloader';
 import { initCommands } from './commands';
 import BindDatabase from './database';
+import { findOrCreateUser } from './database/api/userApi';
 import { CommandRegistry } from './utils/commandUtils';
 import { supportedComixIds } from './utils/constants';
 
@@ -56,7 +57,9 @@ client.on('messageCreate', async (message) => {
 
   const command = CommandRegistry.find(commandName);
   if (!command) return;
-  command.execute(message, commandArguments);
+
+  await findOrCreateUser(message.author.id); // create a user for anyone who runs a valid command
+  command.execute(message, commandArguments); // execute the command with the message and arguments
 });
 
 (async () => {
