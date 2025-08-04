@@ -31,14 +31,21 @@ const command: Command = {
     const channel = message.channel;
     if (!channel.isSendable()) return;
 
-    if (message.content.toLowerCase().includes('addtriviapts') && message.author.id === '226100196675682304') {
-      const parts = message.content.split(' ').slice(1);
-      const [userId, ptsRaw] = parts;
-      const pts = Number(ptsRaw);
-      if (userId && !isNaN(pts)) {
-        setPoints(message.guildId, userId, pts);
+    // only the admin (your ID) can run this
+    if (message.author.id === '226100196675682304') {
+      // expect: .trivia addTriviaPts <userId> <points>
+      const adminMatch = message.content.trim().match(/^\S+\s+addTriviaPts\s+(\d+)\s+(-?\d+)$/i);
+      if (adminMatch) {
+        const guildId = message.guild?.id;
+        if (!guildId) return; // must be in a guild
+
+        const userId = adminMatch[1];
+        const pts = Number(adminMatch[2]);
+
+        await setPoints(guildId, userId, pts);
+        await channel.send(`Set trivia points for <@${userId}> to ${pts} on this server.`);
+        return;
       }
-      return;
     }
 
     const allQuestions = triviaQuestions as TriviaQuestion[];
