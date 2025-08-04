@@ -2,13 +2,13 @@ import { getDbContext } from '..';
 import { TriviaStats } from '../entities';
 import { findOrCreateUser } from './userApi';
 
-export async function addPoints(channelId: string, authorId: string, pointsEarned: number) {
+export async function addPoints(guildId: string, authorId: string, pointsEarned: number) {
   const { em, triviaStatsRepository } = getDbContext();
   const user = await findOrCreateUser(authorId);
-  const trivia = await triviaStatsRepository.findOne({ channelId, user }, { populate: ['user'] });
+  const trivia = await triviaStatsRepository.findOne({ guildId, user }, { populate: ['user'] });
   if (!trivia) {
     const userTriviaPoints = new TriviaStats();
-    userTriviaPoints.channelId = channelId;
+    userTriviaPoints.guildId = guildId;
     userTriviaPoints.user = user;
     userTriviaPoints.points = pointsEarned;
     await em.persistAndFlush(userTriviaPoints);
@@ -18,12 +18,12 @@ export async function addPoints(channelId: string, authorId: string, pointsEarne
   }
 }
 
-export async function setPoints(channelId: string, userId: string, points: number) {
+export async function setPoints(guildId: string, userId: string, points: number) {
   const { em, triviaStatsRepository } = getDbContext();
   const user = await findOrCreateUser(userId);
   const trivia = await triviaStatsRepository.findOne(
     {
-      channelId,
+      guildId,
       user,
     },
     { populate: ['user'] }
@@ -31,7 +31,7 @@ export async function setPoints(channelId: string, userId: string, points: numbe
 
   if (!trivia) {
     const newStats = new TriviaStats();
-    newStats.channelId = channelId;
+    newStats.guildId = guildId;
     newStats.user = user;
     newStats.points = points;
 
@@ -43,9 +43,9 @@ export async function setPoints(channelId: string, userId: string, points: numbe
   }
 }
 
-export async function getPointsForUser(channelId: string, winnerId: string) {
+export async function getPointsForUser(guildId: string, winnerId: string) {
   const user = await findOrCreateUser(winnerId);
   const { triviaStatsRepository } = getDbContext();
-  const trivia = await triviaStatsRepository.findOne({ channelId, user }, { populate: ['user'] });
+  const trivia = await triviaStatsRepository.findOne({ guildId, user }, { populate: ['user'] });
   return trivia ? trivia.points : 0;
 }

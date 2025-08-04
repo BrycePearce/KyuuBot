@@ -72,8 +72,8 @@ const command: Command = {
           const endTime = new Date();
           const pointsEarned = difficultyPts[difficulty] ?? 1;
 
-          await addPoints(message.channelId, guess.author.id, pointsEarned);
-          const totalpts = await getPointsForUser(channel.id, guess.author.id);
+          await addPoints(message.guildId, guess.author.id, pointsEarned);
+          const totalpts = await getPointsForUser(message.guildId, guess.author.id);
           const elapsedTime = parseFloat(((endTime.valueOf() - startTime.valueOf()) / 1000).toFixed(3));
 
           await channel.send(
