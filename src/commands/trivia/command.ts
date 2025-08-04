@@ -36,7 +36,7 @@ const command: Command = {
       const [userId, ptsRaw] = parts;
       const pts = Number(ptsRaw);
       if (userId && !isNaN(pts)) {
-        setPoints(channel.id, userId, pts);
+        setPoints(message.guildId, userId, pts);
       }
       return;
     }
