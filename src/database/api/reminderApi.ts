@@ -10,9 +10,11 @@ export async function getDueReminders(): Promise<Reminder[]> {
 }
 
 export async function removeReminder(reminder: Reminder) {
-  const { em } = getDbContext();
-  em.remove(reminder);
-  await em.flush();
+  const { em, reminderRepository } = getDbContext();
+  const managed = await reminderRepository.findOne({ id: reminder.id });
+  if (managed) {
+    await em.removeAndFlush(managed);
+  }
 }
 
 export async function addReminder(
