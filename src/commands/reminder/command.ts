@@ -14,7 +14,6 @@ import {
   addReminder,
   getDueReminders,
   getUserReminders,
-  refreshRemindersCache,
   removeReminder,
   startReminderLoop,
   stopReminderLoop,
@@ -29,7 +28,6 @@ async function processDueReminders() {
 
     try {
       if (!channel?.isSendable()) continue;
-
       const user =
         client.users.cache.get(reminder.user.id) ?? (await client.users.fetch(reminder.user.id, { force: true }));
       const messageContent = `${user.toString()}, here's your reminder:\n> ${reminder.message}`;
@@ -60,7 +58,6 @@ const command: Command = {
   usage: '[invocation]',
 
   async onload() {
-    await refreshRemindersCache();
     if (this.enabled) {
       startReminderLoop(processDueReminders);
     }

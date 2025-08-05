@@ -1,38 +1,18 @@
-import { isAfter, isEqual } from 'date-fns';
 import { Reminder } from '../entities';
 import { getDbContext } from '../index';
 import { findOrCreateUser } from './userApi';
 
-let reminderCache: Reminder[] = [];
 let reminderInterval: NodeJS.Timeout | null = null;
 
-export async function refreshRemindersCache() {
+export async function getDueReminders(): Promise<Reminder[]> {
   const { reminderRepository } = getDbContext();
-  reminderCache = await reminderRepository.findAll({ populate: ['user'] });
-}
-
-export function getDueReminders(): Reminder[] {
-  const now = new Date();
-  const due: Reminder[] = [];
-  const future: Reminder[] = [];
-
-  for (const r of reminderCache) {
-    if (isAfter(now, r.remindAt) || isEqual(now, r.remindAt)) {
-      due.push(r);
-    } else {
-      future.push(r);
-    }
-  }
-
-  reminderCache = future;
-  return due;
+  return reminderRepository.find({ remindAt: { $lte: new Date() } }, { populate: ['user'] });
 }
 
 export async function removeReminder(reminder: Reminder) {
   const { em } = getDbContext();
   em.remove(reminder);
   await em.flush();
-  reminderCache = reminderCache.filter((r) => r.id !== reminder.id);
 }
 
 export async function addReminder(
@@ -57,7 +37,6 @@ export async function addReminder(
   }
 
   await em.persistAndFlush(reminder);
-  await refreshRemindersCache();
   return reminder;
 }
 
@@ -71,12 +50,9 @@ export async function getUserReminders(userId: string): Promise<Reminder[]> {
   return user.reminders.getItems().sort((a, b) => a.remindAt.getTime() - b.remindAt.getTime());
 }
 
-export function startReminderLoop(callback: (reminders: Reminder[]) => Promise<void>) {
+export function startReminderLoop(callback: () => Promise<void>) {
   reminderInterval = setInterval(async () => {
-    const due = getDueReminders();
-    if (due.length) {
-      await callback(due);
-    }
+    await callback();
   }, 1000);
 }
 

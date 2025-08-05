@@ -11,7 +11,7 @@ export default defineConfig({
   dbName: './config/kyuu.db',
   entities: [TriviaStats, User, Reminder, BaseEntity],
   highlighter: new SqlHighlighter(),
-  debug: true,
+  debug: false,
   migrations: {
     path: path.join(process.cwd(), 'src/database/migrations'),
   },
