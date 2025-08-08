@@ -34,7 +34,7 @@ const command: Command = {
 
     try {
       const response = await openaiClient.chat.completions.create({
-        model: 'chatgpt-4o-latest',
+        model: 'gpt-5-chat-latest',
         messages: [
           {
             role: 'system',
