@@ -2,7 +2,8 @@ import { Reminder } from '../entities';
 import { getDbContext } from '../index';
 import { findOrCreateUser } from './userApi';
 
-let reminderInterval: NodeJS.Timeout | null = null;
+let reminderTimer: NodeJS.Timeout | null = null;
+let running = false;
 
 export async function getDueReminders(): Promise<Reminder[]> {
   const { reminderRepository } = getDbContext();
@@ -31,9 +32,7 @@ export async function addReminder(
   reminder.message = data.message;
   reminder.remindAt = data.remindAt;
   reminder.channelId = data.channelId;
-  if (data.attachments?.length) {
-    reminder.attachments = data.attachments;
-  }
+  if (data.attachments?.length) reminder.attachments = data.attachments;
 
   await em.persistAndFlush(reminder);
   return reminder;
@@ -41,23 +40,35 @@ export async function addReminder(
 
 export async function getUserReminders(userId: string): Promise<Reminder[]> {
   const { userRepository } = getDbContext();
-
   await findOrCreateUser(userId);
-
   const user = await userRepository.findOneOrFail({ id: userId }, { populate: ['reminders'] });
-
   return user.reminders.getItems().sort((a, b) => a.remindAt.getTime() - b.remindAt.getTime());
 }
 
 export function startReminderLoop(callback: () => Promise<void>) {
-  reminderInterval = setInterval(async () => {
-    await callback();
-  }, 1000);
+  if (reminderTimer) return;
+
+  const tick = async () => {
+    if (running) {
+      reminderTimer = setTimeout(tick, 1000);
+      return;
+    }
+    running = true;
+    try {
+      await callback();
+    } finally {
+      running = false;
+      reminderTimer = setTimeout(tick, 1000);
+    }
+  };
+
+  reminderTimer = setTimeout(tick, 1000);
 }
 
 export function stopReminderLoop() {
-  if (reminderInterval) {
-    clearInterval(reminderInterval);
-    reminderInterval = null;
+  if (reminderTimer) {
+    clearTimeout(reminderTimer);
+    reminderTimer = null;
   }
+  running = false;
 }
