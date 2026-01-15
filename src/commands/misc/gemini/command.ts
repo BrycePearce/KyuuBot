@@ -60,7 +60,7 @@ const command: Command = {
     }
 
     try {
-      const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
       const result = await model.generateContent(prompts);
 
       const response = result.response;
