@@ -61,7 +61,6 @@ const command: Command = {
           prompt,
           n: 1,
           size: '1024x1024',
-          // DO NOT USE response_format HERE
         });
       } else {
         // TEXT → IMAGE MODE
