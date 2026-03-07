@@ -75,7 +75,7 @@ const command: Command = {
 
     try {
       const model = await client.messages.create({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-4-sonnet-20250514',
         system: role,
         messages: [
           {
@@ -83,7 +83,7 @@ const command: Command = {
             content: contentBlocks,
           },
         ],
-        max_tokens: 300,
+        max_tokens: 600,
       });
 
       const response = processMessageContent(model.content);

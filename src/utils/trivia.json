@@ -32466,5 +32466,405 @@
     "question": "True or False? Michael Jackson had a pet python named ‘Crusher’.",
     "correct_answer": "True",
     "incorrect_answers": ["False"]
+  },
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "Entertainment: Cartoons",
+    "question": "What is the name of the cat in Tom and Jerry?",
+    "correct_answer": "Tom",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "Entertainment: Cartoons",
+    "question": "Who is the arch-nemesis of Bugs Bunny?",
+    "correct_answer": "Elmer Fudd",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "Entertainment: Cartoons",
+    "question": "Which cartoon character’s catchphrase is \"What’s up, Doc?\"?",
+    "correct_answer": "Bugs Bunny",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "Entertainment: Cartoons",
+    "question": "What is the full name of Scooby-Doo?",
+    "correct_answer": "Scoobert Doo",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "Entertainment: Cartoons",
+    "question": "In The Flintstones, what is the name of Fred’s best friend?",
+    "correct_answer": "Barney Rubble",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "Entertainment: Cartoons",
+    "question": "Which cartoon character has a signature red bow and loves lasagna?",
+    "correct_answer": "Garfield",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "Entertainment: Cartoons",
+    "question": "What is Popeye’s favorite food that makes him stronger?",
+    "correct_answer": "Spinach",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "Entertainment: Cartoons",
+    "question": "Which classic cartoon features a panther that is pink?",
+    "correct_answer": "The Pink Panther",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "Entertainment: Cartoons",
+    "question": "What is the name of Yogi Bear’s little sidekick?",
+    "correct_answer": "Boo-Boo Bear",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "Entertainment: Cartoons",
+    "question": "Which cartoon featured a mystery-solving group called \"Mystery Inc.\"?",
+    "correct_answer": "Scooby-Doo, Where Are You!",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "Entertainment: Cartoons",
+    "question": "Who are the three sisters in The Powerpuff Girls?",
+    "correct_answer": "Blossom, Bubbles, and Buttercup",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "Entertainment: Cartoons",
+    "question": "What is the name of Dexter’s annoying sister in Dexter’s Laboratory?",
+    "correct_answer": "Dee Dee",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "Entertainment: Cartoons",
+    "question": "Which Nickelodeon show featured a football-headed boy?",
+    "correct_answer": "Hey Arnold!",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "Entertainment: Cartoons",
+    "question": "Who is SpongeBob SquarePants’ best friend?",
+    "correct_answer": "Patrick Star",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "Entertainment: Cartoons",
+    "question": "What is the name of Timmy Turner’s fairy godparents in The Fairly OddParents?",
+    "correct_answer": "Cosmo and Wanda",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "Entertainment: Cartoons",
+    "question": "Which animated show follows the adventures of Aang, a young airbender?",
+    "correct_answer": "Avatar: The Last Airbender",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "Entertainment: Cartoons",
+    "question": "What is the name of the evil scientist in Phineas and Ferb?",
+    "correct_answer": "Dr. Heinz Doofenshmirtz",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "Entertainment: Cartoons",
+    "question": "Which show features a talking dog named Brian?",
+    "correct_answer": "Family Guy",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "Entertainment: Cartoons",
+    "question": "In Ed, Edd n Eddy, what is the gang’s ultimate goal?",
+    "correct_answer": "To get jawbreakers",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "Entertainment: Cartoons",
+    "question": "What is Courage’s full name in Courage the Cowardly Dog?",
+    "correct_answer": "Courage",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "Entertainment: Cartoons",
+    "question": "Which Disney Channel cartoon features a pair of siblings, Dipper and Mabel, exploring supernatural mysteries?",
+    "correct_answer": "Gravity Falls",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "Entertainment: Cartoons",
+    "question": "Which Cartoon Network show follows the adventures of a blue cat and his goldfish brother?",
+    "correct_answer": "The Amazing World of Gumball",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "Entertainment: Cartoons",
+    "question": "Who is the main character in Steven Universe?",
+    "correct_answer": "Steven Universe",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "Entertainment: Cartoons",
+    "question": "What is the name of the high school in Rick and Morty?",
+    "correct_answer": "Harry Herpson High School",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "Entertainment: Cartoons",
+    "question": "Which Netflix series follows a washed-up Hollywood horse actor?",
+    "correct_answer": "BoJack Horseman",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "Entertainment: Cartoons",
+    "question": "What is the name of the boy genius in Jimmy Neutron?",
+    "correct_answer": "Jimmy Neutron",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "Entertainment: Cartoons",
+    "question": "Who is the villain in Kim Possible known for his green-glowing hands?",
+    "correct_answer": "Dr. Drakken",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "Entertainment: Cartoons",
+    "question": "Which Adult Swim show features two scientists and their bizarre space adventures?",
+    "correct_answer": "Rick and Morty",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "Entertainment: Cartoons",
+    "question": "What is the name of the robot companion in Futurama?",
+    "correct_answer": "Bender",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "Entertainment: Cartoons",
+    "question": "Which animated show features a human boy named Finn and his magical dog, Jake?",
+    "correct_answer": "Adventure Time",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "Entertainment: Cartoons",
+    "question": "Who is Batman’s sidekick?",
+    "correct_answer": "Robin",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "Entertainment: Cartoons",
+    "question": "Which superhero team consists of Robin, Starfire, Raven, Cyborg, and Beast Boy?",
+    "correct_answer": "Teen Titans",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "Entertainment: Cartoons",
+    "question": "Who is the leader of the X-Men in X-Men: The Animated Series?",
+    "correct_answer": "Professor X",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "Entertainment: Cartoons",
+    "question": "Which web-slinging hero has had multiple animated series?",
+    "correct_answer": "Spider-Man",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "Entertainment: Cartoons",
+    "question": "What is the name of Superman’s home planet?",
+    "correct_answer": "Krypton",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "Entertainment: Cartoons",
+    "question": "Which superhero cartoon features a bald hero who defeats enemies with a single punch?",
+    "correct_answer": "One Punch Man",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "Entertainment: Cartoons",
+    "question": "In Justice League Unlimited, what is Wonder Woman’s real name?",
+    "correct_answer": "Diana Prince",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "Entertainment: Cartoons",
+    "question": "Who is the archenemy of The Flash?",
+    "correct_answer": "Reverse-Flash",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "Entertainment: Cartoons",
+    "question": "Which superhero leads the Avengers: Earth’s Mightiest Heroes cartoon?",
+    "correct_answer": "Captain America",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "Entertainment: Cartoons",
+    "question": "What is the secret identity of Batman Beyond?",
+    "correct_answer": "Terry McGinnis",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "Entertainment: Cartoons",
+    "question": "What is the name of the mayor in The Powerpuff Girls?",
+    "correct_answer": "Mayor of Townsville",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "Entertainment: Cartoons",
+    "question": "Which animated show features a group of kids known as Sector V?",
+    "correct_answer": "Codename: Kids Next Door",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "Entertainment: Cartoons",
+    "question": "What is the name of Ash Ketchum’s first Pokémon?",
+    "correct_answer": "Pikachu",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "Entertainment: Cartoons",
+    "question": "Which animated show follows a young boy with a magic watch that lets him transform into aliens?",
+    "correct_answer": "Ben 10",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "Entertainment: Cartoons",
+    "question": "What is the name of the scientist who created Mojo Jojo?",
+    "correct_answer": "Professor Utonium",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "Entertainment: Cartoons",
+    "question": "Who is the main antagonist in The Lion King?",
+    "correct_answer": "Scar",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "Entertainment: Cartoons",
+    "question": "What is the name of the talking blue dog in Blue’s Clues?",
+    "correct_answer": "Blue",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "Entertainment: Cartoons",
+    "question": "Which character is always trying to steal picnic baskets in Yogi Bear?",
+    "correct_answer": "Yogi Bear",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "Entertainment: Cartoons",
+    "question": "What is the full name of Shaggy from Scooby-Doo?",
+    "correct_answer": "Norville Rogers",
+    "incorrect_answers": []
+  },
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "Entertainment: Cartoons",
+    "question": "Which animated show features a girl with a pink hat and a monkey named Boots?",
+    "correct_answer": "Dora the Explorer",
+    "incorrect_answers": []
   }
 ]
