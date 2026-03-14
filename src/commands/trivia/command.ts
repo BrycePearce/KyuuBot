@@ -3,6 +3,7 @@ import { Command } from '../../types/Command';
 import triviaQuestions from '../../utils/trivia.json';
 
 const maskCharacter = '∗';
+
 const difficultyPts: Record<string, number> = {
   easy: 1,
   moderate: 2,
@@ -20,6 +21,158 @@ interface TriviaQuestion {
   incorrect_answers: string[];
 }
 
+const isRevealableChar = (char: string) => /\p{L}|\p{N}/u.test(char);
+
+const normalizeTriviaText = (str: string) =>
+  str
+    .normalize('NFKC')
+    .toLowerCase()
+    .trim()
+    .replace(/[^\p{L}\p{N}\s]/gu, '')
+    .replace(/\s+/g, ' ');
+
+const getRevealableIndexes = (str: string) =>
+  [...str].map((char, idx) => (isRevealableChar(char) ? idx : -1)).filter((idx) => idx !== -1);
+
+const getInitialHintPercent = (answer: string) => {
+  const revealableCount = getRevealableIndexes(answer).length;
+
+  if (revealableCount <= 2) return 0;
+  if (revealableCount <= 4) return 20;
+  if (revealableCount <= 8) return 25;
+  return 35;
+};
+
+const getHintPercentStep = (answer: string) => {
+  const revealableCount = getRevealableIndexes(answer).length;
+
+  if (revealableCount <= 2) return 0;
+  if (revealableCount <= 4) return 15;
+  if (revealableCount <= 8) return 10;
+  return 8;
+};
+
+const generateStrMask = (str: string) =>
+  [...str].map((char) => (isRevealableChar(char) ? maskCharacter : char)).join('');
+
+const shuffleArray = <T>(array: T[]) => {
+  const copy = [...array];
+
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+
+  return copy;
+};
+
+const getWordRevealableIndexes = (answer: string) => {
+  const chars = [...answer];
+  const words: number[][] = [];
+  let currentWord: number[] = [];
+
+  for (let i = 0; i < chars.length; i++) {
+    const char = chars[i];
+
+    if (char === ' ') {
+      if (currentWord.length > 0) {
+        words.push(currentWord);
+        currentWord = [];
+      }
+      continue;
+    }
+
+    if (isRevealableChar(char)) {
+      currentWord.push(i);
+    }
+  }
+
+  if (currentWord.length > 0) {
+    words.push(currentWord);
+  }
+
+  return words;
+};
+
+const revealHint = (answer: string, currentMask: string, percentToReveal: number) => {
+  const answerChars = [...answer];
+  const maskChars = [...currentMask];
+
+  const revealableIndexes = answerChars
+    .map((char, idx) => (isRevealableChar(char) ? idx : -1))
+    .filter((idx) => idx !== -1);
+
+  const totalRevealableChars = revealableIndexes.length;
+
+  if (totalRevealableChars === 0) {
+    return currentMask;
+  }
+
+  const currentlyRevealedCount = revealableIndexes.reduce((count, idx) => {
+    return maskChars[idx] !== maskCharacter ? count + 1 : count;
+  }, 0);
+
+  const currentlyHiddenIndexes = revealableIndexes.filter((idx) => maskChars[idx] === maskCharacter);
+
+  if (currentlyHiddenIndexes.length === 0) {
+    return currentMask;
+  }
+
+  // Never fully reveal the answer through hints alone.
+  // For 1-character answers, this means no character hints at all.
+  const maxAllowedTotalRevealed = Math.max(0, totalRevealableChars - 1);
+
+  let targetTotalRevealed = Math.floor((totalRevealableChars * percentToReveal) / 100);
+
+  if (percentToReveal > 0 && totalRevealableChars > 2) {
+    targetTotalRevealed = Math.max(1, targetTotalRevealed);
+  }
+
+  targetTotalRevealed = Math.min(targetTotalRevealed, maxAllowedTotalRevealed);
+
+  let charsToRevealNow = targetTotalRevealed - currentlyRevealedCount;
+
+  if (charsToRevealNow <= 0) {
+    return currentMask;
+  }
+
+  const wordIndexes = getWordRevealableIndexes(answer);
+
+  const wordsByRevealProgress = wordIndexes
+    .map((indexes) => ({
+      indexes: shuffleArray(indexes.filter((idx) => maskChars[idx] === maskCharacter)),
+      revealedCount: indexes.filter((idx) => maskChars[idx] !== maskCharacter).length,
+    }))
+    .filter((word) => word.indexes.length > 0)
+    .sort((a, b) => a.revealedCount - b.revealedCount);
+
+  const prioritizedIndexes: number[] = [];
+
+  // Reveal in rounds across words so hints feel more evenly distributed.
+  let addedInRound = true;
+  while (addedInRound) {
+    addedInRound = false;
+
+    for (const word of wordsByRevealProgress) {
+      if (word.indexes.length > 0) {
+        const idx = word.indexes.shift();
+        if (idx !== undefined) {
+          prioritizedIndexes.push(idx);
+          addedInRound = true;
+        }
+      }
+    }
+  }
+
+  for (let i = 0; i < prioritizedIndexes.length && charsToRevealNow > 0; i++) {
+    const idx = prioritizedIndexes[i];
+    maskChars[idx] = answerChars[idx];
+    charsToRevealNow--;
+  }
+
+  return maskChars.join('');
+};
+
 const command: Command = {
   name: 'Trivia',
   description: 'Trivia questions',
@@ -27,20 +180,29 @@ const command: Command = {
   args: false,
   enabled: true,
   usage: '[invocation]',
+
   async execute(message) {
     const channel = message.channel;
     if (!channel.isSendable()) return;
 
-    // only the admin (your ID) can run this
+    const guildId = message.guild?.id ?? message.guildId ?? null;
+
     if (message.author.id === '226100196675682304') {
       // expect: .trivia addTriviaPts <userId> <points>
       const adminMatch = message.content.trim().match(/^\S+\s+addTriviaPts\s+(\d+)\s+(-?\d+)$/i);
       if (adminMatch) {
-        const guildId = message.guild?.id;
-        if (!guildId) return; // must be in a guild
+        if (!guildId) {
+          await channel.send('This command can only be used in a server.');
+          return;
+        }
 
         const userId = adminMatch[1];
         const pts = Number(adminMatch[2]);
+
+        if (!Number.isFinite(pts)) {
+          await channel.send('Invalid points value.');
+          return;
+        }
 
         await setPoints(guildId, userId, pts);
         await channel.send(`Set trivia points for <@${userId}> to ${pts} on this server.`);
@@ -49,42 +211,68 @@ const command: Command = {
     }
 
     const allQuestions = triviaQuestions as TriviaQuestion[];
-    if (!Array.isArray(allQuestions) || allQuestions.length === 0) return;
+    if (!Array.isArray(allQuestions) || allQuestions.length === 0) {
+      await channel.send('No trivia questions are available right now.');
+      return;
+    }
 
     const picked = allQuestions[Math.floor(Math.random() * allQuestions.length)];
-    const { question: displayedQuestion, correct_answer: answer, difficulty = 'easy' } = picked;
+    const { question: displayedQuestion, correct_answer: answer, difficulty = 'easy', category } = picked;
 
-    const collector = channel.createMessageCollector({ time: 80000 });
-    const startTime = new Date();
+    const normalizedAnswer = normalizeTriviaText(answer);
 
-    await channel.send(displayedQuestion);
+    const collector = channel.createMessageCollector({
+      time: 80000,
+      filter: (collectedMessage) => !collectedMessage.author.bot,
+    });
+
+    const startTime = Date.now();
+
+    await channel.send(category ? `**${category}**\n${displayedQuestion}` : displayedQuestion);
 
     const hintIntervals = [25000, 45000, 60000];
     let hintMask = generateStrMask(answer);
-    let hintPercentToReveal = answer.length > 9 ? 40 : 15;
+    let hintPercentToReveal = getInitialHintPercent(answer);
+    const hintPercentStep = getHintPercentStep(answer);
 
     const hintOutputTimers = hintIntervals.map((interval) =>
       setTimeout(() => {
-        const revealedHint = revealHint(answer, hintMask, hintPercentToReveal);
-        channel.send(`Hint: ${revealedHint}`);
-        hintMask = revealedHint;
-        hintPercentToReveal += 6;
+        void (async () => {
+          const revealedHint = revealHint(answer, hintMask, hintPercentToReveal);
+
+          if (revealedHint !== hintMask) {
+            hintMask = revealedHint;
+            await channel.send(`Hint: ${revealedHint}`);
+          }
+
+          hintPercentToReveal += hintPercentStep;
+        })().catch((error) => {
+          console.error('Error when sending trivia hint:', error);
+        });
       }, interval)
     );
 
     collector.on('collect', async (guess) => {
       try {
-        if (guess.content.trim().toLowerCase() === answer.toLowerCase()) {
+        const normalizedGuess = normalizeTriviaText(guess.content);
+
+        if (normalizedGuess === normalizedAnswer) {
           collector.stop('success');
-          const endTime = new Date();
+
+          const endTime = Date.now();
+          const elapsedTime = ((endTime - startTime) / 1000).toFixed(3);
           const pointsEarned = difficultyPts[difficulty] ?? 1;
 
-          await addPoints(message.guildId, guess.author.id, pointsEarned);
-          const totalpts = await getPointsForUser(message.guildId, guess.author.id);
-          const elapsedTime = parseFloat(((endTime.valueOf() - startTime.valueOf()) / 1000).toFixed(3));
+          if (!guildId) {
+            await channel.send(`**Winner**: ${guess.author}; **Answer**: ${answer}; **Time**: ${elapsedTime}s`);
+            return;
+          }
+
+          await addPoints(guildId, guess.author.id, pointsEarned);
+          const totalPts = await getPointsForUser(guildId, guess.author.id);
 
           await channel.send(
-            `**Winner**: ${guess.author}; **Answer**: ${answer}; **Time**: ${elapsedTime}s; **Points**: ${pointsEarned}; **Total**: ${totalpts}`
+            `**Winner**: ${guess.author}; **Answer**: ${answer}; **Time**: ${elapsedTime}s; **Points**: ${pointsEarned}; **Total**: ${totalPts}`
           );
         }
       } catch (error) {
@@ -94,36 +282,16 @@ const command: Command = {
 
     collector.on('end', async (_, reason) => {
       hintOutputTimers.forEach((timer) => clearTimeout(timer));
+
       if (reason === 'time') {
-        await channel.send(`Time's up! The answer was **${answer}**`);
+        try {
+          await channel.send(`Time's up! The answer was **${answer}**`);
+        } catch (error) {
+          console.error('Error when sending trivia timeout message:', error);
+        }
       }
     });
   },
-};
-
-const generateStrMask = (str: string) => {
-  const specialChars = '!@#$%^&*()_+-=[]{}\\|;\':",./<>?';
-  return [...str].map((char) => (specialChars.includes(char) || char === ' ' ? char : maskCharacter)).join('');
-};
-
-const revealHint = (word: string, mask: string, percent: number) => {
-  const wordArray = [...word];
-  const maskArray = [...mask];
-
-  const indexesRevealable = maskArray.map((c, idx) => (c === maskCharacter ? idx : -1)).filter((i) => i !== -1);
-
-  let numCharactersToReveal = Math.ceil((indexesRevealable.length * percent) / 100);
-  if (numCharactersToReveal <= 0) return maskArray.join('');
-
-  while (numCharactersToReveal > 0 && indexesRevealable.length > 0) {
-    const idx = indexesRevealable[Math.floor(Math.random() * indexesRevealable.length)];
-    if (maskArray[idx] === maskCharacter) {
-      maskArray[idx] = wordArray[idx];
-      numCharactersToReveal--;
-    }
-  }
-
-  return maskArray.join('');
 };
 
 export default command;

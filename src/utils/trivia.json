@@ -32866,5 +32866,1205 @@
     "question": "Which animated show features a girl with a pink hat and a monkey named Boots?",
     "correct_answer": "Dora the Explorer",
     "incorrect_answers": []
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What is the name of Wendy's dog in Peter Pan?",
+    "correct_answer": "Nana",
+    "incorrect_answers": ["Mushu", "Moana", "Tod (fox) and Copper (hound dog)"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Which Disney film includes the hit song 'Let It Go'?",
+    "correct_answer": "Frozen",
+    "incorrect_answers": ["Mulan", "Moana", "Aladdin"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "Who trained Hercules to be a hero?",
+    "correct_answer": "Philoctetes",
+    "incorrect_answers": ["Randy Newman", "Dumbo", "Ernesto de la Cruz"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "Who is the bear in 'The Jungle Book'?",
+    "correct_answer": "Baloo",
+    "incorrect_answers": ["Philoctetes", "Dwayne \"The Rock\" Johnson", "Will Smith"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What is the name of the toy store in Toy Story 2?",
+    "correct_answer": "Al's Toy Barn",
+    "incorrect_answers": ["Pocahontas", "Six", "Elsa and Anna"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "Which poisonous fruit did Snow White eat?",
+    "correct_answer": "Apple",
+    "incorrect_answers": ["Mickey Mouse", "\"The Karnival Kid\" in 1929", "Pluto and Fifi"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "Which Disney film features the famous dialogue, \"Mirror, mirror\"?",
+    "correct_answer": "Snow White and the Seven Dwarfs",
+    "incorrect_answers": ["Mulan", "Moana", "Aladdin"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "Who was Maui's voice actor in 'Moana'?",
+    "correct_answer": "Dwayne \"The Rock\" Johnson",
+    "incorrect_answers": ["Andy Davis", "Max Goof", "Mrs. Jumbo"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Moana was chosen by whom to return the heart?",
+    "correct_answer": "The ocean",
+    "incorrect_answers": ["Kala", "Lady Tremaine", "A loaf of bread"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "What year was the original 'Cinderella' released?",
+    "correct_answer": "1950",
+    "incorrect_answers": ["1994", "2003", "2013"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "Who plays the Genie in the 2019 live-action adaptation of 'Aladdin'?",
+    "correct_answer": "Will Smith",
+    "incorrect_answers": ["Philoctetes", "Baloo", "Dwayne \"The Rock\" Johnson"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What does Hakuna Matata mean?",
+    "correct_answer": "No worries",
+    "incorrect_answers": ["Sid Phillips", "Disney", "Sherman, 42 Wallaby Way, Sydney"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "Genie was stuck in the lamp for how many years before Aladdin found him?",
+    "correct_answer": "10,000 years",
+    "incorrect_answers": ["15", "26", "101"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "What was the name of Walt Disney's first cartoon character?",
+    "correct_answer": "Oswald the Lucky Rabbit",
+    "incorrect_answers": ["Wolves", "Rafiki", "Figaro"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Who is Mufasa's trusted advisor in The Lion King?",
+    "correct_answer": "Zazu",
+    "incorrect_answers": ["Kocoum", "Geppetto", "Auguste Gusteau"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "In 'The Jungle Book', what kind of animal is King Louis?",
+    "correct_answer": "Orangutan",
+    "incorrect_answers": ["Tiger", "Bear", "Dragon"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "What is the child's name who owns the toys in Toy Story?",
+    "correct_answer": "Andy Davis",
+    "incorrect_answers": ["Gorilla", "Sarabi", "Rajah"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "Where does Mike Wazowski take his girlfriend Celia for her birthday dinner in Monsters, Inc.?",
+    "correct_answer": "Harryhausen's",
+    "incorrect_answers": ["Oswald the Lucky Rabbit", "Zazu", "Orangutan"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "What type of creature is the Disney sidekick Mushu?",
+    "correct_answer": "Dragon",
+    "incorrect_answers": ["Tiger", "Bear", "Orangutan"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "What is the 'Monsters Incorporated' slogan?",
+    "correct_answer": "We Scare Because We Care",
+    "incorrect_answers": ["Dwayne \"The Rock\" Johnson", "1950", "Will Smith"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "Who is Goofy's son?",
+    "correct_answer": "Max Goof",
+    "incorrect_answers": ["Dwayne \"The Rock\" Johnson", "Will Smith", "Zazu"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What color hair does Ariel have in 'The Little Mermaid'?",
+    "correct_answer": "Red",
+    "incorrect_answers": ["Blue", "Green", "Purple"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "Who is the first animal in Disney's 'Dumbo' to receive a baby from the storks?",
+    "correct_answer": "Mrs. Jumbo",
+    "incorrect_answers": ["Geppetto", "Auguste Gusteau", "Randy Newman"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What's the name of the circus in the 1941 animated film Dumbo?",
+    "correct_answer": "WDP Circus",
+    "incorrect_answers": ["Dumbo", "Ernesto de la Cruz", "Wolves"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "What is the antagonist's name from 'The Little Mermaid'?",
+    "correct_answer": "Ursula",
+    "incorrect_answers": ["Oswald the Lucky Rabbit", "We Scare Because We Care", "WDP Circus"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "What was the first Pixar movie?",
+    "correct_answer": "Toy Story",
+    "incorrect_answers": ["Philoctetes", "Baloo", "Al's Toy Barn"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "Who did Pocahontas' father want her to marry?",
+    "correct_answer": "Kocoum",
+    "incorrect_answers": ["Randy Newman", "Dumbo", "Ernesto de la Cruz"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "How old is Crush in Finding Nemo?",
+    "correct_answer": "150 years",
+    "incorrect_answers": ["26", "101", "999"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "Who brings Pinocchio to life?",
+    "correct_answer": "Geppetto",
+    "incorrect_answers": ["Max Goof", "Mrs. Jumbo", "Kocoum"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What is the name of Sleeping Beauty's Prince?",
+    "correct_answer": "Prince Phillip",
+    "incorrect_answers": ["Figaro", "Stitch", "An Elephant"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What does the enchanted cake in 'Brave' turn Merida's mother into?",
+    "correct_answer": "A bear",
+    "incorrect_answers": ["Four fingers on each hand", "Mickey Mouse", "\"The Karnival Kid\" in 1929"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "Emperor Kuzco turns into what animal in The Emperor's New Groove?",
+    "correct_answer": "Llama",
+    "incorrect_answers": ["Orangutan", "Fish", "Elephant"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Which kind of wood is Pinocchio made of?",
+    "correct_answer": "Pine wood",
+    "incorrect_answers": ["26", "Three", "East High"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Who is Remy's culinary hero in Ratatouille?",
+    "correct_answer": "Auguste Gusteau",
+    "incorrect_answers": ["Philoctetes", "Baloo", "Dwayne \"The Rock\" Johnson"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "What color eyes does Cinderella have?",
+    "correct_answer": "Blue",
+    "incorrect_answers": ["Red", "Green", "Purple"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "Pongo and Perdita originally had how many puppies in 101 Dalmatians?",
+    "correct_answer": "15",
+    "incorrect_answers": ["26", "101", "150 years"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What is Tarzan's adopted mother's name?",
+    "correct_answer": "Kala",
+    "incorrect_answers": ["Pocahontas", "Six", "Elsa and Anna"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What is the name of Cinderella's evil mother?",
+    "correct_answer": "Lady Tremaine",
+    "incorrect_answers": ["Sherman, 42 Wallaby Way, Sydney", "Thomas", "Seven dwarfs"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "Who composed the music for Toy Story?",
+    "correct_answer": "Randy Newman",
+    "incorrect_answers": ["Geppetto", "Auguste Gusteau", "Dumbo"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "What do Aladdin and his monkey Abu steal from the marketplace when you're first introduced to them in the movie?",
+    "correct_answer": "A loaf of bread",
+    "incorrect_answers": ["Six", "Elsa and Anna", "Snow White"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Rapunzel's chameleon in Tangled is called what?",
+    "correct_answer": "Pascal",
+    "incorrect_answers": ["Scott Weinger", "Pixie dust", "So This Is Love"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "Who was the only Disney main character who didn't talk throughout the entire film?",
+    "correct_answer": "Dumbo",
+    "incorrect_answers": ["Will Smith", "Zazu", "Andy Davis"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Which Disney character sings \"Kiss the Girl\"?",
+    "correct_answer": "Sebastian",
+    "incorrect_answers": ["Rapunzel", "Pocahontas", "Six"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "What facial feature of Pinocchio grows when he lies?",
+    "correct_answer": "Nose",
+    "incorrect_answers": ["Lady Tremaine", "A loaf of bread", "Pascal"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "What were Mickey Mouse's first spoken words?",
+    "correct_answer": "Hot dogs! Hot dogs!",
+    "incorrect_answers": ["Stitch", "An Elephant", "Finding Nemo"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What's the name of the giant whale that swallowed Pinocchio?",
+    "correct_answer": "Monstro",
+    "incorrect_answers": ["Walt Disney's Carousel of Progress", "Four", "Scott Weinger"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "What name does Mulan pick for herself while pretending to be a man?",
+    "correct_answer": "Ping",
+    "incorrect_answers": ["Eugene Fitzherbert", "Tony's Town Square", "Mushu"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "Which was the first-ever Disney Movie?",
+    "correct_answer": "Snow White And The Seven Dwarfs",
+    "incorrect_answers": ["Edna Mode", "Walt Disney", "26"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "What is Flynn Rider's real name in Tangled?",
+    "correct_answer": "Eugene Fitzherbert",
+    "incorrect_answers": ["Toy Story", "Kocoum", "150 years"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Who is Miguel's idol in Coco?",
+    "correct_answer": "Ernesto de la Cruz",
+    "incorrect_answers": ["Auguste Gusteau", "Randy Newman", "Dumbo"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "Mowgli was raised by what animals in The Jungle Book?",
+    "correct_answer": "Wolves",
+    "incorrect_answers": ["Lion", "Tiger", "Bear"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "What is the name of the Italian restaurant where Lady and the Tramp share spaghetti?",
+    "correct_answer": "Tony's Town Square",
+    "incorrect_answers": ["Sebastian", "Nose", "Hot dogs! Hot dogs!"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What is Mulan's pet dragon called?",
+    "correct_answer": "Mushu",
+    "incorrect_answers": ["Sebastian", "Nose", "Hot dogs! Hot dogs!"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Which Disney character sings \"How Far I'll Go\"?",
+    "correct_answer": "Moana",
+    "incorrect_answers": ["Hot dogs! Hot dogs!", "Monstro", "Ping"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "What are the names of the little fox and the hound from 1981's The Fox and the Hound?",
+    "correct_answer": "Tod (fox) and Copper (hound dog)",
+    "incorrect_answers": ["Princess Melody", "Sleeping Beauty", "Pain and Panic"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What is the name of the teacup from 'Beauty And The Beast'?",
+    "correct_answer": "Chip Potts",
+    "incorrect_answers": ["Anna", "Zero", "The Enchanted Storybook Castle"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What is the name of Simba and Nala's daughter?",
+    "correct_answer": "Kiara",
+    "incorrect_answers": ["New Orleans", "Three", "East High"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Quasimodo was the bell ringer of which famous cathedral?",
+    "correct_answer": "Notre Dame Cathedral",
+    "incorrect_answers": ["Emily", "Gorilla", "Sarabi"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "What name did Ursula go by when she took human form?",
+    "correct_answer": "Vanessa",
+    "incorrect_answers": ["Sid Phillips", "Disney", "Sherman, 42 Wallaby Way, Sydney"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Russell belongs to which scouting organization in Up?",
+    "correct_answer": "The Wilderness Explorers",
+    "incorrect_answers": ["Phil Collins", "Emily", "Gorilla"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "Which Grammy winner composed the songs on the Tarzan soundtrack?",
+    "correct_answer": "Phil Collins",
+    "incorrect_answers": ["Ursula", "Prince Phillip", "A bear"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "What was the name of Jessie's original owner in Toy Story 2?",
+    "correct_answer": "Emily",
+    "incorrect_answers": ["Rafiki", "Figaro", "Stitch"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "Which animal was Tarzan brought up by?",
+    "correct_answer": "Gorilla",
+    "incorrect_answers": ["Kala", "Lady Tremaine", "A loaf of bread"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "Who said: \"The past can hurt. But the way I see it, you can either run from it or learn from it\"?",
+    "correct_answer": "Rafiki",
+    "incorrect_answers": ["Bruce", "Mickey Mouse", "Edna Mode"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "What color roses does the Queen of Hearts want in Alice in Wonderland?",
+    "correct_answer": "Red",
+    "incorrect_answers": ["White", "Brown", "Blue"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Who was Geppetto's pet in Pinocchio?",
+    "correct_answer": "Figaro",
+    "incorrect_answers": ["Auguste Gusteau", "Randy Newman", "Dumbo"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What is Simba's mother's name?",
+    "correct_answer": "Sarabi",
+    "incorrect_answers": ["The Sherman Brothers", "Four fingers on each hand", "Mickey Mouse"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "Who was Experiment 626?",
+    "correct_answer": "Stitch",
+    "incorrect_answers": ["Rafiki", "Figaro", "Donny Osmond"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What is the name of Princess Jasmine's tiger?",
+    "correct_answer": "Rajah",
+    "incorrect_answers": ["Blue", "15", "Randy Newman"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What animal is 'Dumbo'?",
+    "correct_answer": "An Elephant",
+    "incorrect_answers": ["Dragon", "Orangutan", "Fish"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "What kind of insect is Flik in A Bug's Life?",
+    "correct_answer": "An Ant",
+    "incorrect_answers": ["Three", "East High", "Turner"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Which Disney film has the tagline, \"Fish are friends, not food\"?",
+    "correct_answer": "Finding Nemo",
+    "incorrect_answers": ["Toy Story", "Mulan", "Moana"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Who sang \"I'll Make a Man Out of You\" in Mulan?",
+    "correct_answer": "Donny Osmond",
+    "incorrect_answers": ["Dwayne \"The Rock\" Johnson", "Will Smith", "Zazu"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "What is the \"cutest little town\" in Carburetor County?",
+    "correct_answer": "Radiator Springs",
+    "incorrect_answers": ["Wolves", "Rafiki", "Figaro"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What's the name of the Princess in 'Aladdin'?",
+    "correct_answer": "Princess Jasmine",
+    "incorrect_answers": ["Batuu", "Castaway Cay", "Walt Disney's Carousel of Progress"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Who wrote the hit song 'You've Got A Friend In Me'?",
+    "correct_answer": "Randy Newman",
+    "incorrect_answers": ["Kocoum", "Geppetto", "Auguste Gusteau"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "Which Pixar character said: \"Our fate lives within us. You only have to be brave enough to see it\"?",
+    "correct_answer": "Merida",
+    "incorrect_answers": ["Jiminy Cricket", "Golden Blonde", "12"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "What are the names of Cruella's henchmen in 101 Dalmatians?",
+    "correct_answer": "Jasper and Horace Badun",
+    "incorrect_answers": ["Al's Toy Barn", "Apple", "The ocean"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "In 'Zootopia,' what kind of animal is Judy Hopps?",
+    "correct_answer": "Female Rabbit",
+    "incorrect_answers": ["Llama", "Mouse", "Dog"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "What's the first monster Hercules fights when he arrives in Thebes?",
+    "correct_answer": "Hydra",
+    "incorrect_answers": ["Nose", "Hot dogs! Hot dogs!", "Monstro"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "Who serves Pinocchio's conscience?",
+    "correct_answer": "Jiminy Cricket",
+    "incorrect_answers": ["Mickey Mouse", "Edna Mode", "Walt Disney"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "What are the names of Cinderella's stepsisters?",
+    "correct_answer": "Anastasia and Drizella",
+    "incorrect_answers": ["Five", "Max", "New Orleans"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What is the name of Ariel and Prince Eric's daughter?",
+    "correct_answer": "Princess Melody",
+    "incorrect_answers": ["Rapunzel and Flynn Rider", "Maurice", "Cinderella"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "Which Disney Princess sings \"Once Upon a Dream\"?",
+    "correct_answer": "Sleeping Beauty",
+    "incorrect_answers": ["Anastasia and Drizella", "Princess Melody", "Pain and Panic"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "What are the names of Hades' minions in Hercules?",
+    "correct_answer": "Pain and Panic",
+    "incorrect_answers": ["The Enchanted Storybook Castle", "Happily Ever After", "Batuu"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "What color is Rapunzel's hair at the end of the film?",
+    "correct_answer": "Golden Blonde",
+    "incorrect_answers": ["Green", "Purple", "Yellow"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Which color dress does Cinderella wear to the ball?",
+    "correct_answer": "Blue",
+    "incorrect_answers": ["Mickey Mouse", "1928", "\"The Karnival Kid\" in 1929"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Which Disney Princess attends Elsa's coronation day in Arendelle?",
+    "correct_answer": "Rapunzel and Flynn Rider",
+    "incorrect_answers": ["Frozen", "Philoctetes", "Baloo"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What is the name of Belle's father in Beauty and the Beast?",
+    "correct_answer": "Maurice",
+    "incorrect_answers": ["Anna", "Zero", "The Enchanted Storybook Castle"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "Which Disney Princess did Lily James portray in a 2015 live-action remake?",
+    "correct_answer": "Cinderella",
+    "incorrect_answers": ["26", "Nana", "Al's Toy Barn"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Angelina Jolie brought which Disney villain to life?",
+    "correct_answer": "Maleficent",
+    "incorrect_answers": ["Moana", "Tod (fox) and Copper (hound dog)", "Chip Potts"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "How many siblings does Prince Hans of the Southern Isles have in 'Frozen'?",
+    "correct_answer": "12",
+    "incorrect_answers": ["999", "10,000 years", "11"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "Which Disney Princess has a chameleon as a sidekick?",
+    "correct_answer": "Rapunzel",
+    "incorrect_answers": ["Radiator Springs", "Princess Jasmine", "Merida"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "Which popular princess has the longest hair?",
+    "correct_answer": "Rapunzel",
+    "incorrect_answers": ["Rafiki", "Figaro", "Stitch"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "Which Princess is based on a real person?",
+    "correct_answer": "Pocahontas",
+    "incorrect_answers": ["Castaway Cay", "Walt Disney's Carousel of Progress", "Four"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "How many sisters does Ariel have?",
+    "correct_answer": "Six",
+    "incorrect_answers": ["15", "26", "101"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "Which two Disney princesses are not authorized Disney princesses?",
+    "correct_answer": "Elsa and Anna",
+    "incorrect_answers": ["Jiminy Cricket", "Golden Blonde", "12"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "Which princess has a live-action remake released in 2020?",
+    "correct_answer": "Mulan",
+    "incorrect_answers": ["Strange World", "Riley", "Coral"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "Which princess is the oldest Disney princess?",
+    "correct_answer": "Cinderella",
+    "incorrect_answers": ["Nana", "Al's Toy Barn", "Apple"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "Which Disney princess is the youngest?",
+    "correct_answer": "Snow White",
+    "incorrect_answers": ["Dumbo", "Ernesto de la Cruz", "Wolves"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Who was the first Disney princess?",
+    "correct_answer": "Snow White",
+    "incorrect_answers": ["Figaro", "Stitch", "Donny Osmond"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What is the name of Elsa's sister in 'Frozen'?",
+    "correct_answer": "Anna",
+    "incorrect_answers": ["Rapunzel and Flynn Rider", "Maurice", "Cinderella"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "Which Disney princess has a tattoo?",
+    "correct_answer": "Pocahontas",
+    "incorrect_answers": ["Red", "Mrs. Jumbo", "Toy Story"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "What year did Disneyland open?",
+    "correct_answer": "1955",
+    "incorrect_answers": ["1937", "1950", "1989"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "How many bricks were used to make Cinderella's Castle in Magic Kingdom?",
+    "correct_answer": "Zero",
+    "incorrect_answers": ["11", "12", "15"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "What is the name of the castle in Shanghai Disneyland Park?",
+    "correct_answer": "The Enchanted Storybook Castle",
+    "incorrect_answers": ["Pixie dust", "So This Is Love", "Luxo Jr"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "The Haunted Mansion is home to how many happy haunts?",
+    "correct_answer": "999",
+    "incorrect_answers": ["101", "150 years", "10,000 years"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "What fireworks show replaced Wishes in 2017?",
+    "correct_answer": "Happily Ever After",
+    "incorrect_answers": ["Snow White", "Anna", "Zero"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Which planet do guests visit in Star Wars: Galaxy's Edge?",
+    "correct_answer": "Batuu",
+    "incorrect_answers": ["Kala", "Lady Tremaine", "A loaf of bread"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "World Showcase consists of how many countries?",
+    "correct_answer": "11",
+    "incorrect_answers": ["150 years", "999", "10,000 years"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What is the name of Disney's private island?",
+    "correct_answer": "Castaway Cay",
+    "incorrect_answers": ["11", "Bruce", "1928"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "\"There's a Great Big Beautiful Tomorrow\" is the theme song of which iconic Disney ride in Magic Kingdom?",
+    "correct_answer": "Walt Disney's Carousel of Progress",
+    "incorrect_answers": ["Al's Toy Barn", "Apple", "The ocean"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "How many theme parks are in Walt Disney World?",
+    "correct_answer": "Four",
+    "incorrect_answers": ["10,000 years", "11", "12"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Which Full House character voices Aladdin?",
+    "correct_answer": "Scott Weinger",
+    "incorrect_answers": ["Pocahontas", "Six", "Elsa and Anna"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "All you need is a little faith, trust, and what else?",
+    "correct_answer": "Pixie dust",
+    "incorrect_answers": ["Seven dwarfs", "Amelia Mignonette Thermopolis Grimaldi Renaldo", "Five"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Who said: \"Fish are friends, not food\"?",
+    "correct_answer": "Bruce",
+    "incorrect_answers": ["Stitch", "Donny Osmond", "Jiminy Cricket"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Which song do Cinderella and Prince Charming dance to at the ball?",
+    "correct_answer": "So This Is Love",
+    "incorrect_answers": ["Baloo", "Snow White and the Seven Dwarfs", "Dwayne \"The Rock\" Johnson"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What is the name of Pixar's lamp mascot?",
+    "correct_answer": "Luxo Jr",
+    "incorrect_answers": ["Frozen", "Philoctetes", "Baloo"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "Which siblings were behind a number of Disney movie scores and 'It's a Small World (After All)'?",
+    "correct_answer": "The Sherman Brothers",
+    "incorrect_answers": ["Wolves", "Rafiki", "Figaro"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "How many fingers does Mickey Mouse have?",
+    "correct_answer": "Four fingers on each hand",
+    "incorrect_answers": ["12", "15", "26"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "Who was the first cartoon character to get a star on the Hollywood Walk of Fame?",
+    "correct_answer": "Mickey Mouse",
+    "incorrect_answers": ["Alan Menken", "Jodi Benson", "Phil Harris"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Which prominent Disney character appears as a stuffed animal in 'Frozen'?",
+    "correct_answer": "Mickey Mouse",
+    "incorrect_answers": ["The ocean", "No worries", "Oswald the Lucky Rabbit"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "What year did Mickey Mouse make his first public appearance?",
+    "correct_answer": "1928",
+    "incorrect_answers": ["1955", "1989", "1994"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "What was the name of Mickey Mouse's first spoken film?",
+    "correct_answer": "\"The Karnival Kid\" in 1929",
+    "incorrect_answers": ["Max Goof", "Red", "Mrs. Jumbo"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What are the names of Mickey Mouse's two pet dogs?",
+    "correct_answer": "Pluto and Fifi",
+    "incorrect_answers": ["Geppetto", "Llama", "Pine wood"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Which one of Bashful & Jumpy isn't one of the seven dwarfs?",
+    "correct_answer": "Jumpy",
+    "incorrect_answers": ["Dumbo", "Ernesto de la Cruz", "Wolves"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What is the name of Andy's neighbor in Toy Story?",
+    "correct_answer": "Sid Phillips",
+    "incorrect_answers": ["Kocoum", "150 years", "Geppetto"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "The sorcerer's name in Fantasia spells what backward?",
+    "correct_answer": "Disney",
+    "incorrect_answers": ["Ursula", "Prince Phillip", "A bear"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Who is the fashion designer in The Incredibles?",
+    "correct_answer": "Edna Mode",
+    "incorrect_answers": ["Bruce", "Mickey Mouse", "Walt Disney"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "What is the address Dory has to memorize in 'Finding Nemo'?",
+    "correct_answer": "Sherman, 42 Wallaby Way, Sydney",
+    "incorrect_answers": ["Llama", "Pine wood", "Auguste Gusteau"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Christian Bale is the voice behind which character in Pocahontas?",
+    "correct_answer": "Thomas",
+    "incorrect_answers": ["Maurice", "Cinderella", "Maleficent"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "How many dwarfs does Snow White live with?",
+    "correct_answer": "Seven dwarfs",
+    "incorrect_answers": ["12", "15", "26"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "What is Princess Mia's full name in The Princess Diaries?",
+    "correct_answer": "Amelia Mignonette Thermopolis Grimaldi Renaldo",
+    "incorrect_answers": ["Pine wood", "Auguste Gusteau", "Blue"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "How many siblings did Walt Disney have?",
+    "correct_answer": "Four",
+    "incorrect_answers": ["10,000 years", "11", "12"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "How many Muses are in Hercules?",
+    "correct_answer": "Five",
+    "incorrect_answers": ["12", "15", "26"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What is the name of Prince Eric's dog in The Little Mermaid?",
+    "correct_answer": "Max",
+    "incorrect_answers": ["15", "Randy Newman", "Dumbo"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "The Princess and the Frog is set in which city?",
+    "correct_answer": "New Orleans",
+    "incorrect_answers": ["Prince Ferdinand", "Two (Diane Marie Disney and Sharon Mae Disney)", "Frozen"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Who said: \"It's kind of fun to do the impossible\"?",
+    "correct_answer": "Walt Disney",
+    "incorrect_answers": ["Julie Andrews", "Alan Menken", "Jodi Benson"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "How old is Meredith Blake in 1998's The Parent Trap?",
+    "correct_answer": "26",
+    "incorrect_answers": ["10,000 years", "11", "12"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "Duchess is a mother to how many kittens in The Aristocats?",
+    "correct_answer": "Three",
+    "incorrect_answers": ["10,000 years", "11", "12"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "What high school did Troy and Gabriella attend in High School Musical?",
+    "correct_answer": "East High",
+    "incorrect_answers": ["Riley", "Coral", "Anterograde Amnesia"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "Elizabeth Swann tells the Pirates of the Caribbean pirates that her last name is what?",
+    "correct_answer": "Turner",
+    "incorrect_answers": ["Anastasia and Drizella", "Princess Melody", "Sleeping Beauty"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "moderate",
+    "category": "Entertainment: Disney",
+    "question": "Julie Andrews made her feature film debut in which Disney movie?",
+    "correct_answer": "Mary Poppins",
+    "incorrect_answers": ["Sid Phillips", "Disney", "Sherman, 42 Wallaby Way, Sydney"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "Disney introduced its first animated openly gay character in which movie?",
+    "correct_answer": "Strange World",
+    "incorrect_answers": ["We Scare Because We Care", "WDP Circus", "Ursula"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "Joy, Fear, Anger, Disgust, and Sadness guide whose emotions in Inside Out?",
+    "correct_answer": "Riley",
+    "incorrect_answers": ["Dragon", "Max Goof", "Red"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What was Nemo's mother's name?",
+    "correct_answer": "Coral",
+    "incorrect_answers": ["Emily", "Gorilla", "Sarabi"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "Dory suffers from what?",
+    "correct_answer": "Anterograde Amnesia",
+    "incorrect_answers": ["Princess Melody", "Sleeping Beauty", "Pain and Panic"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "What was the first animated film to earn a Best Picture nomination?",
+    "correct_answer": "Beauty and the Beast",
+    "incorrect_answers": ["Notre Dame Cathedral", "Vanessa", "The Wilderness Explorers"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Entertainment: Disney",
+    "question": "What's the name of Snow White's prince?",
+    "correct_answer": "Prince Ferdinand",
+    "incorrect_answers": ["Merida", "Jasper and Horace Badun", "Hydra"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "difficult",
+    "category": "Entertainment: Disney",
+    "question": "Walt Disney had how many kids?",
+    "correct_answer": "Two (Diane Marie Disney and Sharon Mae Disney)",
+    "incorrect_answers": ["10,000 years", "11", "12"]
   }
 ]

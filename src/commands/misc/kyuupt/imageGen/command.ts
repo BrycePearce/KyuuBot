@@ -56,7 +56,7 @@ const command: Command = {
         const file = await toFile(buffer, `input.${ext}`, { type: mimeType });
 
         response = await openai.images.edit({
-          model: 'gpt-image-1',
+          model: 'gpt-image-1.5',
           image: file,
           prompt,
           n: 1,

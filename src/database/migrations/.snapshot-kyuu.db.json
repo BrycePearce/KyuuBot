@@ -264,6 +264,16 @@
           "nullable": false,
           "default": "false",
           "mappedType": "integer"
+        },
+        "locked_at": {
+          "name": "locked_at",
+          "type": "datetime",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 0,
+          "mappedType": "datetime"
         }
       },
       "name": "reminder",
@@ -272,6 +282,20 @@
           "columnNames": ["user_id"],
           "composite": false,
           "keyName": "reminder_user_id_index",
+          "primary": false,
+          "unique": false
+        },
+        {
+          "keyName": "reminder_locked_at_index",
+          "columnNames": ["locked_at"],
+          "composite": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "keyName": "reminder_delivered_remind_at_index",
+          "columnNames": ["delivered", "remind_at"],
+          "composite": true,
           "primary": false,
           "unique": false
         },

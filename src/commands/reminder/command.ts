@@ -12,24 +12,30 @@ import parseDuration from 'parse-duration';
 import { client } from '../..';
 import {
   addReminder,
-  getDueReminders,
+  claimDueReminders,
   getUserReminders,
-  removeReminder,
+  markReminderDelivered,
+  releaseReminderLock,
   startReminderLoop,
   stopReminderLoop,
 } from '../../database/api/reminderApi';
 import { Command } from '../../types/Command';
 
 async function processDueReminders() {
-  const dueReminders = await getDueReminders();
+  const dueReminders = await claimDueReminders();
 
   for (const reminder of dueReminders) {
-    let channel = client.channels.cache.get(reminder.channelId);
+    const channel = client.channels.cache.get(reminder.channelId);
 
     try {
-      if (!channel?.isSendable()) continue;
+      if (!channel?.isSendable()) {
+        await releaseReminderLock(reminder.id);
+        continue;
+      }
+
       const user =
         client.users.cache.get(reminder.user.id) ?? (await client.users.fetch(reminder.user.id, { force: true }));
+
       const messageContent = `${user.toString()}, here's your reminder:\n> ${reminder.message}`;
       const files = reminder.attachments?.length ? reminder.attachments.map((url) => new AttachmentBuilder(url)) : [];
 
@@ -38,13 +44,10 @@ async function processDueReminders() {
         files,
       });
 
-      await removeReminder(reminder);
+      await markReminderDelivered(reminder.id);
     } catch (err) {
-      if (channel?.isTextBased() && channel?.isSendable()) {
-        channel.send(`Failed to send reminder ${reminder.id}: ${err}`);
-      } else {
-        console.error(`Failed to send reminder ${reminder.id} in channel ${reminder.channelId}:`, err);
-      }
+      await releaseReminderLock(reminder.id);
+      console.error(`Failed to send reminder ${reminder.id} in channel ${reminder.channelId}:`, err);
     }
   }
 }
@@ -77,10 +80,9 @@ const command: Command = {
 function computeRemindAt(durationInput: string): Date | null {
   const CALENDAR_UNIT_REGEX = /(\d+)\s*(y|mo|w|d|h|m|s)/gi;
   const now = new Date();
-  let cursor = new Date(now); // apply calendar units first
+  let cursor = new Date(now);
   let remainderMs = 0;
 
-  // Extract all number+unit tokens
   let matched = false;
   let remaining = durationInput;
 
@@ -114,22 +116,20 @@ function computeRemindAt(durationInput: string): Date | null {
         break;
     }
 
-    // remove this token from the leftover string so we don't double-parse
     remaining = remaining.replace(match[0], '');
   }
 
   if (matched) {
-    // if there is leftover like "1y30" that isn't matched, let parse-duration handle it
     const leftover = remaining.trim();
     if (leftover) {
       const extraMs = parseDuration(leftover);
       if (extraMs === null) return null;
       remainderMs = extraMs;
     }
+
     return addMilliseconds(cursor, remainderMs);
   }
 
-  // fallback: no calendar-style tokens matched, try parse-duration wholesale
   const fallbackMs = parseDuration(durationInput);
   if (fallbackMs === null) return null;
   return addMilliseconds(now, fallbackMs);
@@ -168,14 +168,14 @@ export async function createReminder(message: Message, args: string[]) {
     start: now,
     end: reminder.remindAt,
   });
+
   const formatted = formatDuration(duration, {
     format: ['years', 'months', 'days', 'hours', 'minutes', 'seconds'],
     zero: false,
   });
 
   const human = formatted || 'a moment';
-  const reminderMsg = `${message.author} you will be reminded in ${human}: ${reminderText}`;
-  await channel.send(reminderMsg);
+  await channel.send(`${message.author} you will be reminded in ${human}: ${reminderText}`);
 }
 
 export async function listReminders(message: Message) {
@@ -185,7 +185,7 @@ export async function listReminders(message: Message) {
   const reminders = await getUserReminders(message.author.id);
 
   if (!reminders.length) {
-    channel.send(`🙀 ${message.author.toString()} You have no reminders 🙀`);
+    await channel.send(`🙀 ${message.author.toString()} You have no reminders 🙀`);
     return;
   }
 
@@ -195,8 +195,7 @@ export async function listReminders(message: Message) {
     })}**`;
   });
 
-  const response = `${message.author.toString()} Reminders:\n\n${reminderStrings.join('\n')}`;
-  channel.send(response);
+  await channel.send(`${message.author.toString()} Reminders:\n\n${reminderStrings.join('\n')}`);
 }
 
 export default command;
