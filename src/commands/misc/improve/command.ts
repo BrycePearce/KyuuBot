@@ -19,21 +19,12 @@ const GARFIELD_MESSAGES = {
   nothingUsable: 'That message has no snackable text and no image worthy of Garfieldification.',
   improveFailed: 'Garfield stared at it, judged it, and then refused to cooperate.',
   genericError: 'Garfield was too busy being horizontal to process that one.',
-  imageOnly: 'Behold. I made it worse in the best possible way.',
+  imageOnly: 'There. I made it more Garfield.',
   oversizedText: 'Garfield had too many thoughts. I attached the evidence.',
   oversizedTextWithImage: 'The image is ready. Garfield’s monologue was too powerful, so I attached it.',
   embedFooter: 'Garfield was here',
   failedEmbed: 'Garfield inspected that embed, sighed, and declined to improve it.',
 } as const;
-
-const GARFIELD_STYLE_MODES = [
-  'smug one-liner',
-  'dramatic lazy monologue',
-  'judgmental reaction',
-  'sleepy orange-cat commentary',
-  'lasagna-fueled proclamation',
-  'petty comic-strip caption',
-] as const;
 
 type ImproveSource = {
   imageUrl?: string;
@@ -219,58 +210,57 @@ function extractFromEmbeds(embeds: readonly Embed[]): ExtractedEmbedSource {
 }
 
 async function garfieldifyText(sourceText: string, isAccompanyingImage: boolean): Promise<string> {
-  const selectedStyleMode = GARFIELD_STYLE_MODES[Math.floor(Math.random() * GARFIELD_STYLE_MODES.length)];
   const isVeryShortInput = isShortInput(sourceText);
 
   const completion = await openaiClient.responses.create({
-    model: 'gpt-4.1-mini',
+    model: 'gpt-5-chat-latest',
     input: [
       {
         role: 'system',
         content: [
           'You are Garfield the cat.',
-          'You are lazy, smug, theatrical, sarcastic, mildly mean, food-obsessed, and deeply unimpressed by the world.',
-          'Your humor should feel like an actual Garfield comic strip caption or reaction.',
-          'Prefer punchlines over explanations.',
-          'Be over-the-top, quotable, and expressive.',
-          'Use orange-cat energy: laziness, disdain, appetite, ego, sleepiness, and occasional hatred of Mondays when it fits naturally.',
-          'Do not sound wholesome, generic, assistant-like, or overly helpful.',
+          'Your voice is dry, lazy, smug, deadpan, mildly self-important, and chronically unimpressed.',
+          'Garfield humor should feel like a newspaper comic strip caption.',
+          'Prefer simple punchlines over clever-sounding internet humor.',
+          'Avoid try-hard jokes, meme voice, poetic phrasing, edgy sarcasm, or assistant-like wording.',
+          'Do not sound wholesome, inspirational, theatrical in a cringey way, or overly expressive for its own sake.',
+          'Use classic Garfield themes when they fit naturally: laziness, naps, food, smugness, hating effort, hating mornings, hating Mondays, judging people.',
+          'Be concise.',
+          'Prefer one strong punchline.',
+          'Use at most 2 short lines.',
           'Do not explain the joke.',
           'Do not mention being an AI.',
-          'Do not wrap the answer in quotes unless necessary.',
-          'Keep it concise, but make every line feel intentional and funny.',
-          'Aim for 1 to 4 short lines or 1 to 3 short paragraphs max.',
-          'Occasionally use dramatic formatting like ellipses, em dashes, or a single ALL-CAPS phrase if it improves the joke.',
-          'The final line should ideally be the strongest or funniest line.',
+          'Do not wrap the answer in quotes.',
+          'The result should sound like Garfield actually said it, not like someone doing a Garfield impression too hard.',
           isVeryShortInput
-            ? 'If the source text is very short, do not merely paraphrase it. Expand it into a sharper Garfield reaction with more attitude.'
-            : 'Keep the original meaning or vibe loosely recognizable, but prioritize humor, voice, and personality.',
+            ? 'If the source text is very short, do not just paraphrase it. Turn it into a stronger Garfield-style reaction.'
+            : 'Keep the original meaning or vibe loosely recognizable, but prioritize Garfield voice and a clean punchline.',
         ].join(' '),
       },
       {
         role: 'user',
         content: isAccompanyingImage
           ? [
-              `Style mode: ${selectedStyleMode}.`,
-              'Write a Garfield reaction to this message.',
-              'This is accompanying an image, so it should read like a punchy comic caption or reaction.',
-              'Keep the core vibe of the original, but exaggerate it with Garfield personality.',
+              'Write a short Garfield caption for an accompanying image.',
+              'It should read like a comic-strip caption or reaction.',
+              'Keep it dry and simple.',
+              'No internet-style joke writing.',
               isVeryShortInput
-                ? 'Because the source text is short, make the reaction punchier and more personality-driven instead of just restating it.'
-                : 'Keep it sharp and compact.',
+                ? 'Because the source is short, build a real joke from it instead of restating it.'
+                : 'Keep the core vibe loosely recognizable.',
               '',
-              sourceText,
+              `Source text: ${sourceText}`,
             ].join('\n')
           : [
-              `Style mode: ${selectedStyleMode}.`,
-              'Rewrite this as if Garfield said it or reacted to it.',
-              'Keep the original meaning or vibe loosely recognizable, but prioritize humor, voice, and personality.',
-              'Make it funnier, cattier, lazier, and more dramatic.',
+              'Rewrite this as something Garfield would say.',
+              'Keep it dry, lazy, concise, and deadpan.',
+              'Aim for one punchline, maximum two short lines.',
+              'No meme humor. No cringe. No try-hard phrasing.',
               isVeryShortInput
-                ? 'Because the source text is short, build it into a stronger Garfield bit rather than a tiny paraphrase.'
-                : 'Keep it concise and punchy.',
+                ? 'Because the source is short, turn it into a stronger Garfield bit instead of a tiny paraphrase.'
+                : 'Keep the core vibe loosely recognizable.',
               '',
-              sourceText,
+              `Source text: ${sourceText}`,
             ].join('\n'),
       },
     ],
@@ -299,34 +289,22 @@ async function garfieldifyImage(imageUrl: string, originalFilename: string = 'so
   const inputFilename = ensureExtension(originalFilename, DEFAULT_IMAGE_TYPE);
 
   const imageResponse = await openaiClient.images.edit({
-    model: 'gpt-image-1',
+    model: 'gpt-image-1.5',
     image: new File([normalizedBuffer], inputFilename, { type: DEFAULT_IMAGE_TYPE }),
     prompt: [
-      'Transform the main subject of this image into Garfield the cat.',
-      '',
-      'Preserve the rest of the image as closely as possible:',
-      '- same composition',
-      '- same camera angle',
-      '- same pose and body language',
-      '- same objects and environment',
-      '- same lighting',
-      '- same framing and crop',
-      '',
-      'Only replace the primary subject so it becomes Garfield.',
-      '',
-      'The final image should look like the exact same picture except the subject is Garfield.',
-      '',
-      'Use classic Garfield comic strip styling:',
-      '- orange Garfield tabby',
-      '- bold comic outlines',
-      '- simple cartoon shading',
-      '- Garfield-style facial expressions',
-      '',
-      'Do not change the background.',
+      'Replace the human subject with Garfield the cat.',
+      'Garfield must keep the same pose, position, body orientation, and framing as the original person.',
+      'Preserve all clothing and accessories exactly as they are in the original image.',
+      'Keep the same uniform, hat, medals, decorations, straps, bags, objects being held, facial hair or mustache, and other visible outfit details.',
+      'Only the person should change into Garfield.',
+      'The rest of the scene must stay the same.',
+      'Keep the same composition, background, lighting, camera angle, crop, and overall scene layout.',
+      'This should look like the same image except the person is now Garfield.',
+      'Garfield should be orange with black stripes and a classic smug Garfield expression.',
       'Do not add new characters.',
-      'Do not significantly alter the scene.',
-      'Treat this as a style transformation of the main subject, not a reimagining of the whole image.',
-      'Make minimal changes outside replacing the main subject with Garfield.',
+      'Do not remove important clothing details.',
+      'Do not redesign the scene.',
+      'Do not turn it into a totally new illustration.',
     ].join(' '),
     size: '1024x1024',
     output_format: 'png',
