@@ -415,17 +415,7 @@ function buildImageEditPrompt({ character, variant }: { character: MascotCharact
           'Keep Garfield recognizable as classic Garfield, but adapt him to the image naturally',
         ].join('. ');
 
-  const foodInteractionRules =
-    character === 'garfield'
-      ? [
-          'If clearly visible food is present in the image, have Garfield interact with it naturally in a way that fits the scene, such as staring at it, reaching for it, holding it, eating it, guarding it, or looking possessive about it.',
-          'Do not invent large new meals or food props unless some food is already clearly present in the source image.',
-          'Keep the food interaction subtle and compositionally natural rather than turning the image into a totally new scene.',
-        ]
-      : [];
-
   const sharedRules = [
-    ...foodInteractionRules,
     'Preserve the original image as much as possible.',
     'If there is a clear main subject, central character, or prominent figure, transform that subject into the character.',
     'If there is no clear main subject to replace, add the character prominently but tastefully into the scene in a way that fits the composition.',
