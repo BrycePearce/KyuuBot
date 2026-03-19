@@ -14,6 +14,7 @@ const GARFIELD_ORANGE = 0xf28c28;
 const MAX_IMAGE_DIMENSION = 2048;
 
 const NERMAL_CHANCE = 0.1;
+const CURSED_CHANCE = 0.08;
 
 const GARFIELD_MESSAGES = {
   noReplyTarget: 'Reply to a message with `.garfield`. I’m not doing free-range effort.',
@@ -42,8 +43,34 @@ type ExtractedEmbedSource = {
 };
 
 type MascotCharacter = 'garfield' | 'nermal';
-type ImageVariant = 'classic' | 'insert' | 'cursed';
 type CaptionStyle = 'bitter-one-liner' | 'lazy-complaint' | 'smug-reaction' | 'anti-effort' | 'food-driven';
+type ImageFlavor = 'normal' | 'cursed';
+
+type ImageInsertionMode = 'reinterpret-subject' | 'interact-with-object' | 'add-to-scene' | 'observer';
+
+type SceneFocusStrength = 'clear-single-subject' | 'shared-focus' | 'diffuse-scene';
+type SubjectType = 'person' | 'animal' | 'object' | 'food' | 'statue' | 'architecture' | 'none' | 'multiple';
+
+type ImagePlan = {
+  summary: string;
+  hasClearMainSubject: boolean;
+  sceneFocusStrength: SceneFocusStrength;
+  subjectType: SubjectType;
+  mainSubjectDescription: string;
+  shouldInteractWithObject: boolean;
+  interactionObject: string;
+  interactionAction: string;
+  insertionMode: ImageInsertionMode;
+  placement: string;
+  pose: string;
+  expression: string;
+  medium: string;
+  material: string;
+  abstractionLevel: string;
+  preserve: string[];
+  styleNotes: string[];
+  riskNotes: string[];
+};
 
 const command: Command = {
   name: 'Garfield',
@@ -78,9 +105,9 @@ const command: Command = {
       return;
     }
 
-    const character = pickMascotCharacter();
+    const imageFlavor = pickImageFlavor();
+    const character = imageFlavor === 'cursed' ? 'garfield' : pickMascotCharacter();
     const captionStyle = pickCaptionStyle();
-    const imageVariant = pickImageVariant();
 
     try {
       await channel.sendTyping();
@@ -95,6 +122,7 @@ const command: Command = {
             isAccompanyingImage: Boolean(source.imageUrl),
             character,
             captionStyle,
+            imageFlavor,
           });
         } catch (error) {
           console.error('Failed to mascot-ify text:', error);
@@ -107,7 +135,7 @@ const command: Command = {
             imageUrl: source.imageUrl,
             originalFilename: source.imageFilename ?? 'source.png',
             character,
-            variant: imageVariant,
+            imageFlavor,
           });
         } catch (error) {
           console.error('Failed to mascot-ify image:', error);
@@ -125,6 +153,7 @@ const command: Command = {
           garfieldImage: mascotImage,
           embedTitle: source.embedTitle,
           character,
+          imageFlavor,
         });
         return;
       }
@@ -133,6 +162,7 @@ const command: Command = {
         garfieldText: mascotText,
         garfieldImage: mascotImage,
         character,
+        imageFlavor,
       });
     } catch (error) {
       console.error('Error running .garfield:', error);
@@ -233,11 +263,13 @@ async function mascotifyText({
   isAccompanyingImage,
   character,
   captionStyle,
+  imageFlavor,
 }: {
   sourceText: string;
   isAccompanyingImage: boolean;
   character: MascotCharacter;
   captionStyle: CaptionStyle;
+  imageFlavor: ImageFlavor;
 }): Promise<string> {
   const isVeryShortInput = isShortInput(sourceText);
 
@@ -250,6 +282,7 @@ async function mascotifyText({
           character,
           captionStyle,
           isVeryShortInput,
+          imageFlavor,
         }),
       },
       {
@@ -260,6 +293,7 @@ async function mascotifyText({
           character,
           captionStyle,
           isVeryShortInput,
+          imageFlavor,
         }),
       },
     ],
@@ -278,12 +312,12 @@ async function mascotifyImage({
   imageUrl,
   originalFilename = 'source.png',
   character,
-  variant,
+  imageFlavor,
 }: {
   imageUrl: string;
   originalFilename?: string;
   character: MascotCharacter;
-  variant: ImageVariant;
+  imageFlavor: ImageFlavor;
 }): Promise<AttachmentBuilder> {
   const imageRes = await fetch(imageUrl);
 
@@ -297,16 +331,25 @@ async function mascotifyImage({
   const normalizedBuffer = await normalizeSourceImage(originalBuffer);
   const inputFilename = ensureExtension(originalFilename, DEFAULT_IMAGE_TYPE);
 
+  const plan = await planMascotImageEdit({
+    normalizedBuffer,
+    character,
+    imageFlavor,
+  });
+
+  const prompt = buildPlannedImageEditPrompt({
+    character,
+    imageFlavor,
+    plan,
+  });
+
   const imageResponse = await openaiClient.images.edit({
     model: 'gpt-image-1.5',
     image: new File([normalizedBuffer], inputFilename, { type: DEFAULT_IMAGE_TYPE }),
-    prompt: buildImageEditPrompt({
-      character,
-      variant,
-    }),
+    prompt,
     size: '1024x1024',
     output_format: 'png',
-    quality: 'medium',
+    quality: 'high',
   });
 
   const base64Image = imageResponse.data?.[0]?.b64_json;
@@ -318,19 +361,176 @@ async function mascotifyImage({
   const outputBuffer = Buffer.from(base64Image, 'base64');
 
   return new AttachmentBuilder(outputBuffer, {
-    name: `${characterifiedFilename(character)}.png`,
+    name: `${characterifiedFilename(character, imageFlavor)}.png`,
   });
+}
+
+async function planMascotImageEdit({
+  normalizedBuffer,
+  character,
+  imageFlavor,
+}: {
+  normalizedBuffer: Buffer;
+  character: MascotCharacter;
+  imageFlavor: ImageFlavor;
+}): Promise<ImagePlan> {
+  const response = await openaiClient.responses.create({
+    model: 'gpt-5-chat-latest',
+    input: [
+      {
+        role: 'system',
+        content: [
+          'You are an image edit planner for a Garfield-themed image editing command.',
+          'Analyze the provided image and decide the most composition-preserving way to integrate the requested character.',
+          'You must distinguish between these cases:',
+          '1. If there is obvious food or an object Garfield should naturally interact with, prefer interaction.',
+          '2. If there is a clear main subject, prefer reinterpreting that subject as Garfield while preserving material, medium, structure, pose, abstraction, and composition.',
+          '3. If there is no clear main subject, add Garfield into the scene in the same material, medium, style, abstraction level, and prominence as surrounding elements.',
+          'If the image contains statues, carvings, paintings, drawings, toys, posters, pixel art, or other stylized objects, Garfield should be adapted into that exact kind of thing rather than inserted as a normal cartoon cat.',
+          'The goal is to preserve the original composition as much as possible.',
+          'Be specific about material, medium, abstraction level, focus strength, and what visual elements should be preserved.',
+          'Return strict JSON only.',
+        ].join(' '),
+      },
+      {
+        role: 'user',
+        content: [
+          {
+            type: 'input_text',
+            text: [
+              `Character: ${character}`,
+              `Flavor: ${imageFlavor}`,
+              'Return JSON with exactly these keys:',
+              'summary, hasClearMainSubject, sceneFocusStrength, subjectType, mainSubjectDescription, shouldInteractWithObject, interactionObject, interactionAction, insertionMode, placement, pose, expression, medium, material, abstractionLevel, preserve, styleNotes, riskNotes',
+              'Valid sceneFocusStrength values: clear-single-subject, shared-focus, diffuse-scene',
+              'Valid subjectType values: person, animal, object, food, statue, architecture, none, multiple',
+              'Valid insertionMode values: reinterpret-subject, interact-with-object, add-to-scene, observer',
+              'If there is no clear main subject, do not force one.',
+              'If multiple similar objects are present with no single focal subject, Garfield should be added with similar prominence rather than becoming the dominant subject.',
+              'If no object interaction is appropriate, return empty strings for interactionObject and interactionAction.',
+              'For statues, carvings, sculptures, paintings, drawings, murals, or other stylized media, explicitly identify the material and medium so Garfield can be adapted into them.',
+              'If cursed flavor is requested, still preserve composition and medium as much as possible unless a Dracula-themed shift genuinely helps.',
+            ].join('\n'),
+          },
+          {
+            type: 'input_image',
+            image_url: `data:${DEFAULT_IMAGE_TYPE};base64,${normalizedBuffer.toString('base64')}`,
+            detail: 'high',
+          },
+        ],
+      },
+    ],
+    text: {
+      format: {
+        type: 'json_schema',
+        name: 'garfield_image_plan',
+        strict: true,
+        schema: {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            summary: { type: 'string' },
+            hasClearMainSubject: { type: 'boolean' },
+            sceneFocusStrength: {
+              type: 'string',
+              enum: ['clear-single-subject', 'shared-focus', 'diffuse-scene'],
+            },
+            subjectType: {
+              type: 'string',
+              enum: ['person', 'animal', 'object', 'food', 'statue', 'architecture', 'none', 'multiple'],
+            },
+            mainSubjectDescription: { type: 'string' },
+            shouldInteractWithObject: { type: 'boolean' },
+            interactionObject: { type: 'string' },
+            interactionAction: { type: 'string' },
+            insertionMode: {
+              type: 'string',
+              enum: ['reinterpret-subject', 'interact-with-object', 'add-to-scene', 'observer'],
+            },
+            placement: { type: 'string' },
+            pose: { type: 'string' },
+            expression: { type: 'string' },
+            medium: { type: 'string' },
+            material: { type: 'string' },
+            abstractionLevel: { type: 'string' },
+            preserve: {
+              type: 'array',
+              items: { type: 'string' },
+            },
+            styleNotes: {
+              type: 'array',
+              items: { type: 'string' },
+            },
+            riskNotes: {
+              type: 'array',
+              items: { type: 'string' },
+            },
+          },
+          required: [
+            'summary',
+            'hasClearMainSubject',
+            'sceneFocusStrength',
+            'subjectType',
+            'mainSubjectDescription',
+            'shouldInteractWithObject',
+            'interactionObject',
+            'interactionAction',
+            'insertionMode',
+            'placement',
+            'pose',
+            'expression',
+            'medium',
+            'material',
+            'abstractionLevel',
+            'preserve',
+            'styleNotes',
+            'riskNotes',
+          ],
+        },
+      },
+    },
+  });
+
+  const rawPlan = response.output_text?.trim();
+
+  if (!rawPlan) {
+    throw new Error('No image plan returned from planner.');
+  }
+
+  return JSON.parse(rawPlan) as ImagePlan;
 }
 
 function buildTextSystemPrompt({
   character,
   captionStyle,
   isVeryShortInput,
+  imageFlavor,
 }: {
   character: MascotCharacter;
   captionStyle: CaptionStyle;
   isVeryShortInput: boolean;
+  imageFlavor: ImageFlavor;
 }): string {
+  if (imageFlavor === 'cursed') {
+    return [
+      'You are Garfield, but specifically Dracula-themed Garfield.',
+      'Write a short caption as Garf-ula would say it.',
+      'The voice should still feel like Garfield first: lazy, smug, dry, unimpressed, selfish, food-motivated.',
+      'Add a light Dracula flavor: nocturnal, dramatic, mildly vampiric, but still funny and readable.',
+      'Do not become full gothic roleplay or parody prose.',
+      'Keep it concise and punchy.',
+      'Use at most 2 short lines.',
+      'Prefer one clean joke.',
+      'Do not explain the joke.',
+      'Do not wrap the answer in quotes.',
+      'Do not use emojis or hashtags.',
+      `Caption shape: ${describeCaptionStyle(captionStyle)}.`,
+      isVeryShortInput
+        ? 'If the source text is very short, make a stronger joke rather than lightly paraphrasing it.'
+        : 'Keep the original meaning or vibe loosely recognizable only if it helps the joke.',
+    ].join(' ');
+  }
+
   if (character === 'nermal') {
     return [
       'You are Nermal from Garfield.',
@@ -378,14 +578,16 @@ function buildTextUserPrompt({
   character,
   captionStyle,
   isVeryShortInput,
+  imageFlavor,
 }: {
   sourceText: string;
   isAccompanyingImage: boolean;
   character: MascotCharacter;
   captionStyle: CaptionStyle;
   isVeryShortInput: boolean;
+  imageFlavor: ImageFlavor;
 }): string {
-  const subjectLabel = character === 'nermal' ? 'Nermal' : 'Garfield';
+  const subjectLabel = imageFlavor === 'cursed' ? 'Garf-ula' : character === 'nermal' ? 'Nermal' : 'Garfield';
 
   return [
     isAccompanyingImage
@@ -403,61 +605,125 @@ function buildTextUserPrompt({
   ].join('\n');
 }
 
-function buildImageEditPrompt({ character, variant }: { character: MascotCharacter; variant: ImageVariant }): string {
-  const subjectDescription =
-    character === 'nermal'
+function buildPlannedImageEditPrompt({
+  character,
+  imageFlavor,
+  plan,
+}: {
+  character: MascotCharacter;
+  imageFlavor: ImageFlavor;
+  plan: ImagePlan;
+}): string {
+  const characterDescription = getCharacterDescription(character, imageFlavor);
+  const preserveInstruction = plan.preserve.length
+    ? `Preserve these specific elements wherever possible: ${plan.preserve.join('; ')}.`
+    : 'Preserve the original composition and visible details as much as possible.';
+  const styleInstruction = plan.styleNotes.length
+    ? `Match the original style and medium: ${plan.styleNotes.join('; ')}.`
+    : 'Match the original style and medium exactly.';
+  const riskInstruction = plan.riskNotes.length
+    ? `Avoid these mistakes: ${plan.riskNotes.join('; ')}.`
+    : 'Avoid changing the image more than necessary.';
+
+  const cursedInstruction =
+    imageFlavor === 'cursed'
       ? [
-          'Nermal, the small cute gray cat from Garfield, with soft gray fur, big expressive eyes, a rounded face, and an adorably smug expression',
-          'Keep Nermal recognizable as the classic Garfield character, but adapt him to the image naturally',
-        ].join('. ')
-      : [
-          'Garfield, a classic orange tabby cat with black stripes, a round face, half-lidded eyes, and a smug expression',
-          'Keep Garfield recognizable as classic Garfield, but adapt him to the image naturally',
-        ].join('. ');
+          'Use a Garfield Dracula theme.',
+          'Garfield should read clearly as Dracula-themed Garfield: subtle cape, fangs, gothic attitude, possibly moody lighting or tasteful spooky accents if they fit.',
+          'Even in cursed mode, preserve the original medium, structure, and composition as much as possible.',
+          'Do not turn the image into a completely different scene unless necessary.',
+        ].join(' ')
+      : 'Keep the result tasteful, naturally integrated, and as composition-preserving as possible.';
 
-  const sharedRules = [
-    'Preserve the original image as much as possible.',
-    'If there is a clear main subject, central character, or prominent figure, transform that subject into the character.',
-    'If there is no clear main subject to replace, add the character prominently but tastefully into the scene in a way that fits the composition.',
-    'Match the original medium and style. If the source is a painting, poster, illustration, animation frame, meme, or drawing, keep that style rather than turning it photorealistic.',
-    'Preserve the original pose, framing, camera angle, crop, background, lighting, scene layout, and overall composition.',
-    'Preserve the actual clothing style, accessories, props, and objects that are clearly present in the source image when a subject is being transformed.',
-    'Do not invent military uniforms, medals, ceremonial outfits, royal portraits, fantasy armor, or formal decorations unless they are clearly present in the original image.',
-    'Do not redesign the whole scene.',
-    'Do not add extra random characters.',
-    'Keep the result funny, readable, and visually coherent.',
-  ];
+  const mediumMaterialInstruction = [
+    `Medium: ${plan.medium}.`,
+    `Material: ${plan.material}.`,
+    `Abstraction level: ${plan.abstractionLevel}.`,
+  ].join(' ');
 
-  if (variant === 'insert') {
+  if (plan.insertionMode === 'interact-with-object' && plan.shouldInteractWithObject) {
     return [
-      `Add ${subjectDescription} into this image naturally and prominently.`,
-      'Do not replace the whole scene.',
-      'Keep the original image intact as much as possible.',
-      'If there is already a strong main subject, preserve that subject and add the character as a nearby presence, observer, intruder, or reaction figure.',
-      'The character should feel like they belong in the same world and style as the original image.',
-      'Place the character in a tasteful, visible position rather than hiding them in the distance.',
-      ...sharedRules,
+      `Edit this image so ${characterDescription} is naturally integrated into the scene.`,
+      `Do not insert a generic separate cartoon unless the original image itself is already in that style.`,
+      `Have the character interact with ${plan.interactionObject} by ${plan.interactionAction}.`,
+      `Placement: ${plan.placement}.`,
+      `Pose: ${plan.pose}.`,
+      `Expression: ${plan.expression}.`,
+      mediumMaterialInstruction,
+      'The character must match the same medium, material, visual treatment, and abstraction level as the surrounding image.',
+      'Keep the rest of the image as unchanged as possible.',
+      'Preserve the original framing, crop, background, environment, camera angle, props, and layout.',
+      preserveInstruction,
+      styleInstruction,
+      riskInstruction,
+      cursedInstruction,
     ].join(' ');
   }
 
-  if (variant === 'cursed') {
+  if (plan.insertionMode === 'reinterpret-subject') {
     return [
-      `Transform or insert ${subjectDescription} in a funny, slightly uncanny, cursed way.`,
-      'Keep the original image clearly recognizable.',
-      'If there is a strong main subject, prefer transforming that subject first.',
-      'If there is not, add the character prominently into the scene.',
-      'The effect should be strange and entertaining, but not messy or incomprehensible.',
-      ...sharedRules,
+      `Reinterpret the main subject as ${characterDescription}.`,
+      `Main subject description: ${plan.mainSubjectDescription}.`,
+      'Do not insert a separate Garfield character into the scene.',
+      'Instead, transform the existing subject itself into a Garfield version of that same thing.',
+      'Preserve the original material, medium, structure, silhouette logic, abstraction level, pose, prominence, and composition.',
+      'If the subject is a statue, carving, sculpture, painting, toy, drawing, mural, or stylized object, Garfield must become that same kind of object rather than a normal standalone cartoon cat.',
+      `Pose to preserve: ${plan.pose}.`,
+      `Expression target: ${plan.expression}.`,
+      mediumMaterialInstruction,
+      'The result should feel like the same subject in the same image, only reinterpreted as Garfield.',
+      'Do not redesign the whole scene.',
+      'Do not make Garfield cleaner, more colorful, or more polished than the source style unless the source already is.',
+      preserveInstruction,
+      styleInstruction,
+      riskInstruction,
+      cursedInstruction,
     ].join(' ');
   }
 
   return [
-    `Use ${subjectDescription} as the transformed or inserted character.`,
-    'Default behavior: if there is a clear main subject, replace that subject while preserving as much of the original image as possible.',
-    'If there is no obvious subject to replace, add the character in a tasteful and prominent position that respects the original artwork or photo.',
-    'The result should feel like the same image, just with the character naturally integrated into it.',
-    ...sharedRules,
+    `Add ${characterDescription} naturally into the image.`,
+    'Do not insert a generic separate cartoon unless the source image itself is already that kind of cartoon.',
+    'Garfield must be adapted into the same medium, material, abstraction level, and style as the surrounding scene.',
+    'If there is no clear main subject or the scene has shared/diffuse focus, Garfield should have similar prominence to nearby elements rather than becoming the dominant focal point.',
+    'If the scene contains statues, carvings, sculptures, signs, paintings, drawings, toys, props, or repeating objects, Garfield should be added as that same kind of thing.',
+    `Placement: ${plan.placement}.`,
+    `Pose: ${plan.pose}.`,
+    `Expression: ${plan.expression}.`,
+    mediumMaterialInstruction,
+    'Keep the original scene as intact as possible.',
+    'The character may be relatively subtle or minimally prominent if that better preserves the image and composition.',
+    'Do not add random extra characters.',
+    'Preserve crop, framing, lighting, background, and scene layout.',
+    preserveInstruction,
+    styleInstruction,
+    riskInstruction,
+    cursedInstruction,
   ].join(' ');
+}
+
+function getCharacterDescription(character: MascotCharacter, imageFlavor: ImageFlavor): string {
+  if (imageFlavor === 'cursed') {
+    return [
+      'Garfield as Dracula',
+      'the classic orange tabby Garfield with black stripes, a round face, half-lidded eyes, and a smug lazy expression',
+      'reinterpreted through the source image medium and material with tasteful gothic Dracula details',
+    ].join(', ');
+  }
+
+  if (character === 'nermal') {
+    return [
+      'Nermal',
+      'the small cute gray cat from Garfield, with soft gray fur, big expressive eyes, a rounded face, and an adorably smug expression',
+      'reinterpreted through the source image medium and material',
+    ].join(', ');
+  }
+
+  return [
+    'Garfield',
+    'the classic orange tabby cat with black stripes, a round face, half-lidded eyes, and a smug lazy expression',
+    'reinterpreted through the source image medium and material',
+  ].join(', ');
 }
 
 function describeCaptionStyle(captionStyle: CaptionStyle): string {
@@ -477,30 +743,37 @@ function describeCaptionStyle(captionStyle: CaptionStyle): string {
   }
 }
 
-function characterifiedFilename(character: MascotCharacter): string {
+function characterifiedFilename(character: MascotCharacter, imageFlavor: ImageFlavor): string {
+  if (imageFlavor === 'cursed') return 'garf-ulad';
   return character === 'nermal' ? 'nermalfied' : 'garfieldified';
 }
 
-function getCharacterImageOnlyMessage(character: MascotCharacter): string {
+function getCharacterImageOnlyMessage(character: MascotCharacter, imageFlavor: ImageFlavor): string {
+  if (imageFlavor === 'cursed') return "You have been Garf-ula'd!";
   return character === 'nermal' ? "Oh no, you've been Nermified!" : "Oh yeah, that's beautiful...";
 }
 
-function getCharacterOversizedTextWithImageMessage(character: MascotCharacter): string {
+function getCharacterOversizedTextWithImageMessage(character: MascotCharacter, imageFlavor: ImageFlavor): string {
+  if (imageFlavor === 'cursed') {
+    return "You have been Garf-ula'd! My commentary rose from the crypt, so I attached it.";
+  }
+
   return character === 'nermal'
     ? "Oh no, you've been Nermified! My commentary was too powerful, so I attached it."
     : 'The image is ready. My commentary exceeded my comfort level, so I attached it.';
+}
+
+function getEmbedFooterText(character: MascotCharacter, imageFlavor: ImageFlavor): string {
+  if (imageFlavor === 'cursed') return 'Approved by Garf-ula';
+  return character === 'nermal' ? 'Approved by Nermal' : 'Approved by Garfield';
 }
 
 function pickMascotCharacter(): MascotCharacter {
   return Math.random() < NERMAL_CHANCE ? 'nermal' : 'garfield';
 }
 
-function pickImageVariant(): ImageVariant {
-  return weightedRandom<ImageVariant>([
-    ['classic', 0.72],
-    ['insert', 0.2],
-    ['cursed', 0.08],
-  ]);
+function pickImageFlavor(): ImageFlavor {
+  return Math.random() < CURSED_CHANCE ? 'cursed' : 'normal';
 }
 
 function pickCaptionStyle(): CaptionStyle {
@@ -547,9 +820,10 @@ async function replyWithStandardMode(
     garfieldText?: string;
     garfieldImage?: AttachmentBuilder;
     character: MascotCharacter;
+    imageFlavor: ImageFlavor;
   }
 ): Promise<void> {
-  const { garfieldText, garfieldImage, character } = payload;
+  const { garfieldText, garfieldImage, character, imageFlavor } = payload;
 
   if (garfieldText && garfieldImage) {
     const content = truncateTextReply(garfieldText);
@@ -567,7 +841,7 @@ async function replyWithStandardMode(
     stream.push(null);
 
     await message.reply({
-      content: getCharacterOversizedTextWithImageMessage(character),
+      content: getCharacterOversizedTextWithImageMessage(character, imageFlavor),
       files: [
         garfieldImage,
         {
@@ -581,7 +855,7 @@ async function replyWithStandardMode(
 
   if (garfieldImage) {
     await message.reply({
-      content: getCharacterImageOnlyMessage(character),
+      content: getCharacterImageOnlyMessage(character, imageFlavor),
       files: [garfieldImage],
     });
     return;
@@ -602,15 +876,16 @@ async function replyWithEmbedMode(
     garfieldImage?: AttachmentBuilder;
     embedTitle?: string;
     character: MascotCharacter;
+    imageFlavor: ImageFlavor;
   }
 ): Promise<void> {
-  const { garfieldText, garfieldImage, embedTitle, character } = payload;
+  const { garfieldText, garfieldImage, embedTitle, character, imageFlavor } = payload;
 
   const embeds: EmbedBuilder[] = [];
   const files: AttachmentBuilder[] = [];
 
   if (garfieldText) {
-    embeds.push(buildGarfieldEmbed(garfieldText, embedTitle));
+    embeds.push(buildGarfieldEmbed(garfieldText, embedTitle, character, imageFlavor));
   }
 
   if (garfieldImage) {
@@ -624,7 +899,7 @@ async function replyWithEmbedMode(
 
   if (!embeds.length && files.length) {
     await message.reply({
-      content: getCharacterImageOnlyMessage(character),
+      content: getCharacterImageOnlyMessage(character, imageFlavor),
       files,
     });
     return;
@@ -636,15 +911,21 @@ async function replyWithEmbedMode(
   });
 }
 
-function buildGarfieldEmbed(text: string, title?: string): EmbedBuilder {
-  const safeTitle = title ? truncateEmbedTitle(`Garfieldified: ${title}`) : 'Garfieldified';
+function buildGarfieldEmbed(
+  text: string,
+  title: string | undefined,
+  character: MascotCharacter,
+  imageFlavor: ImageFlavor
+): EmbedBuilder {
+  const prefix = imageFlavor === 'cursed' ? "Garf-ula'd" : 'Garfieldified';
+  const safeTitle = title ? truncateEmbedTitle(`${prefix}: ${title}`) : prefix;
   const safeDescription = truncateEmbedDescription(text);
 
   return new EmbedBuilder()
     .setTitle(safeTitle)
     .setDescription(safeDescription)
     .setColor(GARFIELD_ORANGE)
-    .setFooter({ text: 'Approved by Garfield' });
+    .setFooter({ text: getEmbedFooterText(character, imageFlavor) });
 }
 
 async function replyWithPossiblyLargeText(message: Message, text: string): Promise<void> {
