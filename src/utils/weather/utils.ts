@@ -45,12 +45,10 @@ export const getWeather = async (location: Location) => {
 
 export const getAirQualityIndex = async (location: Location) => {
   const [lat, lng] = location.latlng.split(',');
-  const unixCurrentTime = Math.floor(Date.now() / 1000);
-  const anHourFromNow = unixCurrentTime + 3600;
 
   try {
     return (await got(
-      `http://api.openweathermap.org/data/2.5/air_pollution/history?lat=${lat}&lon=${lng}&start=${unixCurrentTime}&end=${anHourFromNow}&appid=${process.env.openWeatherKey}`
+      `https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lng}&appid=${process.env.openWeatherKey}`
     ).json()) as OpenWeatherAQI;
   } catch {
     throw new Error('Open weather map AQI is down');

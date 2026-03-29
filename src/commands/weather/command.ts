@@ -1,11 +1,16 @@
-import { ColorResolvable, EmbedBuilder } from 'discord.js';
-import { findOrCreateUser } from '../../database/api/userApi';
-import { User } from '../../database/entities';
-import { Location, OpenWeatherAQI, OpenWeatherResponse } from '../../types/OpenWeatherApi';
+import { EmbedBuilder } from 'discord.js';
+import { OpenWeatherAQI, OpenWeatherResponse } from '../../types/OpenWeatherApi';
 import { getRandomEmotePath } from '../../utils/files';
-import { getAirQualityIndex, getGeoLocation, getWeather } from '../../utils/weather/utils';
-import { getDbContext } from './../../database';
+import {
+  fahrenheitToCelsius,
+  formatTime,
+  getUvIndexRisk,
+  getWindDirection,
+  tempToColor,
+} from '../../utils/weather/formatters';
+import { getAirQualityIndex, getWeather } from '../../utils/weather/utils';
 import { Command } from './../../types/Command';
+import { resolveLocation } from './locationResolver';
 
 const command: Command = {
   name: 'Weather',
@@ -18,75 +23,18 @@ const command: Command = {
     const channel = message.channel;
     if (!channel.isSendable()) return;
     try {
-      const user = await findOrCreateUser(message.author.id);
-      const isUpdatingLocation = args[0]?.toLowerCase().trim() === 'set' && !!args[1]?.length;
-      const isStoredLocationRequest = args.length === 0;
-      const userHasNoLocation = !user?.latlng && !user?.address;
+      const location = await resolveLocation(message, args, 'weather');
+      if (!location) return;
 
-      if (userHasNoLocation && isStoredLocationRequest) {
-        channel.send('Set your default location with .weather set YOUR_LOCATION');
-        return;
-      }
-
-      let requestedLocation: Location = null;
-      if (isStoredLocationRequest) {
-        const storedLocation = { latlng: user.latlng, address: user.address };
-        requestedLocation = storedLocation;
-      } else {
-        const parsedLocation = isUpdatingLocation ? args.slice(1).join('') : args.join('');
-        const geoCoords = await getGeoLocation(parsedLocation);
-
-        if (!geoCoords) {
-          channel.send({ content: 'Coordinates not found', files: [await getRandomEmotePath()] });
-          return;
-        }
-        requestedLocation = {
-          latlng: `${geoCoords.geometry.location.lat},${geoCoords.geometry.location.lng}`,
-          address: geoCoords.formatted_address,
-        };
-      }
-
-      if (isUpdatingLocation) {
-        await updateOrCreateUser(
-          user,
-          message.author.id,
-          message.author.username,
-          isUpdatingLocation,
-          requestedLocation
-        );
-        channel.send(`Updated ${message.author.displayName}'s location to ${requestedLocation.address}`);
-      }
-
-      const weather = await getWeather(requestedLocation);
-      const aqi = await getAirQualityIndex(requestedLocation);
-      const weatherEmbed = generateOutputEmbed(weather, aqi, requestedLocation.address);
+      const weather = await getWeather(location);
+      const aqi = await getAirQualityIndex(location);
+      const weatherEmbed = generateOutputEmbed(weather, aqi, location.address);
       channel.send({ embeds: [weatherEmbed] });
     } catch (ex) {
       console.error(ex);
-      const errmsg = ex && ex['message'] ? 'Something really went wrong' : '';
-      channel.send({ content: errmsg, files: [await getRandomEmotePath()] });
+      channel.send({ content: 'Something really went wrong', files: [await getRandomEmotePath()] });
     }
   },
-};
-
-const updateOrCreateUser = async (
-  user: User,
-  userId: string,
-  username: string,
-  isUpdatingLocation: boolean,
-  location: Location
-) => {
-  const { em } = getDbContext();
-  if (!user) {
-    user = new User();
-    user.id = userId;
-    user.username = username;
-  }
-  if (isUpdatingLocation) {
-    user.latlng = location.latlng;
-    user.address = location.address;
-  }
-  await em.persistAndFlush(user);
 };
 
 const generateOutputEmbed = (
@@ -98,16 +46,13 @@ const generateOutputEmbed = (
   const formattedAqi = hasAqi ? getFormattedAirQualityLabel(aqi.list[0].main.aqi) : 'Error';
   const currentWeather = weather.current;
   const currentTemp = currentWeather.temp;
-  const chanceRainToday = weather?.daily?.[0]?.pop ?? 0;
-  const chanceRainPercentage = (chanceRainToday * 100).toFixed(0);
+  const chanceRainPercentage = ((weather?.daily?.[0]?.pop ?? 0) * 100).toFixed(0);
 
+  const nowUnix = Math.floor(Date.now() / 1000);
   const alertsMessage = weather?.alerts
     ? weather.alerts
-        .map((alert) => {
-          const dateIssued = new Date(alert.start);
-          const timeIssued = dateIssued.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-          return `${alert.event} (${timeIssued})`;
-        })
+        .filter((alert) => nowUnix >= alert.start && nowUnix <= alert.end)
+        .map((alert) => `${alert.event} (until ${formatTime(alert.end)})`)
         .join('\n')
     : '';
 
@@ -118,13 +63,15 @@ const generateOutputEmbed = (
   });
 
   embed.setDescription(`
-        ${currentTemp}F / ${fahrenheitToCelsius(currentTemp)}C
+        ${currentTemp}F / ${fahrenheitToCelsius(currentTemp)}C  *(Feels like ${currentWeather.feels_like}F)*
+        **High/Low**: ${weather.daily[0].temp.max.toFixed(1)}F / ${weather.daily[0].temp.min.toFixed(1)}F
         **Cloud Cover**: ${currentWeather.clouds}%
-        **Windspeed**: ${currentWeather.wind_speed}mph
+        **Windspeed**: ${currentWeather.wind_speed}mph ${getWindDirection(currentWeather.wind_deg)}
         **Humidity**: ${currentWeather.humidity}%
         **Chance of Rain**: ${chanceRainPercentage}%
         **UV index**: ${weather.current.uvi} (${getUvIndexRisk(weather.current.uvi)})
         **AQI**: ${formattedAqi}
+        **Sunrise/Sunset**: ${formatTime(currentWeather.sunrise)} / ${formatTime(currentWeather.sunset)}
         **Forecast**: ${
           !!currentWeather.weather[0].description &&
           currentWeather.weather[0].description[0].toUpperCase() + currentWeather.weather[0].description.slice(1)
@@ -132,35 +79,9 @@ const generateOutputEmbed = (
         ${alertsMessage ? `\n**Alerts**:\n ${alertsMessage}` : ''}
     `);
 
-  let embedColor: ColorResolvable;
-  if (currentTemp <= 20) embedColor = 'DarkBlue';
-  else if (currentTemp <= 60) embedColor = 'Aqua';
-  else if (currentTemp <= 75) embedColor = 'Green';
-  else if (currentTemp <= 85) embedColor = 'Orange';
-  else if (currentTemp <= 150) embedColor = 'Red';
-  else embedColor = 'DarkNavy';
-
-  embed.setColor(embedColor);
+  embed.setColor(tempToColor(currentTemp));
   return embed;
 };
-
-function fahrenheitToCelsius(f: number) {
-  return ((f - 32) * (5 / 9)).toFixed(2);
-}
-
-function getUvIndexRisk(uvIndex: number): string {
-  if (uvIndex < 2) {
-    return 'Low';
-  } else if (uvIndex <= 5) {
-    return 'Moderate';
-  } else if (uvIndex <= 7) {
-    return 'High';
-  } else if (uvIndex <= 10) {
-    return 'Very high';
-  } else {
-    return 'Extreme';
-  }
-}
 
 function getFormattedAirQualityLabel(aqiIndex: 1 | 2 | 3 | 4 | 5) {
   switch (aqiIndex) {

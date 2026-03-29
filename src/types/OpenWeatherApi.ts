@@ -1,7 +1,8 @@
 export interface OpenWeatherResponse {
   alerts?: {
     start: number;
-    description: number;
+    end: number;
+    description: string;
     event: string;
   }[];
   lat: number;
@@ -70,6 +71,7 @@ export interface Daily {
   dt: number;
   sunrise: number;
   sunset: number;
+  summary?: string;
   moonrise: number;
   moonset: number;
   moon_phase: number;
