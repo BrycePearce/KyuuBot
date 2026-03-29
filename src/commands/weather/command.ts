@@ -52,7 +52,7 @@ const generateOutputEmbed = (
   const alertsMessage = weather?.alerts
     ? weather.alerts
         .filter((alert) => nowUnix >= alert.start && nowUnix <= alert.end)
-        .map((alert) => `${alert.event} (until ${formatTime(alert.end)})`)
+        .map((alert) => `${alert.event} (until ${formatTime(alert.end, weather.timezone)})`)
         .join('\n')
     : '';
 
@@ -63,7 +63,7 @@ const generateOutputEmbed = (
   });
 
   embed.setDescription(`
-        ${currentTemp}F / ${fahrenheitToCelsius(currentTemp)}C  *(Feels like ${currentWeather.feels_like}F)*
+        ${currentTemp}F / ${fahrenheitToCelsius(currentTemp)}C  ·  *(Feels like ${currentWeather.feels_like}F)*
         **High/Low**: ${weather.daily[0].temp.max.toFixed(1)}F / ${weather.daily[0].temp.min.toFixed(1)}F
         **Cloud Cover**: ${currentWeather.clouds}%
         **Windspeed**: ${currentWeather.wind_speed}mph ${getWindDirection(currentWeather.wind_deg)}
@@ -71,7 +71,7 @@ const generateOutputEmbed = (
         **Chance of Rain**: ${chanceRainPercentage}%
         **UV index**: ${weather.current.uvi} (${getUvIndexRisk(weather.current.uvi)})
         **AQI**: ${formattedAqi}
-        **Sunrise/Sunset**: ${formatTime(currentWeather.sunrise)} / ${formatTime(currentWeather.sunset)}
+        **Sunrise/Sunset**: ${formatTime(currentWeather.sunrise, weather.timezone)} / ${formatTime(currentWeather.sunset, weather.timezone)}
         **Forecast**: ${
           !!currentWeather.weather[0].description &&
           currentWeather.weather[0].description[0].toUpperCase() + currentWeather.weather[0].description.slice(1)

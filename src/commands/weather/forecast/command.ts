@@ -35,17 +35,17 @@ const generateForecastEmbed = (weather: OpenWeatherResponse, formattedAddress: s
   embed.setAuthor({ name: `5-Day Forecast — ${formattedAddress}` });
 
   for (const day of weather.daily.slice(0, 5)) {
-    embed.addFields({ name: getDayLabel(day), value: formatDayField(day), inline: true });
+    embed.addFields({ name: getDayLabel(day, weather.timezone), value: formatDayField(day), inline: true });
   }
 
   embed.setColor(tempToColor(weather.daily[0].temp.max));
   return embed;
 };
 
-function getDayLabel(day: Daily): string {
-  const name = new Date(day.dt * 1000).toLocaleDateString('en-US', { weekday: 'long' });
-  const sunrise = formatTime(day.sunrise);
-  const sunset = formatTime(day.sunset);
+function getDayLabel(day: Daily, timezone: string): string {
+  const name = new Date(day.dt * 1000).toLocaleDateString('en-US', { weekday: 'long', timeZone: timezone });
+  const sunrise = formatTime(day.sunrise, timezone);
+  const sunset = formatTime(day.sunset, timezone);
   return `${name}  (${sunrise} / ${sunset})`;
 }
 

@@ -9,8 +9,13 @@ export function getWindDirection(deg: number): string {
   return dirs[Math.round(deg / 45) % 8];
 }
 
-export function formatTime(unix: number): string {
-  return new Date(unix * 1000).toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+export function formatTime(unix: number, timezone?: string): string {
+  return new Date(unix * 1000).toLocaleString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+    timeZone: timezone,
+  });
 }
 
 export function getUvIndexRisk(uvIndex: number): string {
