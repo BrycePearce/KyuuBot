@@ -10,7 +10,7 @@ const command: Command = {
   async execute(message) {
     const channel = message.channel;
     if (!channel.isSendable()) return;
-    const imageUrl = 'https://upload.wikimedia.org/wikipedia/en/thumb/5/53/Scooby-Doo.png/150px-Scooby-Doo.png';
+    const imageUrl = 'https://upload.wikimedia.org/wikipedia/en/5/53/Scooby-Doo.png';
 
     try {
       channel.send({ files: [imageUrl] });
