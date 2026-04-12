@@ -33,14 +33,15 @@ export type ExtractedEmbedSource = {
   embedTitle?: string;
 };
 
-export type CharacterVariant = 'garfield' | 'nermal' | 'jon' | 'odie' | 'garfula';
+export type CharacterVariant = 'garfield' | 'nermal' | 'jon' | 'odie' | 'garfula' | 'himbo';
 
 export const CHARACTER_WEIGHTS: Array<[CharacterVariant, number]> = [
-  ['garfield', 0.9],
-  ['nermal', 0.025],
-  ['jon', 0.025],
-  ['odie', 0.025],
-  ['garfula', 0.025],
+  ['garfield', 0.85],
+  ['nermal', 0.03],
+  ['jon', 0.03],
+  ['odie', 0.03],
+  ['garfula', 0.03],
+  ['himbo', 0.03],
 ];
 
 export type CaptionStyle = 'bitter-one-liner' | 'lazy-complaint' | 'smug-reaction' | 'anti-effort' | 'food-driven';
@@ -56,6 +57,7 @@ export type ImageInsertionMode =
 export type ComedyIntensity = 'subtle' | 'moderate' | 'unhinged';
 
 export type ImagePlan = {
+  sceneTransform: string; // Full thematic reskin of the scene, or empty string for no transformation
   comedyConcept: string; // The specific funny idea in one sentence
   comedyIntensity: ComedyIntensity;
   insertionMode: ImageInsertionMode;

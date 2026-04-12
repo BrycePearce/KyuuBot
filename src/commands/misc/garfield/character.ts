@@ -27,6 +27,23 @@ export function weightedRandom<T>(entries: Array<[T, number]>): T {
   return entries[entries.length - 1][0];
 }
 
+export function getCharacterName(variant: CharacterVariant): string {
+  switch (variant) {
+    case 'nermal':
+      return 'Nermal';
+    case 'jon':
+      return 'Jon';
+    case 'odie':
+      return 'Odie';
+    case 'garfula':
+      return 'Garf-ula';
+    case 'himbo':
+      return 'Himbo Garfield';
+    default:
+      return 'Garfield';
+  }
+}
+
 export function describeCaptionStyle(captionStyle: CaptionStyle): string {
   switch (captionStyle) {
     case 'bitter-one-liner':
@@ -54,6 +71,8 @@ export function characterifiedFilename(variant: CharacterVariant): string {
       return 'odie-d';
     case 'garfula':
       return 'garf-ulad';
+    case 'himbo':
+      return 'himbofied';
     default:
       return 'garfieldified';
   }
@@ -69,6 +88,8 @@ export function getCharacterImageOnlyMessage(variant: CharacterVariant): string 
       return 'BORK! You have been Odie-d!';
     case 'garfula':
       return "You have been Garf-ula'd!";
+    case 'himbo':
+      return "You've been Himbofied!! Looking INCREDIBLE out there!!";
     default:
       return "Oh yeah, that's beautiful...";
   }
@@ -84,6 +105,8 @@ export function getCharacterOversizedTextWithImageMessage(variant: CharacterVari
       return 'BORK! I had too much to say. I attached it. BORK.';
     case 'garfula':
       return "You have been Garf-ula'd! My commentary rose from the crypt, so I attached it.";
+    case 'himbo':
+      return "You've been Himbofied!! I had SO much to say because everything was SO GOOD. I attached it!!";
     default:
       return 'The image is ready. My commentary exceeded my comfort level, so I attached it.';
   }
@@ -99,6 +122,8 @@ export function getEmbedFooterText(variant: CharacterVariant): string {
       return 'Approved by Odie';
     case 'garfula':
       return 'Approved by Garf-ula';
+    case 'himbo':
+      return 'Approved by Himbo Garfield';
     default:
       return 'Approved by Garfield';
   }
@@ -114,6 +139,8 @@ export function getEmbedPrefix(variant: CharacterVariant): string {
       return "Odie'd";
     case 'garfula':
       return "Garf-ula'd";
+    case 'himbo':
+      return 'Himbofied';
     default:
       return 'Garfieldified';
   }

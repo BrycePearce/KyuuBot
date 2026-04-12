@@ -1,5 +1,5 @@
 import openaiClient from '../../../utils/clients/openaiClient';
-import { describeCaptionStyle } from './character';
+import { describeCaptionStyle, getCharacterName } from './character';
 import { CaptionStyle, CharacterVariant } from './types';
 import { isShortInput, truncateTextReply } from './utils';
 
@@ -120,6 +120,22 @@ function buildTextSystemPrompt({
     ].join(' ');
   }
 
+  if (variant === 'himbo') {
+    return [
+      'You are Himbo Garfield — Garfield but buff, sweet, enthusiastic, and not very bright.',
+      'Your voice is warm, earnest, and relentlessly positive.',
+      'You genuinely think everything is going great.',
+      'You mention your muscles, working out, or how strong you are with total sincerity.',
+      'You are not sarcastic, not lazy, not smug.',
+      'The comedy comes from pure unironic sweetness applied to everything.',
+      'Use simple vocabulary and enthusiastic energy.',
+      'Use at most 2 short lines.',
+      'Do not wrap the answer in quotes.',
+      'Do not use emojis or hashtags.',
+      shortInputInstruction,
+    ].join(' ');
+  }
+
   // garfield (default)
   return [
     'You are Garfield the cat.',
@@ -154,22 +170,13 @@ function buildTextUserPrompt({
   captionStyle: CaptionStyle;
   isVeryShortInput: boolean;
 }): string {
-  const subjectLabel =
-    variant === 'garfula'
-      ? 'Garf-ula'
-      : variant === 'nermal'
-        ? 'Nermal'
-        : variant === 'jon'
-          ? 'Jon'
-          : variant === 'odie'
-            ? 'Odie'
-            : 'Garfield';
+  const subjectLabel = getCharacterName(variant);
 
   return [
     isAccompanyingImage
       ? `Write a short ${subjectLabel}-style caption for an accompanying image.`
       : `Rewrite this as something ${subjectLabel} would say.`,
-    variant !== 'odie' ? `Lean into this mode: ${describeCaptionStyle(captionStyle)}.` : '',
+    variant !== 'odie' && variant !== 'himbo' ? `Lean into this mode: ${describeCaptionStyle(captionStyle)}.` : '',
     'Do not simply paraphrase the source text.',
     'Build one clean joke or reaction.',
     'Keep it concise and readable.',

@@ -2,7 +2,7 @@ import { AttachmentBuilder, Message } from 'discord.js';
 import sharp from 'sharp';
 import { Command } from '../../../types/Command';
 import openaiClient from '../../../utils/clients/openaiClient';
-import { characterifiedFilename, pickCaptionStyle, pickCharacterVariant } from './character';
+import { characterifiedFilename, getCharacterName, pickCaptionStyle, pickCharacterVariant } from './character';
 import { replyWithEmbedMode, replyWithStandardMode } from './reply';
 import { extractImproveSource } from './sourceExtractor';
 import { mascotifyText } from './textGeneration';
@@ -164,21 +164,10 @@ async function planMascotImageEdit({
         content: [
           'You are a comedy director for a Garfield-themed image editing command.',
           'Your job is to find the FUNNIEST way to insert the requested character into the provided image, staying true to their personality.',
-          'Character traits by character:',
-          'garfield — lazy, food-obsessed, smug, selfish, deadpan, chronically unimpressed, secretly chaotic.',
-          'nermal — adorably smug, vain, self-satisfied, effortlessly cute, mildly annoying.',
-          'jon — earnest, upbeat, oblivious, awkward, always slightly out of place, optimistic despite everything.',
-          'odie — pure unthinking chaos energy, always happy, no idea what is happening, drool, running, tongue out.',
-          'garfula — Dracula-themed Garfield, same laziness and food obsession but with gothic vampire energy.',
-          'The funniest insertion depends on the character. Use their specific traits to find the best moment:',
-          'For garfield/garfula: food is always the priority. Face-on-object works great for large inanimate things.',
-          'For nermal: scenes where smugly existing is funnier than participating. Being adorable in the wrong context.',
-          'For jon: awkward presence beats natural presence. Jon being obliviously in the scene, not fitting in, is the joke.',
-          'For odie: chaos and enthusiasm. Odie running through something, Odie in the background being ridiculous, Odie interacting with something with his tongue out.',
+          ...getCharacterPlanningContext(variant),
           'Analyze the image and identify the single funniest insertion opportunity.',
           'Do not default to the most natural or composition-safe option. Ask: what would make someone laugh when they see this?',
-          "If no clean integration exists, be unhinged — the character's face on the most absurd element beats a boring natural insertion.",
-          'Return strict JSON only.',
+          'If no clean integration exists, commit to the bit — an absurd choice executed with confidence beats a boring safe one.',
         ].join(' '),
       },
       {
@@ -187,10 +176,10 @@ async function planMascotImageEdit({
           {
             type: 'input_text',
             text: [
-              `Character: ${variant}`,
               'Analyze the image and return JSON with exactly these keys:',
-              'comedyConcept, comedyIntensity, insertionMode, targetElement, placement, pose, expression, medium, material, abstractionLevel, styleNotes, executionNotes',
-              'comedyConcept: one sentence describing the specific funny idea (e.g. "Garfield\'s face replaces the meteor\'s surface as it smiles toward the dinosaurs")',
+              'sceneTransform, comedyConcept, comedyIntensity, insertionMode, targetElement, placement, pose, expression, medium, material, abstractionLevel, styleNotes, executionNotes',
+              'sceneTransform: if instructed to transform the scene, describe the full thematic reskin here (color palette, lighting, atmosphere, art style). Otherwise empty string.',
+              'comedyConcept: one sentence describing the specific funny idea (e.g. "the character\'s face replaces the meteor\'s surface as it smiles toward the dinosaurs")',
               'comedyIntensity: one of subtle, moderate, unhinged',
               'insertionMode: one of face-on-object, eating, reinterpret-subject, sitting-on, add-to-scene, observer',
               'targetElement: what in the image the character interacts with, replaces, or reacts to',
@@ -202,12 +191,7 @@ async function planMascotImageEdit({
               'abstractionLevel: how realistic vs stylized the image is',
               "styleNotes: array of notes about adapting the character to match the image's visual style while remaining recognizable",
               'executionNotes: array of specific instructions for pulling off this edit cleanly',
-              variant === 'garfula'
-                ? 'Cursed flavor: apply a Dracula/gothic twist to the character while keeping the comedy concept intact.'
-                : '',
-            ]
-              .filter(Boolean)
-              .join('\n'),
+            ].join('\n'),
           },
           {
             type: 'input_image',
@@ -226,6 +210,7 @@ async function planMascotImageEdit({
           type: 'object',
           additionalProperties: false,
           properties: {
+            sceneTransform: { type: 'string' },
             comedyConcept: { type: 'string' },
             comedyIntensity: { type: 'string', enum: ['subtle', 'moderate', 'unhinged'] },
             insertionMode: {
@@ -243,6 +228,7 @@ async function planMascotImageEdit({
             executionNotes: { type: 'array', items: { type: 'string' } },
           },
           required: [
+            'sceneTransform',
             'comedyConcept',
             'comedyIntensity',
             'insertionMode',
@@ -287,13 +273,18 @@ function buildPlannedImageEditPrompt({ variant, plan }: { variant: CharacterVari
     `Abstraction level: ${plan.abstractionLevel}.`,
   ].join(' ');
 
-  const conceptLine = `Comedy concept: ${plan.comedyConcept}`;
+  const conceptLine = [
+    plan.sceneTransform ? `Scene transformation: ${plan.sceneTransform}` : null,
+    `Comedy concept: ${plan.comedyConcept}`,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   if (plan.insertionMode === 'face-on-object') {
     return [
       conceptLine,
       `Place ${characterDescription}'s face on ${plan.targetElement}.`,
-      'The object retains its shape, scale, and position in the scene — only its face or front surface becomes Garfield.',
+      `The object retains its shape, scale, and position in the scene — only its face or front surface becomes ${getCharacterName(variant)}.`,
       'The face should feel like it belongs on the object, not pasted on top of it.',
       `Expression: ${plan.expression}.`,
       mediumInstruction,
@@ -353,7 +344,7 @@ function buildPlannedImageEditPrompt({ variant, plan }: { variant: CharacterVari
       conceptLine,
       `Add ${characterDescription} watching the scene from ${plan.placement}.`,
       `Pose: ${plan.pose}. Expression: ${plan.expression}.`,
-      'The character should look smug, unimpressed, or distantly amused — fully aware of the chaos but not participating.',
+      'The character is fully aware of the chaos but not participating.',
       mediumInstruction,
       identityInstruction,
       styleInstruction,
@@ -402,6 +393,12 @@ function getCharacterDescription(variant: CharacterVariant): string {
         'the yellow dog from Garfield with a long floppy tongue, big dopey eyes, floppy ears, and an expression of pure unthinking happiness',
         'reinterpreted through the source image medium and material',
       ].join(', ');
+    case 'himbo':
+      return [
+        'Himbo Garfield',
+        'a buff muscular version of the classic orange tabby Garfield, with the same black stripes and round face but with an impressive physique, a huge friendly grin, and wide enthusiastic eyes',
+        'reinterpreted through the source image medium and material',
+      ].join(', ');
     default:
       return [
         'Garfield',
@@ -421,8 +418,52 @@ function getIdentityInstruction(variant: CharacterVariant): string {
       return 'Jon must remain recognizable: tall lanky human, dark swept hair, earnest goofy expression, dorky clothes. Adapt the rendering style to match the image but do not lose these features.';
     case 'odie':
       return 'Odie must remain recognizable: yellow dog, long floppy tongue, big dopey eyes, floppy ears, expression of pure happiness. Adapt the rendering style to match the image but do not lose these features.';
+    case 'himbo':
+      return 'Himbo Garfield must remain recognizable: orange tabby, black stripes, round face, but with a clearly muscular build, a huge friendly smile, and wide enthusiastic eyes — not the usual half-lidded smug look. Adapt the rendering style to match the image but do not lose these features.';
     default:
       return 'Garfield must remain recognizable: orange tabby, black stripes, round face, half-lidded sleepy eyes, smug expression. Adapt the rendering style to match the image but do not lose these features.';
+  }
+}
+
+function getCharacterPlanningContext(variant: CharacterVariant): string[] {
+  switch (variant) {
+    case 'garfula':
+      return [
+        'Character: Garfield as Dracula — lazy, food-obsessed, smug, selfish, deadpan, chronically unimpressed, secretly chaotic, with gothic vampire energy.',
+        'Food is always the priority. Face-on-object works great for large inanimate things.',
+        'Apply a gothic/Dracula twist to the comedy concept — keep the laziness and food obsession, but let the vampire energy color the execution.',
+        'Transform the entire scene into a gothic/horror setting: dark stone, candlelight, creeping fog, muted desaturated palette, spooky atmosphere. Describe this in sceneTransform.',
+      ];
+    case 'nermal':
+      return [
+        'Character: Nermal — adorably smug, vain, self-satisfied, effortlessly cute, mildly annoying.',
+        'Find scenes where smugly existing is funnier than participating. Being adorable in the wrong context is the joke.',
+        'Transform the entire scene into a soft pastel world: rounded shapes, warm pastel colors, gentle diffused lighting, everything slightly precious and cute. Describe this in sceneTransform.',
+      ];
+    case 'jon':
+      return [
+        'Character: Jon Arbuckle — earnest, upbeat, oblivious, awkward, always slightly out of place, optimistic despite everything.',
+        'Awkward presence beats natural presence. Jon being obliviously in the scene, not fitting in, is the joke.',
+        'Transform the entire scene into the visual aesthetic of a mid-2000s sitcom: slightly flat lighting, generic suburban interiors bleeding in, the vibe of a show where nothing quite lands. Describe this in sceneTransform.',
+      ];
+    case 'odie':
+      return [
+        'Character: Odie — pure unthinking chaos energy, always happy, no idea what is happening, drool, running, tongue out.',
+        'Lead with chaos and enthusiasm. Odie running through something, Odie in the background being ridiculous, Odie interacting with his tongue out.',
+        'Transform the entire scene into loose cartoon chaos: exaggerated colors, wobbly outlines, motion lines, things slightly flying or melting, pure anarchic cartoon energy. Describe this in sceneTransform.',
+      ];
+    case 'himbo':
+      return [
+        'Character: Himbo Garfield — buff, muscular Garfield, sweet, enthusiastic, not very bright, thinks everything and everyone is amazing, loves working out.',
+        'Find scenes where overwhelming positivity and flexing creates contrast — formal events, serious moments, mundane situations that become joyful by his presence.',
+        'He fits in everywhere because he thinks he fits in everywhere.',
+        'Transform the entire scene into a gym/motivational poster aesthetic: bold saturated colors, dramatic uplighting, everything looks powerful and inspiring. Describe this in sceneTransform.',
+      ];
+    default:
+      return [
+        'Character: Garfield — lazy, food-obsessed, smug, selfish, deadpan, chronically unimpressed, secretly chaotic.',
+        'Food is always the priority. Face-on-object works great for large inanimate things.',
+      ];
   }
 }
 
