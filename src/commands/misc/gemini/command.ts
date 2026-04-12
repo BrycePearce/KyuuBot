@@ -2,6 +2,7 @@ import { GoogleGenerativeAI, Part } from '@google/generative-ai';
 import got from 'got';
 import { Command } from '../../../types/Command';
 import { getRandomEmotePath } from '../../../utils/files';
+import { extractReplySource } from '../../../utils/replySource';
 
 const genAI = new GoogleGenerativeAI(process.env.geminiApi);
 
@@ -23,12 +24,16 @@ const command: Command = {
     const imageAttachments: Array<{ url: string; contentType?: string }> = [];
     message.attachments.forEach((attachment) => {
       if (attachment.contentType?.startsWith('image/')) {
-        imageAttachments.push({
-          url: attachment.url,
-          contentType: attachment.contentType,
-        });
+        imageAttachments.push({ url: attachment.url, contentType: attachment.contentType });
       }
     });
+
+    const replySource = await extractReplySource(message);
+    for (const url of replySource?.imageUrls ?? []) {
+      if (!imageAttachments.some((a) => a.url === url)) {
+        imageAttachments.push({ url, contentType: 'image/png' });
+      }
+    }
 
     const prompts: Array<string | Part> = [`${role} ${userPrompt}`];
     if (imageAttachments.length > 0) {

@@ -1,6 +1,7 @@
 import { Readable } from 'stream';
 import { Command } from '../../../../types/Command';
 import openaiClient from '../../../../utils/clients/openaiClient';
+import { extractReplySource } from '../../../../utils/replySource';
 import { buildContentArray } from './buildContentArray';
 import { extractImageUrls } from './extractImages';
 const discordMaxCharacterCount = 2000;
@@ -25,8 +26,12 @@ const command: Command = {
 
     const userPrompt = args.join(' ');
 
-    // load in images from user message
+    // load in images from user message, then supplement with any from a replied-to message
     const imageUrls = extractImageUrls(message);
+    const replySource = await extractReplySource(message);
+    for (const url of replySource?.imageUrls ?? []) {
+      if (!imageUrls.includes(url)) imageUrls.push(url);
+    }
 
     // build the openai message object
     const contentArray = buildContentArray(userPrompt, imageUrls);

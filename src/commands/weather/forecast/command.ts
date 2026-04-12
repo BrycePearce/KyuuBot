@@ -1,15 +1,15 @@
 import { EmbedBuilder } from 'discord.js';
+import { Command } from '../../../types/Command';
 import { Daily, OpenWeatherResponse } from '../../../types/OpenWeatherApi';
 import { getRandomEmotePath } from '../../../utils/files';
 import { formatTime, tempToColor } from '../../../utils/weather/formatters';
 import { getWeather } from '../../../utils/weather/utils';
-import { Command } from '../../../types/Command';
 import { resolveLocation } from '../locationResolver';
 
 const command: Command = {
   name: 'Forecast',
   description: 'Gets a 5-day weather forecast',
-  invocations: ['forecast', 'fc'],
+  invocations: ['f', 'forecast', 'fc'],
   args: false,
   enabled: true,
   usage: '[invocation] [city | state | zip | etc]',

@@ -3,6 +3,7 @@ import got from 'got';
 import OpenAI, { toFile } from 'openai';
 import type { Command } from '../../../../types/Command';
 import { getRandomEmotePath } from '../../../../utils/files';
+import { extractReplySource } from '../../../../utils/replySource';
 import { extractImageUrls } from '../chatCompletion/extractImages';
 
 const openai = new OpenAI({ apiKey: process.env.gptImageGen });
@@ -19,6 +20,12 @@ const command: Command = {
     if (!channel.isSendable()) return;
 
     const imageUrls = extractImageUrls(message);
+
+    if (imageUrls.length === 0) {
+      const replySource = await extractReplySource(message);
+      imageUrls.push(...(replySource?.imageUrls ?? []));
+    }
+
     if (imageUrls.length > 1) {
       await channel.send('🙀 Please attach only **one** image to edit. 🙀');
       return;

@@ -2,6 +2,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { ContentBlock } from '@anthropic-ai/sdk/resources/messages';
 import { Command } from '../../../types/Command';
 import { getRandomEmotePath } from '../../../utils/files';
+import { extractReplySource } from '../../../utils/replySource';
 
 const client = new Anthropic({
   apiKey: process.env.claude,
@@ -48,17 +49,18 @@ const command: Command = {
       attachment.contentType?.startsWith('image/')
     );
 
+    const replySource = await extractReplySource(message);
+
     const contentBlocks: Anthropic.Messages.ContentBlockParam[] = [];
 
-    // Add image blocks first
+    // Add image blocks first (own attachments, then any from replied-to message)
     for (const attachment of imageAttachments) {
-      contentBlocks.push({
-        type: 'image',
-        source: {
-          type: 'url',
-          url: attachment.url,
-        },
-      });
+      contentBlocks.push({ type: 'image', source: { type: 'url', url: attachment.url } });
+    }
+    for (const url of replySource?.imageUrls ?? []) {
+      if (!imageAttachments.some((a) => a.url === url)) {
+        contentBlocks.push({ type: 'image', source: { type: 'url', url } });
+      }
     }
 
     // Add the text part
