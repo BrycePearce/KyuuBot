@@ -35,7 +35,8 @@ const command: Command = {
       }
     }
 
-    const prompts: Array<string | Part> = [`${role} ${userPrompt}`];
+    const fullPrompt = replySource?.text ? `Replied-to message: "${replySource.text}"\n\n${userPrompt}` : userPrompt;
+    const prompts: Array<string | Part> = [`${role} ${fullPrompt}`];
     if (imageAttachments.length > 0) {
       const imagesAsParts = await Promise.all(
         imageAttachments.map(async (attachment) => {

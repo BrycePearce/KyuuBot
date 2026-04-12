@@ -63,12 +63,12 @@ const command: Command = {
       }
     }
 
-    // Add the text part
+    // Add the text part — reply context first, then the user's own prompt
+    if (replySource?.text) {
+      contentBlocks.push({ type: 'text', text: `Replied-to message: "${replySource.text}"` });
+    }
     if (userPrompt) {
-      contentBlocks.push({
-        type: 'text',
-        text: userPrompt,
-      });
+      contentBlocks.push({ type: 'text', text: userPrompt });
     }
 
     if (contentBlocks.length === 0) {

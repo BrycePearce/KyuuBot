@@ -34,7 +34,8 @@ const command: Command = {
     }
 
     // build the openai message object
-    const contentArray = buildContentArray(userPrompt, imageUrls);
+    const fullPrompt = replySource?.text ? `Replied-to message: "${replySource.text}"\n\n${userPrompt}` : userPrompt;
+    const contentArray = buildContentArray(fullPrompt, imageUrls);
     // const tools: ChatCompletionTool[] = [weatherTool];
 
     try {

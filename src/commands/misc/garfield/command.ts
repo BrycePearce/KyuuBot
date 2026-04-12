@@ -370,58 +370,28 @@ function buildPlannedImageEditPrompt({ variant, plan }: { variant: CharacterVari
 function getCharacterDescription(variant: CharacterVariant): string {
   switch (variant) {
     case 'garfula':
-      return [
-        'Garfield as Dracula',
-        'the classic orange tabby Garfield with black stripes, a round face, half-lidded eyes, and a smug lazy expression',
-        'reinterpreted through the source image medium and material with tasteful gothic Dracula details',
-      ].join(', ');
+      return 'Garfield as Dracula, with gothic vampire details';
     case 'nermal':
-      return [
-        'Nermal',
-        'the small cute gray cat from Garfield, with soft gray fur, big expressive eyes, a rounded face, and an adorably smug expression',
-        'reinterpreted through the source image medium and material',
-      ].join(', ');
+      return 'Nermal';
     case 'jon':
-      return [
-        'Jon Arbuckle',
-        'a tall lanky man with dark swept hair, an earnest goofy expression, and dorky casual clothes',
-        'reinterpreted through the source image medium and material',
-      ].join(', ');
+      return 'Jon Arbuckle';
     case 'odie':
-      return [
-        'Odie',
-        'the yellow dog from Garfield with a long floppy tongue, big dopey eyes, floppy ears, and an expression of pure unthinking happiness',
-        'reinterpreted through the source image medium and material',
-      ].join(', ');
+      return 'Odie';
     case 'himbo':
-      return [
-        'Himbo Garfield',
-        'a buff muscular version of the classic orange tabby Garfield, with the same black stripes and round face but with an impressive physique, a huge friendly grin, and wide enthusiastic eyes',
-        'reinterpreted through the source image medium and material',
-      ].join(', ');
+      return 'Himbo Garfield, a buff muscular version of Garfield with an impressive physique, a huge friendly grin, and wide enthusiastic eyes';
     default:
-      return [
-        'Garfield',
-        'the classic orange tabby cat with black stripes, a round face, half-lidded eyes, and a smug lazy expression',
-        'reinterpreted through the source image medium and material',
-      ].join(', ');
+      return 'Garfield';
   }
 }
 
 function getIdentityInstruction(variant: CharacterVariant): string {
   switch (variant) {
     case 'garfula':
-      return 'Garfield must remain recognizable as Dracula-Garfield: orange tabby, black stripes, round face, half-lidded eyes, plus gothic/vampire accents (subtle cape, fangs). Adapt the rendering style but keep these features clear.';
-    case 'nermal':
-      return 'Nermal must remain recognizable: small gray cat, big expressive eyes, rounded face, adorably smug expression. Adapt the rendering style to match the image but do not lose these features.';
-    case 'jon':
-      return 'Jon must remain recognizable: tall lanky human, dark swept hair, earnest goofy expression, dorky clothes. Adapt the rendering style to match the image but do not lose these features.';
-    case 'odie':
-      return 'Odie must remain recognizable: yellow dog, long floppy tongue, big dopey eyes, floppy ears, expression of pure happiness. Adapt the rendering style to match the image but do not lose these features.';
+      return 'Keep it recognizably Garfield with clear Dracula/vampire elements. Adapt the rendering style to match the image but preserve both.';
     case 'himbo':
-      return 'Himbo Garfield must remain recognizable: orange tabby, black stripes, round face, but with a clearly muscular build, a huge friendly smile, and wide enthusiastic eyes — not the usual half-lidded smug look. Adapt the rendering style to match the image but do not lose these features.';
+      return 'This is Garfield but muscular and enthusiastic — keep the clearly buff build, huge friendly smile, and wide eyes. Do not let it drift back into normal sleepy Garfield. Adapt the rendering style to match the image.';
     default:
-      return 'Garfield must remain recognizable: orange tabby, black stripes, round face, half-lidded sleepy eyes, smug expression. Adapt the rendering style to match the image but do not lose these features.';
+      return `Keep ${getCharacterName(variant)} recognizable. Adapt the rendering style to match the image.`;
   }
 }
 
