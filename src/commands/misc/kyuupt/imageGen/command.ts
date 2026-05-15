@@ -63,7 +63,7 @@ const command: Command = {
         const file = await toFile(buffer, `input.${ext}`, { type: mimeType });
 
         response = await openai.images.edit({
-          model: 'gpt-image-1.5',
+          model: 'gpt-image-2',
           image: file,
           prompt,
           n: 1,
@@ -72,7 +72,7 @@ const command: Command = {
       } else {
         // TEXT → IMAGE MODE
         response = await openai.images.generate({
-          model: 'gpt-image-1.5',
+          model: 'gpt-image-2',
           prompt,
           n: 1,
           size: '1024x1024',

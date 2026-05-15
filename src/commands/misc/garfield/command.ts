@@ -128,7 +128,7 @@ async function mascotifyImage({
   const prompt = buildPlannedImageEditPrompt({ variant, plan });
 
   const imageResponse = await openaiClient.images.edit({
-    model: 'gpt-image-1.5',
+    model: 'gpt-image-2',
     image: new File([normalizedBuffer], inputFilename, { type: DEFAULT_IMAGE_TYPE }),
     prompt,
     size: '1024x1024',
