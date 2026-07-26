@@ -40,7 +40,7 @@ const command: Command = {
 
     try {
       const response = await openaiClient.chat.completions.create({
-        model: 'gpt-5-chat-latest',
+        model: 'gpt-5.6-sol',
         messages: [
           {
             role: 'system',
