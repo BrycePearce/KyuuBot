@@ -52,7 +52,7 @@ const command: Command = {
             content: contentArray,
           },
         ],
-        max_tokens: 500,
+        max_completion_tokens: 750,
       });
 
       const completionText = response.choices?.[0]?.message?.content ?? '';
