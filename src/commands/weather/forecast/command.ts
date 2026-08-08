@@ -5,7 +5,7 @@ import { getRandomEmotePath } from '../../../utils/files';
 import { formatTime, tempToColor } from '../../../utils/weather/formatters';
 import { getWeather } from '../../../utils/weather/utils';
 import { resolveLocation } from '../locationResolver';
-
+// test
 const command: Command = {
   name: 'Forecast',
   description: 'Gets a 5-day weather forecast',
