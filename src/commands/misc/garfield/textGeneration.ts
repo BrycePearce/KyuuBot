@@ -17,7 +17,7 @@ export async function mascotifyText({
   const isVeryShortInput = isShortInput(sourceText);
 
   const completion = await openaiClient.responses.create({
-    model: 'gpt-5-chat-latest',
+    model: 'gpt-5.6-sol',
     input: [
       {
         role: 'system',

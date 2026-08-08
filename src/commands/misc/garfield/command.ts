@@ -157,7 +157,7 @@ async function planMascotImageEdit({
   variant: CharacterVariant;
 }): Promise<ImagePlan> {
   const response = await openaiClient.responses.create({
-    model: 'gpt-5-chat-latest',
+    model: 'gpt-5.6-sol',
     input: [
       {
         role: 'system',
