@@ -1,10 +1,15 @@
 # Pull base image.
-FROM node:lts-slim
+FROM node:lts-alpine
 
-# Install ffmpeg and clean up
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends ffmpeg \
-  && rm -rf /var/lib/apt/lists/*
+# Unraid (6.10+) reads this label to render the container icon.
+# Must be a local host path -- remote URLs fail intermittently when the
+# webgui can't resolve them, and .webp/.svg don't render at all. Copy the
+# icon into place once on the host:
+#   cp /mnt/user/Misc/KyuuBot/assets/icon.png /mnt/user/appdata/kyuu/icon.png
+LABEL net.unraid.docker.icon="/mnt/user/appdata/kyuu/icon.png"
+
+# Install ffmpeg
+RUN apk add --no-cache ffmpeg
 
 WORKDIR /app
 
