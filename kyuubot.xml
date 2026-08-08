@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!--
+  Unraid template. Not a Community Apps submission -- this exists so the Docker
+  page has a template to read <Icon> from, which is the only reliable way to set
+  a container icon (the net.unraid.docker.icon label is ignored whenever a
+  template exists, and unreliable when one doesn't).
+
+  Install on the server:
+    cp kyuubot.xml /boot/config/plugins/dockerMan/templates-user/my-kyuubot.xml
+
+  The filename must be my-<Name>.xml and match <Name> above, or Unraid won't
+  associate it with the running container.
+-->
+<Container version="2">
+  <Name>kyuubot</Name>
+  <Repository>kyuubot:latest</Repository>
+  <Registry />
+  <Network>bridge</Network>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/BrycePearce/KyuuBot/issues</Support>
+  <Project>https://github.com/BrycePearce/KyuuBot</Project>
+  <Overview>Discord bot. Built locally from the Dockerfile in this repo rather than pulled from a registry, so the image lives only on this host. Secrets are read from the .env baked into the image at build time.</Overview>
+  <Category>Other:</Category>
+  <WebUI />
+  <TemplateURL />
+  <Icon>https://raw.githubusercontent.com/BrycePearce/KyuuBot/main/assets/icon.png</Icon>
+  <PostArgs />
+  <CPUset />
+  <DateInstalled />
+  <DonateText />
+  <DonateLink />
+  <Requires />
+
+  <Config
+    Name="Config Path"
+    Target="/app/config"
+    Default="/mnt/user/appdata/kyuu/config"
+    Mode="rw"
+    Description="Persistent directory holding kyuu.db. Must not be lost between rebuilds."
+    Type="Path"
+    Display="always"
+    Required="true"
+    Mask="false">/mnt/user/appdata/kyuu/config</Config>
+</Container>
