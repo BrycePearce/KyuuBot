@@ -1,6 +1,7 @@
 import { AttachmentBuilder, Message } from 'discord.js';
 import { Command } from '../../../types/Command';
 import { extractReplySource } from '../../../utils/replySource';
+import { NonRetryableError } from '../../../utils/withRetry';
 import { pickComicDirection, pickComicStaging, pickComicTheme } from './creativeDirection';
 import { generateComicStrip } from './imageGenerator';
 import { generateComicScript } from './scriptGenerator';
@@ -58,7 +59,8 @@ const command: Command = {
         script = await generateComicScript({ text, imageUrl, theme, direction, staging });
       } catch (error) {
         console.error('Comic script generation failed:', selection, error);
-        await message.reply(COMIC_MESSAGES.scriptFailed);
+        const refused = error instanceof NonRetryableError;
+        await message.reply(refused ? COMIC_MESSAGES.scriptRefused : COMIC_MESSAGES.scriptFailed);
         return;
       }
 

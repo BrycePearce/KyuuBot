@@ -56,6 +56,7 @@ export type ComicStagingDefinition = {
 export const COMIC_MESSAGES = {
   noInput: "Reply to something or give me something to work with. I don't do improv.",
   scriptFailed: 'I tried writing this comic and immediately fell asleep.',
+  scriptRefused: 'I read that and decided I want no part of it.',
   imageFailed: 'The art department had a catastrophic failure. Not my department.',
   genericError: "Something broke. I was going to fix it but then I didn't.",
 } as const;

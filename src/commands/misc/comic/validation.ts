@@ -6,7 +6,13 @@ export function parseComicScript(rawText: string): ComicScript {
     .replace(/^```(?:json)?\s*/i, '')
     .replace(/\s*```$/, '');
 
-  const parsed: unknown = JSON.parse(json);
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(json);
+  } catch {
+    throw new Error(`Script generator did not return JSON. Response began: ${json.slice(0, 200)}`);
+  }
+
   assertComicScript(parsed);
   return parsed;
 }

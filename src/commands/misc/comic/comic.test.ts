@@ -1,6 +1,9 @@
+import type Anthropic from '@anthropic-ai/sdk';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { extractReplySource } from '../../../utils/replySource';
+import { NonRetryableError, withRetry } from '../../../utils/withRetry';
+import { readComicScript } from './scriptGenerator';
 import {
   COMIC_DIRECTIONS,
   COMIC_STAGINGS,
@@ -25,6 +28,24 @@ const SCRIPT: ComicScript = {
     { description: 'Garfield watches it leave town.', caption: 'Problem solved.', dialogue: ['Garfield: Keep it.'] },
   ],
 };
+
+function toolUseBlock(input: unknown): Anthropic.Messages.ContentBlock {
+  return { type: 'tool_use', id: 'toolu_1', name: 'emit_comic_script', input, caller: { type: 'direct' } };
+}
+
+function buildMessage(overrides: Partial<Anthropic.Messages.Message>): Anthropic.Messages.Message {
+  return {
+    id: 'msg_test',
+    type: 'message',
+    role: 'assistant',
+    model: 'claude-sonnet-4-6',
+    content: [],
+    stop_reason: 'tool_use',
+    stop_sequence: null,
+    usage: { input_tokens: 0, output_tokens: 0 },
+    ...overrides,
+  } as Anthropic.Messages.Message;
+}
 
 test('theme registry has the planned weights and boundary selection', () => {
   assert.equal(
@@ -235,6 +256,96 @@ test('script validation rejects malformed panels and dialogue', () => {
   for (const value of cases) {
     assert.throws(() => parseComicScript(JSON.stringify(value)));
   }
+});
+
+test('script parse failure reports what the model actually said', () => {
+  assert.throws(
+    () => parseComicScript('I need to see the image before I can write this.'),
+    (error: unknown) => {
+      const message = error instanceof Error ? error.message : '';
+      return /did not return JSON/.test(message) && message.includes('I need to see the image');
+    }
+  );
+});
+
+test('tool-call responses are read from the tool block, not the text block', () => {
+  const script = readComicScript(buildMessage({ content: [toolUseBlock(SCRIPT)] }));
+
+  assert.deepEqual(script, SCRIPT);
+});
+
+test('refusals are non-retryable and truncation is reported as such', () => {
+  assert.throws(
+    () => readComicScript(buildMessage({ content: [], stop_reason: 'refusal' })),
+    (error: unknown) => error instanceof NonRetryableError
+  );
+
+  assert.throws(
+    () => readComicScript(buildMessage({ content: [toolUseBlock({ panels: [] })], stop_reason: 'max_tokens' })),
+    /output limit/
+  );
+});
+
+test('retry re-rolls malformed scripts but gives up on refusals', async () => {
+  const delays: number[] = [];
+  const sleep = async (ms: number) => {
+    delays.push(ms);
+  };
+
+  let attempts = 0;
+  const script = await withRetry(
+    async () => {
+      attempts += 1;
+      if (attempts < 3) throw new Error('Comic script must contain exactly three panels.');
+      return SCRIPT;
+    },
+    { attempts: 3, baseDelayMs: 10, sleep }
+  );
+
+  assert.deepEqual(script, SCRIPT);
+  assert.equal(attempts, 3);
+  assert.equal(delays.length, 2);
+
+  let refusalAttempts = 0;
+  await assert.rejects(
+    withRetry(
+      async () => {
+        refusalAttempts += 1;
+        throw new NonRetryableError('declined');
+      },
+      { attempts: 3, baseDelayMs: 10, sleep }
+    ),
+    (error: unknown) => error instanceof NonRetryableError
+  );
+  assert.equal(refusalAttempts, 1);
+});
+
+test('retry distinguishes transient failures from bad requests', async () => {
+  const sleep = async () => {};
+
+  let rateLimited = 0;
+  await assert.rejects(
+    withRetry(
+      async () => {
+        rateLimited += 1;
+        throw Object.assign(new Error('rate limited'), { status: 429 });
+      },
+      { attempts: 3, baseDelayMs: 1, sleep }
+    )
+  );
+  assert.equal(rateLimited, 3);
+
+  let badRequests = 0;
+  await assert.rejects(
+    withRetry(
+      async () => {
+        badRequests += 1;
+        throw Object.assign(new Error('bad request'), { status: 400 });
+      },
+      { attempts: 3, baseDelayMs: 1, sleep }
+    )
+  );
+  assert.equal(badRequests, 1, 'a 400 will fail identically every time');
 });
 
 test('typing keepalive refreshes until stopped and tolerates refresh failures', async () => {

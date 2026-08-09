@@ -1,5 +1,6 @@
 import OpenAI, { toFile, type Uploadable } from 'openai';
 import sharp from 'sharp';
+import { withRetry } from '../../../utils/withRetry';
 import { buildImagePrompt } from './prompts';
 import {
   ComicDirectionDefinition,
@@ -21,20 +22,35 @@ export async function generateComicStrip(
   const hasReferenceImage = Boolean(imageUrl);
   const prompt = buildImagePrompt(script, theme, direction, staging, hasReferenceImage);
 
-  const response = imageUrl
-    ? await imageClient.images.edit(buildComicImageEditRequest(await downloadReferenceImage(imageUrl), prompt))
-    : await imageClient.images.generate({
-        model: 'gpt-image-2',
-        prompt,
-        n: 1,
-        output_format: 'png',
-        size: `${STRIP_WIDTH}x${STRIP_HEIGHT}` as any,
-      });
+  // Download once — only the generation call is worth repeating.
+  const referenceImage = imageUrl ? await downloadReferenceImage(imageUrl) : undefined;
 
-  const b64 = response.data?.[0]?.b64_json;
-  if (!b64) throw new Error('No image data returned from image generator.');
+  return withRetry(
+    async () => {
+      const response = referenceImage
+        ? await imageClient.images.edit(buildComicImageEditRequest(referenceImage, prompt))
+        : await imageClient.images.generate({
+            model: 'gpt-image-2',
+            prompt,
+            n: 1,
+            output_format: 'png',
+            size: `${STRIP_WIDTH}x${STRIP_HEIGHT}` as any,
+          });
 
-  return Buffer.from(b64, 'base64');
+      const b64 = response.data?.[0]?.b64_json;
+      if (!b64) throw new Error('No image data returned from image generator.');
+
+      return Buffer.from(b64, 'base64');
+    },
+    {
+      attempts: 3,
+      onRetry: (error, nextAttempt) =>
+        console.warn(
+          `Comic image attempt failed, retrying (attempt ${nextAttempt}):`,
+          error instanceof Error ? error.message : String(error)
+        ),
+    }
+  );
 }
 
 export function buildComicImageEditRequest(image: Uploadable, prompt: string) {
