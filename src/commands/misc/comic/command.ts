@@ -1,9 +1,11 @@
 import { AttachmentBuilder, Message } from 'discord.js';
 import { Command } from '../../../types/Command';
 import { extractReplySource } from '../../../utils/replySource';
+import { pickComicDirection, pickComicStaging, pickComicTheme } from './creativeDirection';
 import { generateComicStrip } from './imageGenerator';
 import { generateComicScript } from './scriptGenerator';
 import { COMIC_MESSAGES } from './types';
+import { startTypingKeepalive } from './typingKeepalive';
 
 const command: Command = {
   name: 'Comic',
@@ -44,23 +46,27 @@ const command: Command = {
       return;
     }
 
-    try {
-      await channel.sendTyping();
+    const theme = pickComicTheme();
+    const direction = pickComicDirection();
+    const staging = pickComicStaging();
+    const selection = { theme: theme.id, direction: direction.id, staging: staging.id };
+    const stopTyping = startTypingKeepalive(() => channel.sendTyping());
 
+    try {
       let script;
       try {
-        script = await generateComicScript({ text, imageUrl });
+        script = await generateComicScript({ text, imageUrl, theme, direction, staging });
       } catch (error) {
-        console.error('Comic script generation failed:', error);
+        console.error('Comic script generation failed:', selection, error);
         await message.reply(COMIC_MESSAGES.scriptFailed);
         return;
       }
 
       let stripBuffer;
       try {
-        stripBuffer = await generateComicStrip(script);
+        stripBuffer = await generateComicStrip(script, theme, direction, staging, imageUrl);
       } catch (error) {
-        console.error('Comic image generation failed:', error);
+        console.error('Comic image generation failed:', selection, error);
         await message.reply(COMIC_MESSAGES.imageFailed);
         return;
       }
@@ -69,8 +75,10 @@ const command: Command = {
 
       await message.reply({ files: [attachment] });
     } catch (error) {
-      console.error('Error running .comic:', error);
+      console.error('Error running .comic:', selection, error);
       await message.reply(COMIC_MESSAGES.genericError);
+    } finally {
+      stopTyping();
     }
   },
 };

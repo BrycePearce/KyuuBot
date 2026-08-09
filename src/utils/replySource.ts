@@ -20,7 +20,8 @@ export async function extractReplySource(message: Message): Promise<ReplySource 
     return null;
   }
 
-  const text = referenced.content?.trim() || undefined;
+  const textParts: string[] = [];
+  if (referenced.content?.trim()) textParts.push(referenced.content.trim());
 
   const imageUrls: string[] = [];
 
@@ -31,11 +32,22 @@ export async function extractReplySource(message: Message): Promise<ReplySource 
   });
 
   for (const embed of referenced.embeds) {
+    const embedText = [
+      embed.data.author?.name,
+      embed.data.title,
+      embed.data.description,
+      ...(embed.data.fields ?? []).flatMap((field) => [field.name, field.value]),
+      embed.data.footer?.text,
+    ].filter((value): value is string => Boolean(value?.trim()));
+
+    textParts.push(...embedText);
+
     const url = embed.data.image?.url ?? embed.data.thumbnail?.url;
     if (url && !imageUrls.includes(url)) {
       imageUrls.push(url);
     }
   }
 
+  const text = textParts.join('\n').trim().slice(0, 12_000) || undefined;
   return { text, imageUrls };
 }

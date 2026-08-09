@@ -8,6 +8,51 @@ export type ComicScript = {
   panels: [ComicPanel, ComicPanel, ComicPanel];
 };
 
+export type ComicTheme = 'classic' | 'himbo' | 'vampire' | 'zeus' | 'odie' | 'nermal' | 'noir' | 'kaiju';
+
+export type ComicDirection =
+  | 'dry-observation'
+  | 'escalating-consequences'
+  | 'misunderstanding'
+  | 'petty-backfire'
+  | 'character-reversal'
+  | 'surreal-logic'
+  | 'visual-transformation'
+  | 'food-fixation';
+
+export type ComicStaging =
+  | 'source-native-action'
+  | 'location-transplant'
+  | 'prop-domino'
+  | 'foreground-background'
+  | 'scale-shift'
+  | 'public-spectacle'
+  | 'theatrical-tableau';
+
+export type ComicThemeDefinition = {
+  id: ComicTheme;
+  label: string;
+  weight: number;
+  writingGuidance: string;
+  imageGuidance: string;
+};
+
+export type ComicDirectionDefinition = {
+  id: ComicDirection;
+  label: string;
+  weight: number;
+  writingGuidance: string;
+  imageGuidance: string;
+};
+
+export type ComicStagingDefinition = {
+  id: ComicStaging;
+  label: string;
+  weight: number;
+  writingGuidance: string;
+  imageGuidance: string;
+};
+
 export const COMIC_MESSAGES = {
   noInput: "Reply to something or give me something to work with. I don't do improv.",
   scriptFailed: 'I tried writing this comic and immediately fell asleep.',
@@ -18,21 +63,3 @@ export const COMIC_MESSAGES = {
 // Generated image dimensions (matching .i command — confirmed working)
 export const STRIP_WIDTH = 1024;
 export const STRIP_HEIGHT = 1024;
-
-// Caption bar overlaid at the bottom of each panel
-export const CAPTION_HEIGHT = 90;
-
-// Panel layout: 1024px wide, 3 panels + 2 dividers
-// 340 + 4 + 336 + 4 + 340 = 1024
-export const DIVIDER_WIDTH = 4;
-export const PANEL_1_START = 0;
-export const PANEL_1_WIDTH = 340;
-export const PANEL_1_CENTER = 170;
-export const DIVIDER_1_X = 340;
-export const PANEL_2_START = 344;
-export const PANEL_2_WIDTH = 336;
-export const PANEL_2_CENTER = 512;
-export const DIVIDER_2_X = 680;
-export const PANEL_3_START = 684;
-export const PANEL_3_WIDTH = 340;
-export const PANEL_3_CENTER = 854;
