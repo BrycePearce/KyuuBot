@@ -1,4 +1,4 @@
-import OpenAI, { toFile } from 'openai';
+import OpenAI, { toFile, type Uploadable } from 'openai';
 import sharp from 'sharp';
 import { buildImagePrompt } from './prompts';
 import {
@@ -10,8 +10,6 @@ import {
   STRIP_WIDTH,
 } from './types';
 
-const imageClient = new OpenAI({ apiKey: process.env.gptImageGen });
-
 export async function generateComicStrip(
   script: ComicScript,
   theme: ComicThemeDefinition,
@@ -19,19 +17,12 @@ export async function generateComicStrip(
   staging: ComicStagingDefinition,
   imageUrl?: string
 ): Promise<Buffer> {
+  const imageClient = new OpenAI({ apiKey: process.env.gptImageGen });
   const hasReferenceImage = Boolean(imageUrl);
   const prompt = buildImagePrompt(script, theme, direction, staging, hasReferenceImage);
 
   const response = imageUrl
-    ? await imageClient.images.edit({
-        model: 'gpt-image-2',
-        image: await downloadReferenceImage(imageUrl),
-        input_fidelity: 'high',
-        prompt,
-        n: 1,
-        output_format: 'png',
-        size: `${STRIP_WIDTH}x${STRIP_HEIGHT}` as any,
-      })
+    ? await imageClient.images.edit(buildComicImageEditRequest(await downloadReferenceImage(imageUrl), prompt))
     : await imageClient.images.generate({
         model: 'gpt-image-2',
         prompt,
@@ -44,6 +35,17 @@ export async function generateComicStrip(
   if (!b64) throw new Error('No image data returned from image generator.');
 
   return Buffer.from(b64, 'base64');
+}
+
+export function buildComicImageEditRequest(image: Uploadable, prompt: string) {
+  return {
+    model: 'gpt-image-2',
+    image,
+    prompt,
+    n: 1,
+    output_format: 'png' as const,
+    size: `${STRIP_WIDTH}x${STRIP_HEIGHT}` as '1024x1024',
+  };
 }
 
 async function downloadReferenceImage(imageUrl: string) {
