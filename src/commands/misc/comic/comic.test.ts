@@ -13,6 +13,7 @@ import {
   pickComicTheme,
 } from './creativeDirection';
 import { buildImagePrompt, buildScriptSystemPrompt, buildScriptUserPrompt } from './prompts';
+import { buildComicImageEditRequest } from './imageGenerator';
 import { ComicScript } from './types';
 import { startTypingKeepalive } from './typingKeepalive';
 import { parseComicScript } from './validation';
@@ -182,6 +183,13 @@ test('reference-image prompt requires identifiable source details', () => {
     staging: getComicStaging('source-native-action'),
   });
   assert.match(scriptPrompt, /one to three distinctive visual anchors/i);
+});
+
+test('GPT Image 2 edit requests omit unsupported input_fidelity', () => {
+  const request = buildComicImageEditRequest({} as any, 'make a comic');
+
+  assert.equal(request.model, 'gpt-image-2');
+  assert.equal('input_fidelity' in request, false);
 });
 
 test('reply extraction includes message text, embed text, and embed images', async () => {
