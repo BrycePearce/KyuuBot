@@ -16,6 +16,7 @@ export const COMIC_THEMES: readonly ComicThemeDefinition[] = [
       'Garfield is the lead: lazy, smug, selfish, dry, petty, and chronically unimpressed. Food may appear when relevant, but it is only one possible interest and must not be the automatic subject.',
     imageGuidance:
       'Feature the actual character Garfield as the unmistakable lead in a colorful classic newspaper-comic world. Use expressive poses and varied locations appropriate to the source.',
+    visualRequirements: [],
   },
   {
     id: 'himbo',
@@ -25,15 +26,27 @@ export const COMIC_THEMES: readonly ComicThemeDefinition[] = [
       'Himbo Garfield is the lead: recognizably Garfield but extremely muscular, sweet, enthusiastic, earnest, and not very bright. He sincerely believes everything is going amazingly and is never cynical or lazy.',
     imageGuidance:
       'Feature the actual character Garfield with an enormous heroic bodybuilder physique, wide friendly eyes, a huge sincere grin, and exuberant gym-bro energy. Carry the source into an intensely upbeat fitness aesthetic.',
+    visualRequirements: [
+      'Himbo Garfield has a huge bodybuilder physique in every panel',
+      'his wide friendly eyes and enormous sincere grin remain visible',
+      'fitness, gym, or heroic strongman details shape the entire scene',
+    ],
+    resultMessage: "You've been Himbofied! Looking INCREDIBLE out there!",
   },
   {
     id: 'vampire',
     label: 'Vampire Garfield / Garf-ula',
     weight: 5,
     writingGuidance:
-      'Vampire Garfield, also called Garf-ula, is the lead. Keep Garfield dry, lazy, entitled, and unimpressed while giving the entire premise nocturnal gothic vampire logic and melodrama.',
+      'Vampire Garfield, also called Garf-ula, is the lead. Keep Garfield dry, lazy, entitled, and unimpressed while giving the premise nocturnal gothic vampire logic. Garlic is dangerous or repellent to him; never make him desire, eat, buy, or protect garlic unless the setup explicitly establishes a funny exception that drives the payoff.',
     imageGuidance:
       'Feature the actual character Garfield as an unmistakable Dracula-like vampire with fangs, cape, gothic castle atmosphere, moonlight, bats, deep crimson accents, and extreme spooky theatricality.',
+    visualRequirements: [
+      'Garf-ula has prominent fangs and a dramatic high-collared black-and-red cape in every panel',
+      'gothic stonework, moonlight, bats, candles, or crimson shadows dominate the environment',
+      'the palette and lighting feel intensely vampiric rather than like normal Garfield at night',
+    ],
+    resultMessage: "You've been Garf-ula'd!",
   },
   {
     id: 'zeus',
@@ -43,6 +56,12 @@ export const COMIC_THEMES: readonly ComicThemeDefinition[] = [
       'Zeus Garfield is the lead: Garfield as the entitled ruler of Mount Olympus, wielding divine power for petty, lazy, self-serving reasons. Use mythic grandeur contrasted with Garfield-level concerns.',
     imageGuidance:
       'Feature the actual character Garfield as Zeus on Mount Olympus with a toga, laurel details, storm clouds, marble temples, lightning bolts, and absurdly grand divine authority.',
+    visualRequirements: [
+      'Zeus Garfield wears a white toga and gold laurel crown in every panel',
+      'lightning, storm clouds, marble columns, and Mount Olympus dominate the setting',
+      'Garfield visibly wields oversized divine power for petty purposes',
+    ],
+    resultMessage: "You've been Zeusified!",
   },
   {
     id: 'odie',
@@ -52,6 +71,12 @@ export const COMIC_THEMES: readonly ComicThemeDefinition[] = [
       'Odie is the featured lead. Build the joke around his joyful, physical, chaotic dog logic; he communicates mostly through action, expression, panting, and very short barks. Garfield may support or react but must not take over.',
     imageGuidance:
       'Feature the actual character Odie as the clear star, with huge physical movement, tongue-out enthusiasm, elastic expressions, and joyful chaos. Garfield may appear only as a supporting reaction character.',
+    visualRequirements: [
+      'Odie is the largest or clearest focal character in every panel',
+      'his long tongue, floppy ears, and explosive physical energy are unmistakable',
+      'Garfield is absent or visibly secondary and never takes over the composition',
+    ],
+    resultMessage: "BORK! You've been Odie'd!",
   },
   {
     id: 'nermal',
@@ -61,6 +86,12 @@ export const COMIC_THEMES: readonly ComicThemeDefinition[] = [
       'Nermal is the featured lead: cute, vain, smug, effortlessly self-satisfied, and mildly infuriating. Garfield may support or react but must not take over the comic.',
     imageGuidance:
       'Feature the actual character Nermal as the clear star, emphasizing polished cuteness, camera-ready poses, smug confidence, and an adorably irritating atmosphere. Garfield may be a supporting reaction character.',
+    visualRequirements: [
+      'Nermal is the largest or clearest focal character in every panel',
+      'his small gray body, polished cuteness, and smug camera-ready poses are unmistakable',
+      'Garfield is absent or visibly secondary and never takes over the composition',
+    ],
+    resultMessage: "Oh no, you've been Nermal'd!",
   },
   {
     id: 'noir',
@@ -70,6 +101,12 @@ export const COMIC_THEMES: readonly ComicThemeDefinition[] = [
       'Garfield is a hard-boiled noir detective narrating the source like a seedy case. Keep his voice terse, suspicious, lazy, and deadpan rather than writing flowery parody prose.',
     imageGuidance:
       'Feature the actual character Garfield as a trench-coated noir detective in a rain-soaked, high-contrast black-and-white city with blinds, desk lamps, long shadows, and one restrained orange accent.',
+    visualRequirements: [
+      'detective Garfield wears a trench coat and fedora in every panel',
+      'the entire strip uses high-contrast black-and-white noir lighting with at most one orange accent',
+      'rain, venetian-blind shadows, smoke, or hard-boiled city details dominate every composition',
+    ],
+    resultMessage: "You've been Noirfield'd!",
   },
   {
     id: 'kaiju',
@@ -79,8 +116,18 @@ export const COMIC_THEMES: readonly ComicThemeDefinition[] = [
       'Garfield is a city-sized kaiju. Treat the source as an enormous disaster-movie event while Garfield remains casually petty, bored, and concerned with something comically small.',
     imageGuidance:
       'Feature the actual character Garfield as a colossal kaiju towering over a detailed miniature city, with dramatic scale, emergency spectacle, cinematic low angles, and Garfield remaining unmistakably himself.',
+    visualRequirements: [
+      'Kaiju Garfield is colossal relative to buildings, vehicles, or crowds in every panel',
+      'low camera angles and miniature city details make his scale immediately obvious',
+      'disaster-movie spectacle fills the environment while Garfield stays recognizable',
+    ],
+    resultMessage: "You've been Kaiju'd!",
   },
 ];
+
+export function getComicVariantMessage(theme: ComicThemeDefinition): string | undefined {
+  return theme.id === 'classic' ? undefined : theme.resultMessage;
+}
 
 export const COMIC_DIRECTIONS: readonly ComicDirectionDefinition[] = [
   {

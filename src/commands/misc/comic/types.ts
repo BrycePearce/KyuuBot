@@ -1,11 +1,37 @@
 export type ComicPanel = {
   description: string; // Visual description for the image generator
-  caption: string; // Garfield's internal monologue (caption bar)
-  dialogue?: string[]; // Speech bubble lines, e.g. ["Garfield: ...", "Jon: ..."]
+  caption?: string; // Caption-bar narration; only used in caption mode
+  dialogue?: ComicDialogue[]; // Speech bubbles; only used in dialogue mode
 };
 
+export type ComicDialogue = {
+  speaker: string;
+  text: string;
+};
+
+export type ComicTextMode = 'captions' | 'dialogue';
+
 export type ComicScript = {
+  textMode: ComicTextMode;
   panels: [ComicPanel, ComicPanel, ComicPanel];
+};
+
+export type ComicPlan = {
+  sourceAnchor: string;
+  premise: string;
+  characterMotivation: string;
+  themeLogic: string;
+  setup: string;
+  turn: string;
+  payoff: string;
+  visualThroughline: string;
+  continuityFacts: string[];
+  textMode: ComicTextMode;
+};
+
+export type PlannedComic = {
+  plan: ComicPlan;
+  script: ComicScript;
 };
 
 export type ComicTheme = 'classic' | 'himbo' | 'vampire' | 'zeus' | 'odie' | 'nermal' | 'noir' | 'kaiju';
@@ -35,6 +61,8 @@ export type ComicThemeDefinition = {
   weight: number;
   writingGuidance: string;
   imageGuidance: string;
+  visualRequirements: string[];
+  resultMessage?: string;
 };
 
 export type ComicDirectionDefinition = {

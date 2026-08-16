@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { extractReplySource } from '../../../utils/replySource';
 import { NonRetryableError, withRetry } from '../../../utils/withRetry';
-import { readComicScript } from './scriptGenerator';
+import { readComicPlan, readComicScript } from './scriptGenerator';
 import {
   COMIC_DIRECTIONS,
   COMIC_STAGINGS,
@@ -11,26 +11,56 @@ import {
   getComicDirection,
   getComicStaging,
   getComicTheme,
+  getComicVariantMessage,
   pickComicDirection,
   pickComicStaging,
   pickComicTheme,
 } from './creativeDirection';
-import { buildImagePrompt, buildScriptSystemPrompt, buildScriptUserPrompt } from './prompts';
+import {
+  buildConceptSystemPrompt,
+  buildConceptUserPrompt,
+  buildImagePrompt,
+  buildScriptSystemPrompt,
+  buildScriptUserPrompt,
+} from './prompts';
 import { buildComicImageEditRequest } from './imageGenerator';
-import { ComicScript } from './types';
+import { ComicPlan, ComicScript } from './types';
 import { startTypingKeepalive } from './typingKeepalive';
 import { parseComicScript } from './validation';
 
+const PLAN: ComicPlan = {
+  sourceAnchor: 'A mysterious cardboard box',
+  premise: 'Garfield refuses responsibility until the box solves its own problem.',
+  characterMotivation: 'Garfield wants the box gone without standing up.',
+  themeLogic: 'Garfield stays lazy, dry, and selfish.',
+  setup: 'Garfield is expected to open the box.',
+  turn: 'The box grows legs before Garfield acts.',
+  payoff: 'Garfield claims success after the box leaves.',
+  visualThroughline: 'The same labeled cardboard box changes position in every panel.',
+  continuityFacts: ['Garfield never opens the box.', 'The box leaves under its own power.'],
+  textMode: 'captions',
+};
+
 const SCRIPT: ComicScript = {
+  textMode: 'captions',
   panels: [
-    { description: 'Garfield opens a mysterious box.', caption: 'This seems ambitious.' },
+    { description: 'Garfield stares at a mysterious box without touching it.', caption: 'This seems ambitious.' },
     { description: 'The box grows legs and runs.', caption: 'I preferred cardboard.' },
-    { description: 'Garfield watches it leave town.', caption: 'Problem solved.', dialogue: ['Garfield: Keep it.'] },
+    { description: 'Garfield watches it leave town.', caption: 'Problem solved.' },
   ],
 };
 
-function toolUseBlock(input: unknown): Anthropic.Messages.ContentBlock {
-  return { type: 'tool_use', id: 'toolu_1', name: 'emit_comic_script', input, caller: { type: 'direct' } };
+const DIALOGUE_SCRIPT: ComicScript = {
+  textMode: 'dialogue',
+  panels: [
+    { description: 'Jon points at a mysterious box.', dialogue: [{ speaker: 'Jon', text: 'Open it.' }] },
+    { description: 'The box grows legs and runs away.' },
+    { description: 'Garfield watches it leave.', dialogue: [{ speaker: 'Garfield', text: 'Done.' }] },
+  ],
+};
+
+function toolUseBlock(input: unknown, name = 'emit_comic_script'): Anthropic.Messages.ContentBlock {
+  return { type: 'tool_use', id: 'toolu_1', name, input, caller: { type: 'direct' } };
 }
 
 function buildMessage(overrides: Partial<Anthropic.Messages.Message>): Anthropic.Messages.Message {
@@ -129,8 +159,8 @@ test('every theme contributes writing and image guidance to prompts', () => {
   const staging = getComicStaging('source-native-action');
 
   for (const theme of COMIC_THEMES) {
-    const systemPrompt = buildScriptSystemPrompt(theme, direction, staging);
-    const imagePrompt = buildImagePrompt(SCRIPT, theme, direction, staging);
+    const systemPrompt = buildConceptSystemPrompt(theme, direction, staging);
+    const imagePrompt = buildImagePrompt(SCRIPT, theme, PLAN);
     assert.ok(systemPrompt.includes(theme.label));
     assert.ok(systemPrompt.includes(theme.writingGuidance));
     assert.ok(imagePrompt.includes(theme.label));
@@ -138,34 +168,77 @@ test('every theme contributes writing and image guidance to prompts', () => {
   }
 });
 
+test('rare variants have dominant visual requirements and an accompanying result message', () => {
+  assert.equal(getComicVariantMessage(getComicTheme('classic')), undefined);
+
+  const expectedMessages = {
+    himbo: "You've been Himbofied! Looking INCREDIBLE out there!",
+    vampire: "You've been Garf-ula'd!",
+    zeus: "You've been Zeusified!",
+    odie: "BORK! You've been Odie'd!",
+    nermal: "Oh no, you've been Nermal'd!",
+    noir: "You've been Noirfield'd!",
+    kaiju: "You've been Kaiju'd!",
+  } as const;
+
+  for (const [id, expectedMessage] of Object.entries(expectedMessages)) {
+    const theme = getComicTheme(id as keyof typeof expectedMessages);
+    const imagePrompt = buildImagePrompt(SCRIPT, theme, PLAN);
+    const scriptPrompt = buildScriptSystemPrompt(theme);
+
+    assert.ok(theme.visualRequirements.length >= 3);
+    assert.equal(getComicVariantMessage(theme), expectedMessage);
+    assert.match(imagePrompt, /RARE VARIANT LOCK/i);
+    assert.match(imagePrompt, /immediately obvious at thumbnail size/i);
+    assert.match(imagePrompt, /Do not drift toward ordinary Garfield/i);
+    assert.match(scriptPrompt, /rare variant, not normal Garfield in a costume/i);
+    for (const marker of theme.visualRequirements) assert.ok(imagePrompt.includes(marker));
+  }
+});
+
 test('prompts enforce source fidelity, named characters, novelty, and readable three-panel text', () => {
   const theme = getComicTheme('classic');
   const direction = getComicDirection('misunderstanding');
   const staging = getComicStaging('prop-domino');
-  const systemPrompt = buildScriptSystemPrompt(theme, direction, staging);
-  const userPrompt = buildScriptUserPrompt({ text: 'a haunted printer', hasImage: false, theme, direction, staging });
-  const imagePrompt = buildImagePrompt(SCRIPT, theme, direction, staging);
+  const systemPrompt = buildConceptSystemPrompt(theme, direction, staging);
+  const userPrompt = buildConceptUserPrompt({ text: 'a haunted printer', hasImage: false });
+  const scriptPrompt = buildScriptSystemPrompt(theme);
+  const scriptUserPrompt = buildScriptUserPrompt({ text: 'a haunted printer', hasImage: false, plan: PLAN });
+  const imagePrompt = buildImagePrompt(SCRIPT, theme, PLAN);
 
-  assert.match(systemPrompt, /primary subject/i);
-  assert.match(systemPrompt, /three materially different joke premises/i);
-  assert.match(systemPrompt, /reject the most obvious Garfield clich/i);
-  assert.match(systemPrompt, /Never introduce lasagna/i);
-  assert.match(systemPrompt, /actual names Garfield, Odie, and Nermal/i);
-  assert.match(systemPrompt, /one short sentence/i);
+  assert.match(systemPrompt, /comic subject/i);
+  assert.match(systemPrompt, /three genuinely different jokes/i);
+  assert.match(systemPrompt, /contradictory facts/i);
+  assert.match(systemPrompt, /Mondays.*lasagna/i);
+  assert.match(scriptPrompt, /same setup, turn, and payoff/i);
+  assert.match(scriptPrompt, /silent continuity pass/i);
+  assert.match(scriptUserPrompt, /binding plan/i);
+  assert.match(scriptUserPrompt, /continuityFacts/i);
   assert.match(userPrompt, /<source_text>a haunted printer<\/source_text>/);
-  assert.match(userPrompt, /exactly three panels/i);
   assert.match(imagePrompt, /exactly three equal vertical panels/i);
-  assert.match(imagePrompt, /copy exactly/i);
-  assert.match(imagePrompt, /Do not substitute a generic orange cat/i);
+  assert.match(imagePrompt, /caption-only strip/i);
+  assert.match(imagePrompt, /Do not substitute generic animals/i);
 });
 
-test('image prompts include comedy-direction visual guidance', () => {
+test('vampire theme preserves garlic as a character constraint', () => {
+  const prompt = buildConceptSystemPrompt(
+    getComicTheme('vampire'),
+    getComicDirection('dry-observation'),
+    getComicStaging('source-native-action')
+  );
+
+  assert.match(prompt, /Garlic is dangerous or repellent/i);
+  assert.match(prompt, /never make him desire, eat, buy, or protect garlic/i);
+});
+
+test('concept prompts include comedy-direction guidance without making it mandatory', () => {
   const theme = getComicTheme('kaiju');
   const staging = getComicStaging('public-spectacle');
   for (const direction of COMIC_DIRECTIONS) {
-    const imagePrompt = buildImagePrompt(SCRIPT, theme, direction, staging);
-    assert.ok(imagePrompt.includes(direction.label));
-    assert.ok(imagePrompt.includes(direction.imageGuidance));
+    const conceptPrompt = buildConceptSystemPrompt(theme, direction, staging);
+    assert.ok(conceptPrompt.includes(direction.label));
+    assert.ok(conceptPrompt.includes(direction.writingGuidance));
+    assert.match(conceptPrompt, /suggestions, not obligations/i);
   }
 });
 
@@ -174,36 +247,35 @@ test('every staging contributes writing and image guidance to prompts', () => {
   const direction = getComicDirection('dry-observation');
 
   for (const staging of COMIC_STAGINGS) {
-    const systemPrompt = buildScriptSystemPrompt(theme, direction, staging);
-    const imagePrompt = buildImagePrompt(SCRIPT, theme, direction, staging);
+    const systemPrompt = buildConceptSystemPrompt(theme, direction, staging);
     assert.ok(systemPrompt.includes(staging.label));
     assert.ok(systemPrompt.includes(staging.writingGuidance));
-    assert.ok(imagePrompt.includes(staging.label));
-    assert.ok(imagePrompt.includes(staging.imageGuidance));
   }
 });
 
 test('reference-image prompt requires identifiable source details', () => {
-  const prompt = buildImagePrompt(
-    SCRIPT,
-    getComicTheme('vampire'),
-    getComicDirection('escalating-consequences'),
-    getComicStaging('source-native-action'),
-    true
-  );
+  const prompt = buildImagePrompt(SCRIPT, getComicTheme('vampire'), PLAN, true);
 
   assert.match(prompt, /reference image is the comic source/i);
   assert.match(prompt, /Preserve its recognizable people, objects, clothing, colors/i);
   assert.match(prompt, /visibly identifiable/i);
   assert.match(prompt, /three genuinely different sequential panels/i);
 
-  const scriptPrompt = buildScriptUserPrompt({
+  const conceptPrompt = buildConceptUserPrompt({
+    text: undefined,
     hasImage: true,
-    theme: getComicTheme('vampire'),
-    direction: getComicDirection('escalating-consequences'),
-    staging: getComicStaging('source-native-action'),
   });
-  assert.match(scriptPrompt, /one to three distinctive visual anchors/i);
+  assert.match(conceptPrompt, /concrete visual anchors/i);
+});
+
+test('dialogue image prompts omit caption bars and speaker labels from rendered text', () => {
+  const prompt = buildImagePrompt(DIALOGUE_SCRIPT, getComicTheme('classic'), { ...PLAN, textMode: 'dialogue' });
+
+  assert.match(prompt, /dialogue-only strip/i);
+  assert.match(prompt, /Do not create bottom caption bars/i);
+  assert.match(prompt, /spoken by Garfield/i);
+  assert.match(prompt, /render only these words.*"Done\."/i);
+  assert.doesNotMatch(prompt, /"Garfield: Done\."/);
 });
 
 test('GPT Image 2 edit requests omit unsupported input_fidelity', () => {
@@ -248,9 +320,32 @@ test('script validation rejects malformed panels and dialogue', () => {
   const cases = [
     {},
     { panels: SCRIPT.panels.slice(0, 2) },
-    { panels: [{ description: '', caption: 'x' }, SCRIPT.panels[1], SCRIPT.panels[2]] },
-    { panels: [{ description: 'x', caption: '' }, SCRIPT.panels[1], SCRIPT.panels[2]] },
-    { panels: [{ description: 'x', caption: 'y', dialogue: ['okay', 42] }, SCRIPT.panels[1], SCRIPT.panels[2]] },
+    { ...SCRIPT, panels: [{ description: '', caption: 'x' }, SCRIPT.panels[1], SCRIPT.panels[2]] },
+    { ...SCRIPT, panels: [{ description: 'x', caption: '' }, SCRIPT.panels[1], SCRIPT.panels[2]] },
+    {
+      ...SCRIPT,
+      panels: [
+        { description: 'x', caption: 'y', dialogue: [{ speaker: 'Garfield', text: 'No.' }] },
+        SCRIPT.panels[1],
+        SCRIPT.panels[2],
+      ],
+    },
+    {
+      ...DIALOGUE_SCRIPT,
+      panels: [
+        { description: 'x', dialogue: [{ speaker: 'Garfield', text: '' }] },
+        DIALOGUE_SCRIPT.panels[1],
+        DIALOGUE_SCRIPT.panels[2],
+      ],
+    },
+    {
+      ...DIALOGUE_SCRIPT,
+      panels: [
+        { description: 'x', dialogue: [{ speaker: 'Garfield', text: 'Garfield: No.' }] },
+        DIALOGUE_SCRIPT.panels[1],
+        DIALOGUE_SCRIPT.panels[2],
+      ],
+    },
   ];
 
   for (const value of cases) {
@@ -268,9 +363,11 @@ test('script parse failure reports what the model actually said', () => {
   );
 });
 
-test('tool-call responses are read from the tool block, not the text block', () => {
+test('plan and script tool-call responses are read from their named tool blocks', () => {
+  const plan = readComicPlan(buildMessage({ content: [toolUseBlock(PLAN, 'plan_comic')] }));
   const script = readComicScript(buildMessage({ content: [toolUseBlock(SCRIPT)] }));
 
+  assert.deepEqual(plan, PLAN);
   assert.deepEqual(script, SCRIPT);
 });
 

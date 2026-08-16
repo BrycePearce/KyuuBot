@@ -2,7 +2,7 @@ import { AttachmentBuilder, Message } from 'discord.js';
 import { Command } from '../../../types/Command';
 import { extractReplySource } from '../../../utils/replySource';
 import { NonRetryableError } from '../../../utils/withRetry';
-import { pickComicDirection, pickComicStaging, pickComicTheme } from './creativeDirection';
+import { getComicVariantMessage, pickComicDirection, pickComicStaging, pickComicTheme } from './creativeDirection';
 import { generateComicStrip } from './imageGenerator';
 import { generateComicScript } from './scriptGenerator';
 import { COMIC_MESSAGES } from './types';
@@ -54,9 +54,9 @@ const command: Command = {
     const stopTyping = startTypingKeepalive(() => channel.sendTyping());
 
     try {
-      let script;
+      let plannedComic;
       try {
-        script = await generateComicScript({ text, imageUrl, theme, direction, staging });
+        plannedComic = await generateComicScript({ text, imageUrl, theme, direction, staging });
       } catch (error) {
         console.error('Comic script generation failed:', selection, error);
         const refused = error instanceof NonRetryableError;
@@ -66,16 +66,17 @@ const command: Command = {
 
       let stripBuffer;
       try {
-        stripBuffer = await generateComicStrip(script, theme, direction, staging, imageUrl);
+        stripBuffer = await generateComicStrip(plannedComic.script, theme, plannedComic.plan, imageUrl);
       } catch (error) {
         console.error('Comic image generation failed:', selection, error);
         await message.reply(COMIC_MESSAGES.imageFailed);
         return;
       }
 
-      const attachment = new AttachmentBuilder(stripBuffer, { name: 'comic.png' });
+      const attachment = new AttachmentBuilder(stripBuffer, { name: `comic-${theme.id}.png` });
+      const variantMessage = getComicVariantMessage(theme);
 
-      await message.reply({ files: [attachment] });
+      await message.reply({ ...(variantMessage ? { content: variantMessage } : {}), files: [attachment] });
     } catch (error) {
       console.error('Error running .comic:', selection, error);
       await message.reply(COMIC_MESSAGES.genericError);

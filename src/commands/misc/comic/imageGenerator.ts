@@ -2,25 +2,17 @@ import OpenAI, { toFile, type Uploadable } from 'openai';
 import sharp from 'sharp';
 import { withRetry } from '../../../utils/withRetry';
 import { buildImagePrompt } from './prompts';
-import {
-  ComicDirectionDefinition,
-  ComicScript,
-  ComicStagingDefinition,
-  ComicThemeDefinition,
-  STRIP_HEIGHT,
-  STRIP_WIDTH,
-} from './types';
+import { ComicPlan, ComicScript, ComicThemeDefinition, STRIP_HEIGHT, STRIP_WIDTH } from './types';
 
 export async function generateComicStrip(
   script: ComicScript,
   theme: ComicThemeDefinition,
-  direction: ComicDirectionDefinition,
-  staging: ComicStagingDefinition,
+  plan: ComicPlan,
   imageUrl?: string
 ): Promise<Buffer> {
   const imageClient = new OpenAI({ apiKey: process.env.gptImageGen });
   const hasReferenceImage = Boolean(imageUrl);
-  const prompt = buildImagePrompt(script, theme, direction, staging, hasReferenceImage);
+  const prompt = buildImagePrompt(script, theme, plan, hasReferenceImage);
 
   // Download once — only the generation call is worth repeating.
   const referenceImage = imageUrl ? await downloadReferenceImage(imageUrl) : undefined;
