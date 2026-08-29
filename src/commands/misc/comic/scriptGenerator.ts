@@ -3,18 +3,27 @@ import { NonRetryableError, withRetry } from '../../../utils/withRetry';
 import {
   buildConceptSystemPrompt,
   buildConceptUserPrompt,
+  buildEditorSystemPrompt,
+  buildEditorUserPrompt,
   buildScriptSystemPrompt,
   buildScriptUserPrompt,
 } from './prompts';
 import {
   ComicDirectionDefinition,
+  ComicPitchSet,
   ComicPlan,
   ComicScript,
   ComicStagingDefinition,
   ComicThemeDefinition,
   PlannedComic,
 } from './types';
-import { assertComicPlan, assertComicScript, parseComicScript } from './validation';
+import {
+  assertComicPitchSet,
+  assertComicPlan,
+  assertComicScript,
+  assertComicScriptMatchesPlan,
+  parseComicScript,
+} from './validation';
 
 const client = new Anthropic({ apiKey: process.env.claude });
 
@@ -31,7 +40,7 @@ export async function generateComicScript({
   direction: ComicDirectionDefinition;
   staging: ComicStagingDefinition;
 }): Promise<PlannedComic> {
-  const plan = await withRetry(
+  const pitches = await withRetry(
     async () => {
       const response = await client.messages.create({
         model: 'claude-sonnet-4-6',
@@ -42,7 +51,35 @@ export async function generateComicScript({
             content: buildContentBlocks(imageUrl, buildConceptUserPrompt({ text, hasImage: Boolean(imageUrl) })),
           },
         ],
-        max_tokens: 2048,
+        max_tokens: 4096,
+        tools: [PITCH_TOOL],
+        tool_choice: { type: 'tool', name: PITCH_TOOL.name },
+      });
+
+      return readComicPitches(response);
+    },
+    {
+      attempts: 3,
+      onRetry: (error, nextAttempt) =>
+        console.warn(`Comic pitch attempt failed, retrying (attempt ${nextAttempt}):`, describeError(error)),
+    }
+  );
+
+  const plan = await withRetry(
+    async () => {
+      const response = await client.messages.create({
+        model: 'claude-sonnet-4-6',
+        system: buildEditorSystemPrompt(theme),
+        messages: [
+          {
+            role: 'user',
+            content: buildContentBlocks(
+              imageUrl,
+              buildEditorUserPrompt({ text, hasImage: Boolean(imageUrl), pitches })
+            ),
+          },
+        ],
+        max_tokens: 4096,
         tools: [PLAN_TOOL],
         tool_choice: { type: 'tool', name: PLAN_TOOL.name },
       });
@@ -52,7 +89,7 @@ export async function generateComicScript({
     {
       attempts: 3,
       onRetry: (error, nextAttempt) =>
-        console.warn(`Comic plan attempt failed, retrying (attempt ${nextAttempt}):`, describeError(error)),
+        console.warn(`Comic punch-up attempt failed, retrying (attempt ${nextAttempt}):`, describeError(error)),
     }
   );
 
@@ -76,6 +113,7 @@ export async function generateComicScript({
       if (candidate.textMode !== plan.textMode) {
         throw new Error(`Script changed text mode from ${plan.textMode} to ${candidate.textMode}.`);
       }
+      assertComicScriptMatchesPlan(candidate, plan);
       return candidate;
     },
     {
@@ -88,10 +126,21 @@ export async function generateComicScript({
   return { plan, script };
 }
 
+export function readComicPitches(response: Anthropic.Messages.Message): ComicPitchSet {
+  rejectIncompleteResponse(response, 'Comic pitch writer');
+  const toolBlock = response.content.find((block) => block.type === 'tool_use' && block.name === PITCH_TOOL.name);
+  if (!toolBlock || toolBlock.type !== 'tool_use')
+    throw new Error('Comic pitch writer did not return a pitch tool call.');
+
+  assertComicPitchSet(toolBlock.input);
+  return toolBlock.input;
+}
+
 export function readComicPlan(response: Anthropic.Messages.Message): ComicPlan {
-  rejectIncompleteResponse(response, 'Comic planner');
+  rejectIncompleteResponse(response, 'Comic comedy editor');
   const toolBlock = response.content.find((block) => block.type === 'tool_use' && block.name === PLAN_TOOL.name);
-  if (!toolBlock || toolBlock.type !== 'tool_use') throw new Error('Comic planner did not return a plan tool call.');
+  if (!toolBlock || toolBlock.type !== 'tool_use')
+    throw new Error('Comic comedy editor did not return a plan tool call.');
 
   assertComicPlan(toolBlock.input);
   return toolBlock.input;
@@ -132,9 +181,47 @@ function describeError(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
+const PITCH_PROPERTIES = {
+  title: { type: 'string', description: 'A short internal title distinguishing this pitch.' },
+  premise: { type: 'string', description: 'The single joke premise in one sentence.' },
+  characterMotivation: { type: 'string', description: 'What the featured character wants and why.' },
+  comedyMechanism: {
+    type: 'string',
+    description: 'The specific mechanism that makes this candidate funny and distinct.',
+  },
+  setup: { type: 'string', description: 'The fact and situation established in panel one.' },
+  turn: { type: 'string', description: 'The cause-and-effect complication in panel two.' },
+  payoff: { type: 'string', description: 'The concrete final choice, reveal, reversal, or consequence.' },
+  visualThroughline: { type: 'string', description: 'The source-rooted visual element carried through all panels.' },
+  textMode: { type: 'string', enum: ['captions', 'dialogue'], description: 'The text system for this candidate.' },
+} as const;
+
+const PITCH_TOOL: Anthropic.Messages.Tool = {
+  name: 'pitch_comic',
+  description: 'Return exactly four distinct, source-rooted comic pitches for a comedy editor to compare.',
+  input_schema: {
+    type: 'object',
+    properties: {
+      sourceAnchor: { type: 'string', description: 'The exact source detail every candidate preserves.' },
+      creativeLiberty: { type: 'string', description: 'What may be invented or exaggerated beyond the source.' },
+      pitches: {
+        type: 'array',
+        minItems: 4,
+        maxItems: 4,
+        items: {
+          type: 'object',
+          properties: PITCH_PROPERTIES,
+          required: Object.keys(PITCH_PROPERTIES),
+        },
+      },
+    },
+    required: ['sourceAnchor', 'creativeLiberty', 'pitches'],
+  },
+};
+
 const PLAN_TOOL: Anthropic.Messages.Tool = {
-  name: 'plan_comic',
-  description: 'Return one coherent, source-rooted comic concept before any final lines are written.',
+  name: 'punch_up_comic',
+  description: 'Return the comedy-edited, continuity-checked binding comic plan.',
   input_schema: {
     type: 'object',
     properties: {
@@ -142,6 +229,24 @@ const PLAN_TOOL: Anthropic.Messages.Tool = {
       premise: { type: 'string', description: 'The single joke premise in one sentence.' },
       characterMotivation: { type: 'string', description: 'What the featured character wants and why.' },
       themeLogic: { type: 'string', description: 'How the premise obeys the selected character theme and its rules.' },
+      essentialCast: {
+        type: 'array',
+        minItems: 1,
+        maxItems: 4,
+        description:
+          'The minimum viable cast. Every character must have a specific causal function without which the joke fails.',
+        items: {
+          type: 'object',
+          properties: {
+            name: { type: 'string', description: 'Exact character identity used consistently by panel cast arrays.' },
+            function: {
+              type: 'string',
+              description: 'The indispensable action this character performs in the setup, turn, or payoff.',
+            },
+          },
+          required: ['name', 'function'],
+        },
+      },
       setup: { type: 'string', description: 'The fact and situation established in panel one.' },
       turn: { type: 'string', description: 'The cause-and-effect complication in panel two.' },
       payoff: { type: 'string', description: 'The punchline that follows from and reinterprets the first two beats.' },
@@ -167,6 +272,7 @@ const PLAN_TOOL: Anthropic.Messages.Tool = {
       'premise',
       'characterMotivation',
       'themeLogic',
+      'essentialCast',
       'setup',
       'turn',
       'payoff',
@@ -193,6 +299,12 @@ const SCRIPT_TOOL: Anthropic.Messages.Tool = {
           type: 'object',
           properties: {
             description: { type: 'string', description: 'Detailed visible action for the image generator.' },
+            cast: {
+              type: 'array',
+              description:
+                'Binding visible character roster. List each named or foreground character identity exactly once; use an empty array when no character appears.',
+              items: { type: 'string' },
+            },
             caption: { type: 'string', description: 'Caption text; present only in captions mode.' },
             dialogue: {
               type: 'array',
@@ -208,7 +320,7 @@ const SCRIPT_TOOL: Anthropic.Messages.Tool = {
               },
             },
           },
-          required: ['description'],
+          required: ['description', 'cast'],
         },
       },
     },

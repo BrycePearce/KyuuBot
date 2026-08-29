@@ -1,5 +1,6 @@
 export type ComicPanel = {
   description: string; // Visual description for the image generator
+  cast: string[]; // Binding visible character roster; each named character appears once
   caption?: string; // Caption-bar narration; only used in caption mode
   dialogue?: ComicDialogue[]; // Speech bubbles; only used in dialogue mode
 };
@@ -11,6 +12,29 @@ export type ComicDialogue = {
 
 export type ComicTextMode = 'captions' | 'dialogue';
 
+export type ComicCharacterRole = {
+  name: string;
+  function: string;
+};
+
+export type ComicPitch = {
+  title: string;
+  premise: string;
+  characterMotivation: string;
+  comedyMechanism: string;
+  setup: string;
+  turn: string;
+  payoff: string;
+  visualThroughline: string;
+  textMode: ComicTextMode;
+};
+
+export type ComicPitchSet = {
+  sourceAnchor: string;
+  creativeLiberty: string;
+  pitches: [ComicPitch, ComicPitch, ComicPitch, ComicPitch];
+};
+
 export type ComicScript = {
   textMode: ComicTextMode;
   panels: [ComicPanel, ComicPanel, ComicPanel];
@@ -21,6 +45,7 @@ export type ComicPlan = {
   premise: string;
   characterMotivation: string;
   themeLogic: string;
+  essentialCast: ComicCharacterRole[];
   setup: string;
   turn: string;
   payoff: string;

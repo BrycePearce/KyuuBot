@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { extractReplySource } from '../../../utils/replySource';
 import { NonRetryableError, withRetry } from '../../../utils/withRetry';
-import { readComicPlan, readComicScript } from './scriptGenerator';
+import { readComicPitches, readComicPlan, readComicScript } from './scriptGenerator';
 import {
   COMIC_DIRECTIONS,
   COMIC_STAGINGS,
@@ -19,20 +19,74 @@ import {
 import {
   buildConceptSystemPrompt,
   buildConceptUserPrompt,
+  buildEditorSystemPrompt,
+  buildEditorUserPrompt,
   buildImagePrompt,
   buildScriptSystemPrompt,
   buildScriptUserPrompt,
 } from './prompts';
 import { buildComicImageEditRequest } from './imageGenerator';
-import { ComicPlan, ComicScript } from './types';
+import { ComicPitchSet, ComicPlan, ComicScript } from './types';
 import { startTypingKeepalive } from './typingKeepalive';
-import { parseComicScript } from './validation';
+import { assertComicPitchSet, assertComicPlan, assertComicScriptMatchesPlan, parseComicScript } from './validation';
+
+const PITCHES: ComicPitchSet = {
+  sourceAnchor: 'A mysterious cardboard box',
+  creativeLiberty: 'The box may move, speak, or contain something unexpected.',
+  pitches: [
+    {
+      title: 'Delegated departure',
+      premise: 'Garfield waits until the box removes itself.',
+      characterMotivation: 'Garfield wants the box gone without standing up.',
+      comedyMechanism: 'A lazy refusal becomes an accidental success.',
+      setup: 'Jon asks Garfield to move the box.',
+      turn: 'The box grows legs and leaves.',
+      payoff: 'Garfield takes credit.',
+      visualThroughline: 'The same labeled box moves farther away.',
+      textMode: 'dialogue',
+    },
+    {
+      title: 'Rent dispute',
+      premise: 'Garfield charges the mysterious box rent.',
+      characterMotivation: 'Garfield wants payment for sharing floor space.',
+      comedyMechanism: 'Petty landlord logic applied to an unknown object.',
+      setup: 'The box appears beside Garfield.',
+      turn: 'Garfield posts an overdue notice on it.',
+      payoff: 'The box opens to reveal a smaller box serving an eviction notice.',
+      visualThroughline: 'Notices accumulate on the cardboard box.',
+      textMode: 'captions',
+    },
+    {
+      title: 'Do not disturb',
+      premise: 'Garfield mistakes the box for premium furniture.',
+      characterMotivation: 'Garfield wants a new place to sleep.',
+      comedyMechanism: 'Confident misunderstanding with a physical consequence.',
+      setup: 'Garfield settles on the box.',
+      turn: 'Something inside carries him away.',
+      payoff: 'Garfield treats the kidnapping as delivery service.',
+      visualThroughline: 'Garfield remains on top of the moving box.',
+      textMode: 'captions',
+    },
+    {
+      title: 'Inspection',
+      premise: 'Garfield outsources opening the box to Odie.',
+      characterMotivation: 'Garfield wants the mystery solved from a safe distance.',
+      comedyMechanism: 'A selfish scheme backfires through Odie enthusiasm.',
+      setup: 'Garfield points Odie at the box.',
+      turn: 'Odie tears through the box and the room.',
+      payoff: 'The untouched contents are protected by the wreckage.',
+      visualThroughline: 'Cardboard debris expands across the room.',
+      textMode: 'dialogue',
+    },
+  ],
+};
 
 const PLAN: ComicPlan = {
   sourceAnchor: 'A mysterious cardboard box',
   premise: 'Garfield refuses responsibility until the box solves its own problem.',
   characterMotivation: 'Garfield wants the box gone without standing up.',
   themeLogic: 'Garfield stays lazy, dry, and selfish.',
+  essentialCast: [{ name: 'Garfield', function: 'Refuses the work and takes credit when the box leaves.' }],
   setup: 'Garfield is expected to open the box.',
   turn: 'The box grows legs before Garfield acts.',
   payoff: 'Garfield claims success after the box leaves.',
@@ -44,18 +98,30 @@ const PLAN: ComicPlan = {
 const SCRIPT: ComicScript = {
   textMode: 'captions',
   panels: [
-    { description: 'Garfield stares at a mysterious box without touching it.', caption: 'This seems ambitious.' },
-    { description: 'The box grows legs and runs.', caption: 'I preferred cardboard.' },
-    { description: 'Garfield watches it leave town.', caption: 'Problem solved.' },
+    {
+      description: 'Garfield stares at a mysterious box without touching it.',
+      cast: ['Garfield'],
+      caption: 'This seems ambitious.',
+    },
+    { description: 'The box grows legs and runs.', cast: [], caption: 'I preferred cardboard.' },
+    { description: 'Garfield watches it leave town.', cast: ['Garfield'], caption: 'Problem solved.' },
   ],
 };
 
 const DIALOGUE_SCRIPT: ComicScript = {
   textMode: 'dialogue',
   panels: [
-    { description: 'Jon points at a mysterious box.', dialogue: [{ speaker: 'Jon', text: 'Open it.' }] },
-    { description: 'The box grows legs and runs away.' },
-    { description: 'Garfield watches it leave.', dialogue: [{ speaker: 'Garfield', text: 'Done.' }] },
+    {
+      description: 'Jon points at a mysterious box.',
+      cast: ['Jon'],
+      dialogue: [{ speaker: 'Jon', text: 'Open it.' }],
+    },
+    { description: 'The box grows legs and runs away.', cast: [] },
+    {
+      description: 'Garfield watches it leave.',
+      cast: ['Garfield'],
+      dialogue: [{ speaker: 'Garfield', text: 'Done.' }],
+    },
   ],
 };
 
@@ -202,22 +268,46 @@ test('prompts enforce source fidelity, named characters, novelty, and readable t
   const staging = getComicStaging('prop-domino');
   const systemPrompt = buildConceptSystemPrompt(theme, direction, staging);
   const userPrompt = buildConceptUserPrompt({ text: 'a haunted printer', hasImage: false });
+  const editorPrompt = buildEditorSystemPrompt(theme);
+  const editorUserPrompt = buildEditorUserPrompt({
+    text: 'a haunted printer',
+    hasImage: false,
+    pitches: PITCHES,
+  });
   const scriptPrompt = buildScriptSystemPrompt(theme);
   const scriptUserPrompt = buildScriptUserPrompt({ text: 'a haunted printer', hasImage: false, plan: PLAN });
   const imagePrompt = buildImagePrompt(SCRIPT, theme, PLAN);
 
   assert.match(systemPrompt, /comic subject/i);
-  assert.match(systemPrompt, /three genuinely different jokes/i);
-  assert.match(systemPrompt, /contradictory facts/i);
+  assert.match(systemPrompt, /four genuinely different joke premises/i);
+  assert.match(systemPrompt, /inciting incident rather than the whole joke/i);
+  assert.match(systemPrompt, /invent motives, consequences, props, locations/i);
   assert.match(systemPrompt, /Mondays.*lasagna/i);
+  assert.match(editorPrompt, /cause, exploit, misunderstand, resist, or selfishly reframe/i);
+  assert.match(editorPrompt, /minimum viable cast/i);
+  assert.match(editorPrompt, /if the joke still works after deleting a supporting character/i);
+  assert.match(editorPrompt, /Merely watching, agreeing, looking surprised/i);
+  assert.match(editorPrompt, /merely summarize an attitude/i);
+  assert.match(editorPrompt, /explain the reference/i);
+  assert.match(editorPrompt, /concrete choice, reveal, reversal, physical consequence/i);
+  assert.match(editorUserPrompt, /comic_pitches/i);
+  assert.match(editorUserPrompt, /haunted printer/i);
   assert.match(scriptPrompt, /same setup, turn, and payoff/i);
+  assert.match(scriptPrompt, /essentialCast is binding/i);
+  assert.match(scriptPrompt, /smallest subset needed for that beat/i);
   assert.match(scriptPrompt, /silent continuity pass/i);
   assert.match(scriptUserPrompt, /binding plan/i);
   assert.match(scriptUserPrompt, /continuityFacts/i);
   assert.match(userPrompt, /<source_text>a haunted printer<\/source_text>/);
-  assert.match(imagePrompt, /exactly three equal vertical panels/i);
+  assert.match(imagePrompt, /exactly three equal-width vertical panels/i);
+  assert.match(imagePrompt, /exactly two vertical black divider lines/i);
+  assert.match(imagePrompt, /Do not use horizontal dividers, stacked panels, a 2x2 grid, an L-shaped layout/i);
+  assert.match(imagePrompt, /Panel 1 cast \(binding\): Garfield/i);
+  assert.match(imagePrompt, /exactly one visible instance/i);
+  assert.match(imagePrompt, /no named character appears more than once inside any single panel/i);
   assert.match(imagePrompt, /caption-only strip/i);
-  assert.match(imagePrompt, /Do not substitute generic animals/i);
+  assert.match(imagePrompt, /Use only the characters explicitly named in each panel cast/i);
+  assert.match(imagePrompt, /never add Garfield, Jon, Odie, Nermal, spectators, or generic animals/i);
 });
 
 test('vampire theme preserves garlic as a character constraint', () => {
@@ -257,7 +347,9 @@ test('reference-image prompt requires identifiable source details', () => {
   const prompt = buildImagePrompt(SCRIPT, getComicTheme('vampire'), PLAN, true);
 
   assert.match(prompt, /reference image is the comic source/i);
-  assert.match(prompt, /Preserve its recognizable people, objects, clothing, colors/i);
+  assert.match(prompt, /source people only when they are explicitly named in that panel cast/i);
+  assert.match(prompt, /Omit other source people rather than carrying them through as decorative extras/i);
+  assert.match(prompt, /Preserve source objects, colors, and scene-specific details/i);
   assert.match(prompt, /visibly identifiable/i);
   assert.match(prompt, /three genuinely different sequential panels/i);
 
@@ -316,6 +408,45 @@ test('script parsing accepts valid JSON and accidental markdown fences', () => {
   assert.deepEqual(parsed, SCRIPT);
 });
 
+test('pitch validation requires exactly four complete candidate records', () => {
+  assert.doesNotThrow(() => assertComicPitchSet(PITCHES));
+  assert.throws(() => assertComicPitchSet({ ...PITCHES, pitches: PITCHES.pitches.slice(0, 3) }), /exactly four/i);
+  assert.throws(
+    () =>
+      assertComicPitchSet({
+        ...PITCHES,
+        pitches: [{ ...PITCHES.pitches[0], comedyMechanism: '' }, ...PITCHES.pitches.slice(1)],
+      }),
+    /comedyMechanism/i
+  );
+});
+
+test('binding essential cast rejects decorative additions and omitted required characters', () => {
+  assert.doesNotThrow(() => assertComicPlan(PLAN));
+  assert.doesNotThrow(() => assertComicScriptMatchesPlan(SCRIPT, PLAN));
+
+  const extraOdie: ComicScript = {
+    ...SCRIPT,
+    panels: [{ ...SCRIPT.panels[0], cast: ['Garfield', 'Odie'] }, SCRIPT.panels[1], SCRIPT.panels[2]],
+  };
+  assert.throws(() => assertComicScriptMatchesPlan(extraOdie, PLAN), /Odie.*not in the binding essential cast/i);
+
+  const noGarfield: ComicScript = {
+    ...SCRIPT,
+    panels: [{ ...SCRIPT.panels[0], cast: [] }, SCRIPT.panels[1], { ...SCRIPT.panels[2], cast: [] }],
+  };
+  assert.throws(() => assertComicScriptMatchesPlan(noGarfield, PLAN), /omitted essential cast: Garfield/i);
+
+  assert.throws(
+    () =>
+      assertComicPlan({
+        ...PLAN,
+        essentialCast: [PLAN.essentialCast[0], { name: 'garfield', function: 'Takes up the same space twice.' }],
+      }),
+    /same essential character more than once/i
+  );
+});
+
 test('script validation rejects malformed panels and dialogue', () => {
   const cases = [
     {},
@@ -333,7 +464,7 @@ test('script validation rejects malformed panels and dialogue', () => {
     {
       ...DIALOGUE_SCRIPT,
       panels: [
-        { description: 'x', dialogue: [{ speaker: 'Garfield', text: '' }] },
+        { description: 'x', cast: ['Garfield'], dialogue: [{ speaker: 'Garfield', text: '' }] },
         DIALOGUE_SCRIPT.panels[1],
         DIALOGUE_SCRIPT.panels[2],
       ],
@@ -341,9 +472,25 @@ test('script validation rejects malformed panels and dialogue', () => {
     {
       ...DIALOGUE_SCRIPT,
       panels: [
-        { description: 'x', dialogue: [{ speaker: 'Garfield', text: 'Garfield: No.' }] },
+        { description: 'x', cast: ['Garfield'], dialogue: [{ speaker: 'Garfield', text: 'Garfield: No.' }] },
         DIALOGUE_SCRIPT.panels[1],
         DIALOGUE_SCRIPT.panels[2],
+      ],
+    },
+    {
+      ...DIALOGUE_SCRIPT,
+      panels: [
+        { description: 'x', cast: ['Jon'], dialogue: [{ speaker: 'Garfield', text: 'No.' }] },
+        DIALOGUE_SCRIPT.panels[1],
+        DIALOGUE_SCRIPT.panels[2],
+      ],
+    },
+    {
+      ...SCRIPT,
+      panels: [
+        { description: 'x', cast: ['Garfield', 'garfield'], caption: 'No clones.' },
+        SCRIPT.panels[1],
+        SCRIPT.panels[2],
       ],
     },
   ];
@@ -364,9 +511,11 @@ test('script parse failure reports what the model actually said', () => {
 });
 
 test('plan and script tool-call responses are read from their named tool blocks', () => {
-  const plan = readComicPlan(buildMessage({ content: [toolUseBlock(PLAN, 'plan_comic')] }));
+  const pitches = readComicPitches(buildMessage({ content: [toolUseBlock(PITCHES, 'pitch_comic')] }));
+  const plan = readComicPlan(buildMessage({ content: [toolUseBlock(PLAN, 'punch_up_comic')] }));
   const script = readComicScript(buildMessage({ content: [toolUseBlock(SCRIPT)] }));
 
+  assert.deepEqual(pitches, PITCHES);
   assert.deepEqual(plan, PLAN);
   assert.deepEqual(script, SCRIPT);
 });
