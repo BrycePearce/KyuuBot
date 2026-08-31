@@ -8,7 +8,7 @@ export const GARFIELD_ORANGE = 0xf28c28;
 export const MAX_IMAGE_DIMENSION = 2048;
 
 export const GARFIELD_MESSAGES = {
-  noReplyTarget: "Reply to a message with `.garfield`. I'm not doing free-range effort.",
+  noInput: 'Give `.garfield` some text or an image, or reply to a message. Even I need raw material.',
   unreadableReply: 'I tried to read that reply. Regrettably, it fought back.',
   nothingUsable: 'That message has no snackable text and no image worth improving against its will.',
   improveFailed: 'I looked at it and decided not to grow as a person.',

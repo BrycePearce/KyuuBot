@@ -3,6 +3,7 @@ import got from 'got';
 import OpenAI, { toFile } from 'openai';
 import type { Command } from '../../../../types/Command';
 import { getRandomEmotePath } from '../../../../utils/files';
+import { waitForMessageUnfurl } from '../../../../utils/messageImages';
 import { extractReplySource } from '../../../../utils/replySource';
 import { extractImageUrls } from '../chatCompletion/extractImages';
 
@@ -19,7 +20,8 @@ const command: Command = {
     const channel = message.channel;
     if (!channel.isSendable()) return;
 
-    const imageUrls = extractImageUrls(message);
+    const sourceMessage = await waitForMessageUnfurl(message);
+    const imageUrls = extractImageUrls(sourceMessage);
 
     if (imageUrls.length === 0) {
       const replySource = await extractReplySource(message);

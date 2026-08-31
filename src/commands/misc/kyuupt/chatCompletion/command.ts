@@ -1,6 +1,7 @@
 import { Readable } from 'stream';
 import { Command } from '../../../../types/Command';
 import openaiClient from '../../../../utils/clients/openaiClient';
+import { waitForMessageUnfurl } from '../../../../utils/messageImages';
 import { extractReplySource } from '../../../../utils/replySource';
 import { buildContentArray } from './buildContentArray';
 import { extractImageUrls } from './extractImages';
@@ -27,7 +28,8 @@ const command: Command = {
     const userPrompt = args.join(' ');
 
     // load in images from user message, then supplement with any from a replied-to message
-    const imageUrls = extractImageUrls(message);
+    const sourceMessage = await waitForMessageUnfurl(message);
+    const imageUrls = extractImageUrls(sourceMessage);
     const replySource = await extractReplySource(message);
     for (const url of replySource?.imageUrls ?? []) {
       if (!imageUrls.includes(url)) imageUrls.push(url);

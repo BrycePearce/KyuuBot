@@ -2,6 +2,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { ContentBlock } from '@anthropic-ai/sdk/resources/messages';
 import { Command } from '../../../types/Command';
 import { getRandomEmotePath } from '../../../utils/files';
+import { extractMessageImageUrls, waitForMessageUnfurl } from '../../../utils/messageImages';
 import { extractReplySource } from '../../../utils/replySource';
 
 const client = new Anthropic({
@@ -45,20 +46,19 @@ const command: Command = {
     const role =
       'You are a helpful assistant. Your response should be 80 words or less, unless necessary for a full answer.';
 
-    const imageAttachments = [...message.attachments.values()].filter((attachment) =>
-      attachment.contentType?.startsWith('image/')
-    );
+    const sourceMessage = await waitForMessageUnfurl(message);
+    const ownImageUrls = extractMessageImageUrls(sourceMessage);
 
     const replySource = await extractReplySource(message);
 
     const contentBlocks: Anthropic.Messages.ContentBlockParam[] = [];
 
-    // Add image blocks first (own attachments, then any from replied-to message)
-    for (const attachment of imageAttachments) {
-      contentBlocks.push({ type: 'image', source: { type: 'url', url: attachment.url } });
+    // Add image blocks first (own images/embeds, then any from replied-to message)
+    for (const url of ownImageUrls) {
+      contentBlocks.push({ type: 'image', source: { type: 'url', url } });
     }
     for (const url of replySource?.imageUrls ?? []) {
-      if (!imageAttachments.some((a) => a.url === url)) {
+      if (!ownImageUrls.includes(url)) {
         contentBlocks.push({ type: 'image', source: { type: 'url', url } });
       }
     }

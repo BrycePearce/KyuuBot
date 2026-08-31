@@ -1,4 +1,5 @@
 import { Message } from 'discord.js';
+import { extractMessageImageUrls, waitForMessageUnfurl } from './messageImages';
 
 export interface ReplySource {
   text?: string;
@@ -16,6 +17,7 @@ export async function extractReplySource(message: Message): Promise<ReplySource 
   let referenced: Message;
   try {
     referenced = await message.fetchReference();
+    referenced = await waitForMessageUnfurl(referenced);
   } catch {
     return null;
   }
@@ -23,13 +25,7 @@ export async function extractReplySource(message: Message): Promise<ReplySource 
   const textParts: string[] = [];
   if (referenced.content?.trim()) textParts.push(referenced.content.trim());
 
-  const imageUrls: string[] = [];
-
-  referenced.attachments.forEach((attachment) => {
-    if (attachment.contentType?.startsWith('image/')) {
-      imageUrls.push(attachment.url);
-    }
-  });
+  const imageUrls = extractMessageImageUrls(referenced);
 
   for (const embed of referenced.embeds) {
     const embedText = [
@@ -41,11 +37,6 @@ export async function extractReplySource(message: Message): Promise<ReplySource 
     ].filter((value): value is string => Boolean(value?.trim()));
 
     textParts.push(...embedText);
-
-    const url = embed.data.image?.url ?? embed.data.thumbnail?.url;
-    if (url && !imageUrls.includes(url)) {
-      imageUrls.push(url);
-    }
   }
 
   const text = textParts.join('\n').trim().slice(0, 12_000) || undefined;

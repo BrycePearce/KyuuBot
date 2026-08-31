@@ -1,26 +1,48 @@
 import { Attachment, Collection, Embed, Message } from 'discord.js';
+import { isImageAttachment } from '../../../utils/isImageAttachment';
+import { extractMessageImageUrls } from '../../../utils/messageImages';
 import { ExtractedEmbedSource, ImproveSource, SUPPORTED_IMAGE_TYPES } from './types';
 import { getFilenameFromUrl, normalizeExtractedText } from './utils';
 
-export function extractImproveSource(repliedToMessage: Message): ImproveSource {
-  const attachmentImage = findFirstSupportedImageAttachment(repliedToMessage.attachments);
-  const messageText = normalizeExtractedText(repliedToMessage.content ?? '');
-  const embedSource = extractFromEmbeds(repliedToMessage.embeds);
+export function extractImproveSource(sourceMessage: Message, textOverride?: string): ImproveSource {
+  const attachmentImage = findFirstSupportedImageAttachment(sourceMessage.attachments);
+  const messageText = normalizeExtractedText(textOverride ?? sourceMessage.content ?? '');
+  const embedSource = extractFromEmbeds(sourceMessage.embeds);
+  const safeImageUrl = attachmentImage?.url ?? extractMessageImageUrls(sourceMessage)[0];
 
   const finalText = normalizeExtractedText([messageText, embedSource.text].filter(Boolean).join('\n\n'));
 
   return {
-    imageUrl: attachmentImage?.url ?? embedSource.imageUrl,
-    imageFilename: attachmentImage?.name ?? embedSource.imageFilename,
+    imageUrl: safeImageUrl,
+    imageFilename:
+      attachmentImage?.name ??
+      (safeImageUrl ? (getFilenameFromUrl(safeImageUrl) ?? embedSource.imageFilename) : undefined),
     text: finalText,
     cameFromEmbed: embedSource.hasUsefulEmbedContent,
     embedTitle: embedSource.embedTitle,
   };
 }
 
+/** Combines direct command input with optional reply context. */
+export function mergeImproveSources(ownSource: ImproveSource, replySource?: ImproveSource): ImproveSource {
+  const ownText = normalizeExtractedText(ownSource.text ?? '');
+  const replyText = normalizeExtractedText(replySource?.text ?? '');
+
+  return {
+    imageUrl: ownSource.imageUrl ?? replySource?.imageUrl,
+    imageFilename: ownSource.imageFilename ?? replySource?.imageFilename,
+    text: normalizeExtractedText([replyText, ownText].filter(Boolean).join('\n\n')),
+    cameFromEmbed: ownSource.cameFromEmbed || Boolean(replySource?.cameFromEmbed),
+    embedTitle: ownSource.embedTitle ?? replySource?.embedTitle,
+  };
+}
+
 function findFirstSupportedImageAttachment(attachments: Collection<string, Attachment>): Attachment | undefined {
   return attachments.find((attachment) => {
-    return Boolean(attachment.contentType && SUPPORTED_IMAGE_TYPES.has(attachment.contentType.toLowerCase()));
+    const contentType = attachment.contentType?.toLowerCase();
+    if (contentType?.startsWith('image/')) return SUPPORTED_IMAGE_TYPES.has(contentType);
+
+    return isImageAttachment(attachment);
   });
 }
 

@@ -2,43 +2,54 @@ import { AttachmentBuilder, Message } from 'discord.js';
 import sharp from 'sharp';
 import { Command } from '../../../types/Command';
 import openaiClient from '../../../utils/clients/openaiClient';
+import { waitForMessageUnfurl } from '../../../utils/messageImages';
 import { characterifiedFilename, getCharacterName, pickCaptionStyle, pickCharacterVariant } from './character';
 import { replyWithEmbedMode, replyWithStandardMode } from './reply';
-import { extractImproveSource } from './sourceExtractor';
+import { extractImproveSource, mergeImproveSources } from './sourceExtractor';
 import { mascotifyText } from './textGeneration';
-import { CharacterVariant, DEFAULT_IMAGE_TYPE, GARFIELD_MESSAGES, ImagePlan, MAX_IMAGE_DIMENSION } from './types';
+import {
+  CharacterVariant,
+  DEFAULT_IMAGE_TYPE,
+  GARFIELD_MESSAGES,
+  ImagePlan,
+  ImproveSource,
+  MAX_IMAGE_DIMENSION,
+} from './types';
 import { ensureExtension } from './utils';
 
 const command: Command = {
   name: 'Garfield',
-  description: 'Reply to a message with .garfield to Garfield-ify its text or image.',
+  description: 'Garfield-ifies text or an image from the command or a replied-to message.',
   invocations: ['garfield'],
   args: false,
   enabled: true,
-  usage: '.garfield (as a reply to a message)',
+  usage: '.garfield [text] [image] — or reply to a message with .garfield',
 
-  async execute(message: Message) {
+  async execute(message: Message, args: string[]) {
     const channel = message.channel;
     if (!channel.isSendable()) return;
 
-    if (!message.reference?.messageId) {
-      await message.reply(GARFIELD_MESSAGES.noReplyTarget);
-      return;
+    const ownMessage = await waitForMessageUnfurl(message);
+    const ownSource = extractImproveSource(ownMessage, args.join(' ').trim());
+    let replySource: ImproveSource | undefined;
+
+    if (message.reference?.messageId) {
+      try {
+        const repliedMessage = await waitForMessageUnfurl(await message.fetchReference());
+        replySource = extractImproveSource(repliedMessage);
+      } catch (error) {
+        console.error('Failed to fetch replied-to message for .garfield:', error);
+        if (!ownSource.imageUrl && !ownSource.text) {
+          await message.reply(GARFIELD_MESSAGES.unreadableReply);
+          return;
+        }
+      }
     }
 
-    let repliedToMessage: Message;
-    try {
-      repliedToMessage = await message.fetchReference();
-    } catch (error) {
-      console.error('Failed to fetch replied-to message for .garfield:', error);
-      await message.reply(GARFIELD_MESSAGES.unreadableReply);
-      return;
-    }
-
-    const source = extractImproveSource(repliedToMessage);
+    const source = mergeImproveSources(ownSource, replySource);
 
     if (!source.imageUrl && !source.text) {
-      await message.reply(GARFIELD_MESSAGES.nothingUsable);
+      await message.reply(GARFIELD_MESSAGES.noInput);
       return;
     }
 

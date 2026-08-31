@@ -1,5 +1,6 @@
 import { AttachmentBuilder, Message } from 'discord.js';
 import { Command } from '../../../types/Command';
+import { extractMessageImageUrls, waitForMessageUnfurl } from '../../../utils/messageImages';
 import { extractReplySource } from '../../../utils/replySource';
 import { NonRetryableError } from '../../../utils/withRetry';
 import { getComicVariantMessage, pickComicDirection, pickComicStaging, pickComicTheme } from './creativeDirection';
@@ -22,7 +23,8 @@ const command: Command = {
 
     // Collect own text args and image attachments
     const ownText = args.join(' ').trim() || undefined;
-    const ownImageUrl = [...message.attachments.values()].find((a) => a.contentType?.startsWith('image/'))?.url;
+    const sourceMessage = await waitForMessageUnfurl(message);
+    const ownImageUrl = extractMessageImageUrls(sourceMessage)[0];
 
     // Collect reply source
     let replyText: string | undefined;
