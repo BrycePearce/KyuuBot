@@ -6,6 +6,7 @@ import {
   ComicPitchSet,
   ComicPlan,
   ComicScript,
+  ComicSourceBrief,
 } from './types';
 
 export function parseComicScript(rawText: string): ComicScript {
@@ -60,12 +61,16 @@ export function assertComicPlan(value: unknown): asserts value is ComicPlan {
 
   const requiredStrings: Array<keyof ComicPlan> = [
     'sourceAnchor',
+    'comicTarget',
     'premise',
     'characterMotivation',
     'themeLogic',
     'setup',
     'turn',
+    'panelTwoGoal',
+    'turnCausality',
     'payoff',
+    'payoffLogic',
     'visualThroughline',
   ];
   for (const field of requiredStrings) {
@@ -96,6 +101,17 @@ export function assertComicPlan(value: unknown): asserts value is ComicPlan {
   ) {
     throw new Error('Comic plan must contain at least two non-empty continuity facts.');
   }
+}
+
+export function assertComicSourceBrief(value: unknown): asserts value is ComicSourceBrief {
+  if (!isRecord(value)) throw new Error('Comic source analyst must return an object.');
+  if (!isNonEmptyString(value.centralHook)) {
+    throw new Error('Comic source brief must identify a non-empty centralHook.');
+  }
+  assertStringArray(value.literalFacts, 'literalFacts', 1, 10);
+  assertStringArray(value.mustPreserve, 'mustPreserve', 1, 8);
+  assertStringArray(value.unknowns, 'unknowns', 0, 8);
+  assertStringArray(value.prohibitedMisreadings, 'prohibitedMisreadings', 0, 8);
 }
 
 export function assertComicScriptMatchesPlan(script: ComicScript, plan: ComicPlan): void {
@@ -188,4 +204,10 @@ function isComicDialogue(value: unknown): value is ComicDialogue {
 
 function isComicCharacterRole(value: unknown): value is ComicCharacterRole {
   return isRecord(value) && isNonEmptyString(value.name) && isNonEmptyString(value.function);
+}
+
+function assertStringArray(value: unknown, field: string, min: number, max: number): asserts value is string[] {
+  if (!Array.isArray(value) || value.length < min || value.length > max || !value.every(isNonEmptyString)) {
+    throw new Error(`Comic source brief ${field} must contain ${min} to ${max} non-empty strings.`);
+  }
 }

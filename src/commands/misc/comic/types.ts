@@ -17,6 +17,14 @@ export type ComicCharacterRole = {
   function: string;
 };
 
+export type ComicSourceBrief = {
+  literalFacts: string[];
+  centralHook: string;
+  mustPreserve: string[];
+  unknowns: string[];
+  prohibitedMisreadings: string[];
+};
+
 export type ComicPitch = {
   title: string;
   premise: string;
@@ -42,19 +50,24 @@ export type ComicScript = {
 
 export type ComicPlan = {
   sourceAnchor: string;
+  comicTarget: string;
   premise: string;
   characterMotivation: string;
   themeLogic: string;
   essentialCast: ComicCharacterRole[];
   setup: string;
   turn: string;
+  panelTwoGoal: string;
+  turnCausality: string;
   payoff: string;
+  payoffLogic: string;
   visualThroughline: string;
   continuityFacts: string[];
   textMode: ComicTextMode;
 };
 
 export type PlannedComic = {
+  sourceBrief: ComicSourceBrief;
   plan: ComicPlan;
   script: ComicScript;
 };

@@ -7,12 +7,15 @@ import {
   buildEditorUserPrompt,
   buildScriptSystemPrompt,
   buildScriptUserPrompt,
+  buildSourceSystemPrompt,
+  buildSourceUserPrompt,
 } from './prompts';
 import {
   ComicDirectionDefinition,
   ComicPitchSet,
   ComicPlan,
   ComicScript,
+  ComicSourceBrief,
   ComicStagingDefinition,
   ComicThemeDefinition,
   PlannedComic,
@@ -22,6 +25,7 @@ import {
   assertComicPlan,
   assertComicScript,
   assertComicScriptMatchesPlan,
+  assertComicSourceBrief,
   parseComicScript,
 } from './validation';
 
@@ -40,6 +44,31 @@ export async function generateComicScript({
   direction: ComicDirectionDefinition;
   staging: ComicStagingDefinition;
 }): Promise<PlannedComic> {
+  const sourceBrief = await withRetry(
+    async () => {
+      const response = await client.messages.create({
+        model: 'claude-sonnet-4-6',
+        system: buildSourceSystemPrompt(),
+        messages: [
+          {
+            role: 'user',
+            content: buildContentBlocks(imageUrl, buildSourceUserPrompt({ text, hasImage: Boolean(imageUrl) })),
+          },
+        ],
+        max_tokens: 2048,
+        tools: [SOURCE_TOOL],
+        tool_choice: { type: 'tool', name: SOURCE_TOOL.name },
+      });
+
+      return readComicSourceBrief(response);
+    },
+    {
+      attempts: 3,
+      onRetry: (error, nextAttempt) =>
+        console.warn(`Comic source analysis failed, retrying (attempt ${nextAttempt}):`, describeError(error)),
+    }
+  );
+
   const pitches = await withRetry(
     async () => {
       const response = await client.messages.create({
@@ -48,7 +77,10 @@ export async function generateComicScript({
         messages: [
           {
             role: 'user',
-            content: buildContentBlocks(imageUrl, buildConceptUserPrompt({ text, hasImage: Boolean(imageUrl) })),
+            content: buildContentBlocks(
+              imageUrl,
+              buildConceptUserPrompt({ text, hasImage: Boolean(imageUrl), sourceBrief })
+            ),
           },
         ],
         max_tokens: 4096,
@@ -75,7 +107,7 @@ export async function generateComicScript({
             role: 'user',
             content: buildContentBlocks(
               imageUrl,
-              buildEditorUserPrompt({ text, hasImage: Boolean(imageUrl), pitches })
+              buildEditorUserPrompt({ text, hasImage: Boolean(imageUrl), pitches, sourceBrief })
             ),
           },
         ],
@@ -101,7 +133,10 @@ export async function generateComicScript({
         messages: [
           {
             role: 'user',
-            content: buildContentBlocks(imageUrl, buildScriptUserPrompt({ text, hasImage: Boolean(imageUrl), plan })),
+            content: buildContentBlocks(
+              imageUrl,
+              buildScriptUserPrompt({ text, hasImage: Boolean(imageUrl), plan, sourceBrief })
+            ),
           },
         ],
         max_tokens: 4096,
@@ -123,7 +158,17 @@ export async function generateComicScript({
     }
   );
 
-  return { plan, script };
+  return { sourceBrief, plan, script };
+}
+
+export function readComicSourceBrief(response: Anthropic.Messages.Message): ComicSourceBrief {
+  rejectIncompleteResponse(response, 'Comic source analyst');
+  const toolBlock = response.content.find((block) => block.type === 'tool_use' && block.name === SOURCE_TOOL.name);
+  if (!toolBlock || toolBlock.type !== 'tool_use')
+    throw new Error('Comic source analyst did not return a grounding tool call.');
+
+  assertComicSourceBrief(toolBlock.input);
+  return toolBlock.input;
 }
 
 export function readComicPitches(response: Anthropic.Messages.Message): ComicPitchSet {
@@ -181,6 +226,47 @@ function describeError(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
+const SOURCE_TOOL: Anthropic.Messages.Tool = {
+  name: 'ground_comic_source',
+  description: 'Return a literal, inference-aware grounding brief before any comedy writing begins.',
+  input_schema: {
+    type: 'object',
+    properties: {
+      literalFacts: {
+        type: 'array',
+        minItems: 1,
+        maxItems: 10,
+        items: { type: 'string' },
+        description: 'Directly visible or stated facts, phrased without unsupported inference.',
+      },
+      centralHook: {
+        type: 'string',
+        description: 'The most distinctive grounded contrast, implication, tension, pattern, or concrete detail.',
+      },
+      mustPreserve: {
+        type: 'array',
+        minItems: 1,
+        maxItems: 8,
+        items: { type: 'string' },
+        description: 'Exact source anchors the comic must retain to remain recognizable.',
+      },
+      unknowns: {
+        type: 'array',
+        maxItems: 8,
+        items: { type: 'string' },
+        description: 'Relevant details the source does not establish and that must not be silently assumed.',
+      },
+      prohibitedMisreadings: {
+        type: 'array',
+        maxItems: 8,
+        items: { type: 'string' },
+        description: 'Tempting conclusions contradicted by the source or unsupported by its logic.',
+      },
+    },
+    required: ['literalFacts', 'centralHook', 'mustPreserve', 'unknowns', 'prohibitedMisreadings'],
+  },
+};
+
 const PITCH_PROPERTIES = {
   title: { type: 'string', description: 'A short internal title distinguishing this pitch.' },
   premise: { type: 'string', description: 'The single joke premise in one sentence.' },
@@ -226,6 +312,10 @@ const PLAN_TOOL: Anthropic.Messages.Tool = {
     type: 'object',
     properties: {
       sourceAnchor: { type: 'string', description: 'The exact source detail that makes this comic recognizable.' },
+      comicTarget: {
+        type: 'string',
+        description: 'The single grounded source observation being transformed into the joke.',
+      },
       premise: { type: 'string', description: 'The single joke premise in one sentence.' },
       characterMotivation: { type: 'string', description: 'What the featured character wants and why.' },
       themeLogic: { type: 'string', description: 'How the premise obeys the selected character theme and its rules.' },
@@ -249,7 +339,19 @@ const PLAN_TOOL: Anthropic.Messages.Tool = {
       },
       setup: { type: 'string', description: 'The fact and situation established in panel one.' },
       turn: { type: 'string', description: 'The cause-and-effect complication in panel two.' },
+      panelTwoGoal: {
+        type: 'string',
+        description: 'The concrete result a character intentionally tries to achieve in panel two and why.',
+      },
+      turnCausality: {
+        type: 'string',
+        description: 'Why the panel-two action follows from the setup and could produce the payoff.',
+      },
       payoff: { type: 'string', description: 'The punchline that follows from and reinterprets the first two beats.' },
+      payoffLogic: {
+        type: 'string',
+        description: 'Why panel three is caused by panel two or materially reinterprets panel one.',
+      },
       visualThroughline: {
         type: 'string',
         description: 'The source-rooted visual element carried through all panels.',
@@ -269,13 +371,17 @@ const PLAN_TOOL: Anthropic.Messages.Tool = {
     },
     required: [
       'sourceAnchor',
+      'comicTarget',
       'premise',
       'characterMotivation',
       'themeLogic',
       'essentialCast',
       'setup',
       'turn',
+      'panelTwoGoal',
+      'turnCausality',
       'payoff',
+      'payoffLogic',
       'visualThroughline',
       'continuityFacts',
       'textMode',
