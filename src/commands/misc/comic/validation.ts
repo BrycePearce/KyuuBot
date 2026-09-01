@@ -110,6 +110,8 @@ export function assertComicSourceBrief(value: unknown): asserts value is ComicSo
   }
   assertStringArray(value.literalFacts, 'literalFacts', 1, 10);
   assertStringArray(value.mustPreserve, 'mustPreserve', 1, 8);
+  assertStringArray(value.semanticRoles, 'semanticRoles', 1, 8);
+  assertStringArray(value.scopeBoundaries, 'scopeBoundaries', 1, 8);
   assertStringArray(value.unknowns, 'unknowns', 0, 8);
   assertStringArray(value.prohibitedMisreadings, 'prohibitedMisreadings', 0, 8);
 }

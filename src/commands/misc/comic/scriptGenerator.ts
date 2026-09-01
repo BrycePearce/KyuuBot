@@ -1,6 +1,8 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { NonRetryableError, withRetry } from '../../../utils/withRetry';
 import {
+  buildAuditSystemPrompt,
+  buildAuditUserPrompt,
   buildConceptSystemPrompt,
   buildConceptUserPrompt,
   buildEditorSystemPrompt,
@@ -97,7 +99,7 @@ export async function generateComicScript({
     }
   );
 
-  const plan = await withRetry(
+  const draftPlan = await withRetry(
     async () => {
       const response = await client.messages.create({
         model: 'claude-sonnet-4-6',
@@ -122,6 +124,34 @@ export async function generateComicScript({
       attempts: 3,
       onRetry: (error, nextAttempt) =>
         console.warn(`Comic punch-up attempt failed, retrying (attempt ${nextAttempt}):`, describeError(error)),
+    }
+  );
+
+  const plan = await withRetry(
+    async () => {
+      const response = await client.messages.create({
+        model: 'claude-sonnet-4-6',
+        system: buildAuditSystemPrompt(theme),
+        messages: [
+          {
+            role: 'user',
+            content: buildContentBlocks(
+              imageUrl,
+              buildAuditUserPrompt({ text, hasImage: Boolean(imageUrl), sourceBrief, plan: draftPlan })
+            ),
+          },
+        ],
+        max_tokens: 4096,
+        tools: [AUDIT_TOOL],
+        tool_choice: { type: 'tool', name: AUDIT_TOOL.name },
+      });
+
+      return readAuditedComicPlan(response);
+    },
+    {
+      attempts: 3,
+      onRetry: (error, nextAttempt) =>
+        console.warn(`Comic plan audit failed, retrying (attempt ${nextAttempt}):`, describeError(error)),
     }
   );
 
@@ -191,6 +221,16 @@ export function readComicPlan(response: Anthropic.Messages.Message): ComicPlan {
   return toolBlock.input;
 }
 
+export function readAuditedComicPlan(response: Anthropic.Messages.Message): ComicPlan {
+  rejectIncompleteResponse(response, 'Comic plan auditor');
+  const toolBlock = response.content.find((block) => block.type === 'tool_use' && block.name === AUDIT_TOOL.name);
+  if (!toolBlock || toolBlock.type !== 'tool_use')
+    throw new Error('Comic plan auditor did not return an audit tool call.');
+
+  assertComicPlan(toolBlock.input);
+  return toolBlock.input;
+}
+
 export function readComicScript(response: Anthropic.Messages.Message): ComicScript {
   rejectIncompleteResponse(response, 'Script generator');
   const toolBlock = response.content.find((block) => block.type === 'tool_use' && block.name === SCRIPT_TOOL.name);
@@ -250,6 +290,20 @@ const SOURCE_TOOL: Anthropic.Messages.Tool = {
         items: { type: 'string' },
         description: 'Exact source anchors the comic must retain to remain recognizable.',
       },
+      semanticRoles: {
+        type: 'array',
+        minItems: 1,
+        maxItems: 8,
+        items: { type: 'string' },
+        description: 'What central people, objects, labels, data, and relationships actually represent or do.',
+      },
+      scopeBoundaries: {
+        type: 'array',
+        minItems: 1,
+        maxItems: 8,
+        items: { type: 'string' },
+        description: 'What the source does not measure, classify, imply, or establish.',
+      },
       unknowns: {
         type: 'array',
         maxItems: 8,
@@ -263,7 +317,15 @@ const SOURCE_TOOL: Anthropic.Messages.Tool = {
         description: 'Tempting conclusions contradicted by the source or unsupported by its logic.',
       },
     },
-    required: ['literalFacts', 'centralHook', 'mustPreserve', 'unknowns', 'prohibitedMisreadings'],
+    required: [
+      'literalFacts',
+      'centralHook',
+      'mustPreserve',
+      'semanticRoles',
+      'scopeBoundaries',
+      'unknowns',
+      'prohibitedMisreadings',
+    ],
   },
 };
 
@@ -387,6 +449,12 @@ const PLAN_TOOL: Anthropic.Messages.Tool = {
       'textMode',
     ],
   },
+};
+
+const AUDIT_TOOL: Anthropic.Messages.Tool = {
+  name: 'audit_comic_plan',
+  description: 'Return the independently audited and fully revised binding comic plan.',
+  input_schema: PLAN_TOOL.input_schema,
 };
 
 const SCRIPT_TOOL: Anthropic.Messages.Tool = {

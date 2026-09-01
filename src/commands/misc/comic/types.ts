@@ -21,6 +21,8 @@ export type ComicSourceBrief = {
   literalFacts: string[];
   centralHook: string;
   mustPreserve: string[];
+  semanticRoles: string[];
+  scopeBoundaries: string[];
   unknowns: string[];
   prohibitedMisreadings: string[];
 };
