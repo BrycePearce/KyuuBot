@@ -38,7 +38,6 @@ const command: Command = {
     // build the openai message object
     const fullPrompt = replySource?.text ? `Replied-to message: "${replySource.text}"\n\n${userPrompt}` : userPrompt;
     const contentArray = buildContentArray(fullPrompt, imageUrls);
-    // const tools: ChatCompletionTool[] = [weatherTool];
 
     try {
       const response = await openaiClient.chat.completions.create({
@@ -54,10 +53,18 @@ const command: Command = {
             content: contentArray,
           },
         ],
-        max_completion_tokens: 750,
+        // reasoning tokens come out of max_completion_tokens, so any thinking at all can
+        // eat the whole budget and leave an empty answer. Chat Q&A doesn't need it.
+        reasoning_effort: 'none',
+        max_completion_tokens: 1500,
       });
 
-      const completionText = response.choices?.[0]?.message?.content ?? '';
+      const completionText = response.choices?.[0]?.message?.content?.trim() ?? '';
+
+      if (!completionText) {
+        await channel.send('🙀 I got an empty response back. Try again? 🙀');
+        return;
+      }
 
       if (completionText.length <= discordMaxCharacterCount) {
         await channel.send(completionText);
