@@ -58,3 +58,23 @@ export function isShortInput(text: string): boolean {
   const wordCount = trimmed.split(/\s+/).filter(Boolean).length;
   return trimmed.length <= 25 || wordCount <= 4;
 }
+
+/** Closest supported output shape, so wide memes and tall screenshots are not squashed into a square. */
+export function pickEditSize(width: number, height: number): '1024x1024' | '1536x1024' | '1024x1536' {
+  const ratio = width / height;
+  if (ratio >= 1.25) return '1536x1024';
+  if (ratio <= 0.8) return '1024x1536';
+  return '1024x1024';
+}
+
+/** True when OpenAI's image safety system rejected the request or the generated image. */
+export function isModerationBlocked(error: unknown): boolean {
+  return typeof error === 'object' && error !== null && (error as { code?: unknown }).code === 'moderation_blocked';
+}
+
+/** The useful part of a moderation rejection; the default error log collapses the categories array. */
+export function describeModerationBlock(error: unknown): string {
+  const details = (error as { error?: { moderation_details?: unknown } }).error?.moderation_details;
+  const requestId = (error as { requestID?: unknown }).requestID;
+  return `${JSON.stringify(details ?? null)} (request ${String(requestId ?? 'unknown')})`;
+}

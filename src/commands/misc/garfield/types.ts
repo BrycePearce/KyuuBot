@@ -15,6 +15,7 @@ export const GARFIELD_MESSAGES = {
   genericError: 'Something broke. I blame Monday.',
   oversizedText: 'I had too much to say. That alone is upsetting.',
   failedEmbed: 'That embed had problems even I did not want.',
+  imageBlocked: 'The art department refused to draw my idea. Cowards.',
 } as const;
 
 export type ImproveSource = {
@@ -44,30 +45,72 @@ export const CHARACTER_WEIGHTS: Array<[CharacterVariant, number]> = [
   ['himbo', 0.03],
 ];
 
-export type CaptionStyle = 'bitter-one-liner' | 'lazy-complaint' | 'smug-reaction' | 'anti-effort' | 'food-driven';
+export type CaptionStyle = 'bitter-one-liner' | 'lazy-complaint' | 'smug-reaction' | 'anti-effort';
 
-export type ImageInsertionMode =
-  | 'face-on-object' // Character's face on/as an inanimate object (meteor, moon, sign, ball)
-  | 'eating' // Character eating or fixated on food in the scene
-  | 'reinterpret-subject' // The main subject itself becomes the character
-  | 'sitting-on' // Character lounging on a prominent object or surface
-  | 'add-to-scene' // Character added in a funny contextually-fitting way
-  | 'observer'; // Character watching/judging from the side or background
+/** How the image gets translated into Garfield's world. */
+export type EditMechanism =
+  | 'character-hybrid' // Characters become hybrids of themselves and their Garfield-universe counterpart
+  | 'subject-transformation' // The main non-human subject is Garfield-ified, keeping its form and function
+  | 'world-translation' // Names, props, references, and setting recast as their Garfield-world equivalents
+  | 'text-translation'; // Text-led images: the text is lightly translated into Garfield's world
 
-export type ComedyIntensity = 'subtle' | 'moderate' | 'unhinged';
+export const EDIT_MECHANISMS: readonly EditMechanism[] = [
+  'character-hybrid',
+  'subject-transformation',
+  'world-translation',
+  'text-translation',
+];
 
-export type ImagePlan = {
-  sceneTransform: string; // Full thematic reskin of the scene, or empty string for no transformation
-  comedyConcept: string; // The specific funny idea in one sentence
-  comedyIntensity: ComedyIntensity;
-  insertionMode: ImageInsertionMode;
-  targetElement: string; // What in the image the character interacts with, replaces, or reacts to
-  placement: string;
-  pose: string;
-  expression: string;
-  medium: string;
-  material: string;
-  abstractionLevel: string;
-  styleNotes: string[];
-  executionNotes: string[]; // Specific instructions for pulling off this edit
+export type VisibleText = {
+  location: string;
+  text: string;
+};
+
+export type GarfieldSourceBrief = {
+  format: string;
+  artStyle: string;
+  literalFacts: string[];
+  characters: string[];
+  visibleText: VisibleText[];
+  existingJoke: string;
+  jokeAnchors: string[];
+  editableSlots: string[];
+  mustPreserve: string[];
+};
+
+export type CastMapping = {
+  original: string;
+  becomes: string;
+};
+
+export type TextChange = {
+  location: string;
+  original: string;
+  replacement: string;
+};
+
+export type PlannedEdit = {
+  target: string;
+  change: string;
+};
+
+export type GarfieldPitch = {
+  title: string;
+  mechanism: EditMechanism;
+  premise: string;
+  castMapping: CastMapping[];
+  edits: PlannedEdit[];
+  textChanges: TextChange[];
+  characterHint: string;
+  coherenceCheck: string;
+};
+
+export type GarfieldPitchSet = {
+  pitches: GarfieldPitch[];
+};
+
+export type GarfieldEditPlan = Omit<GarfieldPitch, 'title'> & {
+  sourceHook: string;
+  preserve: string[];
+  caption: string;
 };

@@ -9,8 +9,7 @@ export function pickCaptionStyle(): CaptionStyle {
     ['bitter-one-liner', 0.34],
     ['lazy-complaint', 0.24],
     ['smug-reaction', 0.22],
-    ['anti-effort', 0.14],
-    ['food-driven', 0.06],
+    ['anti-effort', 0.2],
   ]);
 }
 
@@ -54,8 +53,6 @@ export function describeCaptionStyle(captionStyle: CaptionStyle): string {
       return 'a smug reaction';
     case 'anti-effort':
       return 'an anti-effort observation';
-    case 'food-driven':
-      return 'a food-motivated reaction';
     default:
       return 'a short deadpan caption';
   }
