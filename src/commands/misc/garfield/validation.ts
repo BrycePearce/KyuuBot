@@ -2,12 +2,13 @@ import type Anthropic from '@anthropic-ai/sdk';
 import { NonRetryableError } from '../../../utils/withRetry';
 import {
   CastMapping,
-  EDIT_MECHANISMS,
-  EditMechanism,
   GarfieldEditPlan,
   GarfieldPitchSet,
   GarfieldSourceBrief,
+  LENS_IDS,
+  LensId,
   PlannedEdit,
+  SOURCE_KINDS,
   TextChange,
   VisibleText,
 } from './types';
@@ -36,6 +37,9 @@ export function parseJsonResponse<T>(
 
 export function assertSourceBrief(value: unknown): asserts value is GarfieldSourceBrief {
   if (!isRecord(value)) throw new Error('Garfield source analyst must return an object.');
+  if (!(SOURCE_KINDS as readonly unknown[]).includes(value.sourceKind)) {
+    throw new Error('Garfield source brief has an unknown sourceKind.');
+  }
   for (const field of ['format', 'artStyle', 'existingJoke'] as const) {
     if (!isNonEmptyString(value[field])) throw new Error(`Garfield source brief must have a non-empty ${field}.`);
   }
@@ -108,7 +112,7 @@ function assertTransformation(value: Record<string, unknown>, label: string): vo
   for (const field of ['premise', 'characterHint', 'coherenceCheck'] as const) {
     if (!isNonEmptyString(value[field])) throw new Error(`${label} must have a non-empty ${field}.`);
   }
-  if (!isMechanism(value.mechanism)) throw new Error(`${label} has an unknown mechanism.`);
+  if (!isLens(value.lens)) throw new Error(`${label} has an unknown lens.`);
   if (!Array.isArray(value.castMapping) || !value.castMapping.every(isCastMapping)) {
     throw new Error(`${label} castMapping must be an array of { original, becomes }.`);
   }
@@ -118,13 +122,19 @@ function assertTransformation(value: Record<string, unknown>, label: string): vo
   if (!Array.isArray(value.textChanges) || !value.textChanges.every(isTextChange)) {
     throw new Error(`${label} textChanges must be an array of { location, original, replacement }.`);
   }
+  if (value.textPolicy !== 'keep' && value.textPolicy !== 'adapt') {
+    throw new Error(`${label} textPolicy must be keep or adapt.`);
+  }
+  if (value.textPolicy === 'keep' && value.textChanges.length) {
+    throw new Error(`${label} keeps the text but lists text changes.`);
+  }
   if (!value.castMapping.length && !value.edits.length && !value.textChanges.length) {
     throw new Error(`${label} must change something.`);
   }
 }
 
-function isMechanism(value: unknown): value is EditMechanism {
-  return typeof value === 'string' && (EDIT_MECHANISMS as readonly string[]).includes(value);
+function isLens(value: unknown): value is LensId {
+  return typeof value === 'string' && (LENS_IDS as readonly string[]).includes(value);
 }
 
 function isVisibleText(value: unknown): value is VisibleText {

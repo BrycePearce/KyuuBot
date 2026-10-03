@@ -46,20 +46,49 @@ export const CHARACTER_WEIGHTS: Array<[CharacterVariant, number]> = [
 ];
 
 export type CaptionStyle = 'bitter-one-liner' | 'lazy-complaint' | 'smug-reaction' | 'anti-effort';
-
-/** How the image gets translated into Garfield's world. */
-export type EditMechanism =
+/** A distinct way of Garfield-ifying an image. One is rolled per run so rerolls feel different. */
+export type LensId =
   | 'character-hybrid' // Characters become hybrids of themselves and their Garfield-universe counterpart
-  | 'subject-transformation' // The main non-human subject is Garfield-ified, keeping its form and function
-  | 'world-translation' // Names, props, references, and setting recast as their Garfield-world equivalents
+  | 'cast-swap' // The Garfield cast perform the scene exactly as staged
+  | 'bad-disguise' // The featured character replaces someone, badly disguised, and nobody notices
+  | 'davis-restyle' // The image is redrawn as a Jim Davis newspaper strip
+  | 'prop-swap' // People untouched; the scene's objects, logos, and emblems become Garfield-world versions
+  | 'subject-transformation' // The main non-human subject is Garfield-ified, keeping its form and realism
   | 'text-translation'; // Text-led images: the text is lightly translated into Garfield's world
 
-export const EDIT_MECHANISMS: readonly EditMechanism[] = [
+export const LENS_IDS: readonly LensId[] = [
   'character-hybrid',
+  'cast-swap',
+  'bad-disguise',
+  'davis-restyle',
+  'prop-swap',
   'subject-transformation',
-  'world-translation',
   'text-translation',
 ];
+
+export type SourceKind =
+  | 'meme-or-comic'
+  | 'photo-of-people'
+  | 'animal'
+  | 'food'
+  | 'scenery'
+  | 'screenshot-or-text'
+  | 'artwork'
+  | 'other';
+
+export const SOURCE_KINDS: readonly SourceKind[] = [
+  'meme-or-comic',
+  'photo-of-people',
+  'animal',
+  'food',
+  'scenery',
+  'screenshot-or-text',
+  'artwork',
+  'other',
+];
+
+/** Text is left alone unless changing it genuinely helps. */
+export type TextPolicy = 'keep' | 'adapt';
 
 export type VisibleText = {
   location: string;
@@ -67,6 +96,7 @@ export type VisibleText = {
 };
 
 export type GarfieldSourceBrief = {
+  sourceKind: SourceKind;
   format: string;
   artStyle: string;
   literalFacts: string[];
@@ -96,10 +126,11 @@ export type PlannedEdit = {
 
 export type GarfieldPitch = {
   title: string;
-  mechanism: EditMechanism;
+  lens: LensId;
   premise: string;
   castMapping: CastMapping[];
   edits: PlannedEdit[];
+  textPolicy: TextPolicy;
   textChanges: TextChange[];
   characterHint: string;
   coherenceCheck: string;

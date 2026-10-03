@@ -3,6 +3,7 @@ import sharp from 'sharp';
 import openaiClient from '../../../utils/clients/openaiClient';
 import { withRetry } from '../../../utils/withRetry';
 import { characterifiedFilename } from './character';
+import { getLens } from './lenses';
 import { buildImageEditPrompt } from './prompts';
 import {
   CharacterVariant,
@@ -33,7 +34,7 @@ export async function renderGarfieldEdit({
 
   const { buffer, width, height } = await normalizeSourceImage(Buffer.from(await imageRes.arrayBuffer()));
   const inputFilename = ensureExtension(originalFilename, DEFAULT_IMAGE_TYPE);
-  const prompt = buildImageEditPrompt({ variant, plan, sourceBrief });
+  const prompt = buildImageEditPrompt({ variant, lens: getLens(plan.lens), plan, sourceBrief });
 
   const outputBuffer = await withRetry(
     async () => {

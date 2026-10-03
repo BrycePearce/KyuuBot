@@ -2,14 +2,15 @@ import { AttachmentBuilder, Message } from 'discord.js';
 import { Command } from '../../../types/Command';
 import { waitForMessageUnfurl } from '../../../utils/messageImages';
 import { startTypingKeepalive } from '../comic/typingKeepalive';
-import { pickCaptionStyle, pickCharacterVariant } from './character';
+import { pickCaptionStyle, pickCharacterVariant, variantFromDirection } from './character';
 import { renderGarfieldEdit } from './imageEditor';
-import { editGarfieldPlan, planGarfieldEdit } from './planner';
+import { getRecentLenses, recordLens } from './lenses';
+import { editGarfieldPlan, GarfieldEditRequest, planGarfieldEdit } from './planner';
 import { replyWithEmbedMode, replyWithStandardMode } from './reply';
 import { extractImproveSource, mergeImproveSources } from './sourceExtractor';
 import { mascotifyText } from './textGeneration';
-import { CharacterVariant, GARFIELD_MESSAGES, ImproveSource } from './types';
-import { describeModerationBlock, isModerationBlocked } from './utils';
+import { GARFIELD_MESSAGES, ImproveSource } from './types';
+import { describeModerationBlock, isModerationBlocked, normalizeExtractedText } from './utils';
 
 const command: Command = {
   name: 'Garfield',
@@ -47,7 +48,10 @@ const command: Command = {
       return;
     }
 
-    const variant = pickCharacterVariant();
+    // With an image, words after the command steer the edit instead of being treated as source material.
+    const direction = source.imageUrl ? normalizeExtractedText(args.join(' ')) : undefined;
+    const sourceText = direction ? replySource?.text : source.text;
+    const variant = variantFromDirection(direction) ?? pickCharacterVariant();
     const stopTyping = startTypingKeepalive(
       () => channel.sendTyping(),
       undefined,
@@ -59,21 +63,25 @@ const command: Command = {
       let mascotImage: AttachmentBuilder | undefined;
 
       if (source.imageUrl) {
-        const edit = await editImage(source, variant);
+        const edit = await editImage(
+          { imageUrl: source.imageUrl, text: sourceText, direction, variant },
+          source.imageFilename,
+          message.guildId ?? message.channelId
+        );
         if (edit && 'image' in edit) {
           mascotImage = edit.image;
           mascotText = edit.caption;
-        } else if (edit && !source.text) {
+        } else if (edit && !sourceText) {
           await message.reply(GARFIELD_MESSAGES.imageBlocked);
           return;
         }
       }
 
       // Text-only input, or the image edit failed and there is still text to riff on.
-      if (source.text && !mascotImage) {
+      if (sourceText && !mascotImage) {
         try {
           mascotText = await mascotifyText({
-            sourceText: source.text,
+            sourceText,
             isAccompanyingImage: false,
             variant,
             captionStyle: pickCaptionStyle(),
@@ -116,26 +124,34 @@ type ImageEditResult = { image: AttachmentBuilder; caption?: string } | { blocke
 
 const MAX_RENDER_ATTEMPTS = 2;
 
-async function editImage(source: ImproveSource, variant: CharacterVariant): Promise<ImageEditResult | undefined> {
-  if (!source.imageUrl) return undefined;
-  const imageUrl = source.imageUrl;
-
+async function editImage(
+  request: GarfieldEditRequest,
+  originalFilename: string | undefined,
+  lensScope: string
+): Promise<ImageEditResult | undefined> {
   try {
-    const { sourceBrief, pitches, plan: firstPlan } = await planGarfieldEdit({ imageUrl, text: source.text, variant });
+    const {
+      sourceBrief,
+      rolledLens,
+      pitches,
+      plan: firstPlan,
+    } = await planGarfieldEdit(request, getRecentLenses(lensScope));
     const blockedPremises: string[] = [];
     let plan = firstPlan;
 
     for (let attempt = 1; attempt <= MAX_RENDER_ATTEMPTS; attempt++) {
-      console.log(`.garfield plan (${variant}, ${plan.mechanism}): ${plan.premise}`);
+      const lensNote = plan.lens === rolledLens ? plan.lens : `${plan.lens}, rolled ${rolledLens}`;
+      console.log(`.garfield plan (${request.variant}, ${lensNote}, text ${plan.textPolicy}): ${plan.premise}`);
 
       try {
         const image = await renderGarfieldEdit({
-          imageUrl,
-          originalFilename: source.imageFilename,
-          variant,
+          imageUrl: request.imageUrl,
+          originalFilename,
+          variant: request.variant,
           plan,
           sourceBrief,
         });
+        recordLens(lensScope, plan.lens);
         return { image, caption: plan.caption.trim() || undefined };
       } catch (error) {
         if (!isModerationBlocked(error)) throw error;
@@ -144,7 +160,7 @@ async function editImage(source: ImproveSource, variant: CharacterVariant): Prom
         blockedPremises.push(plan.premise);
         if (attempt === MAX_RENDER_ATTEMPTS) return { blocked: true };
 
-        plan = await editGarfieldPlan({ imageUrl, text: source.text, variant, sourceBrief, pitches, blockedPremises });
+        plan = await editGarfieldPlan(request, { sourceBrief, rolledLens, pitches, blockedPremises });
       }
     }
   } catch (error) {

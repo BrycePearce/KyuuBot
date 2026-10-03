@@ -4,6 +4,21 @@ export function pickCharacterVariant(): CharacterVariant {
   return weightedRandom<CharacterVariant>(CHARACTER_WEIGHTS);
 }
 
+const DIRECTION_VARIANTS: Array<[RegExp, CharacterVariant]> = [
+  [/\bodie\b/i, 'odie'],
+  [/\bnermal\b/i, 'nermal'],
+  [/\b(jon|arbuckle)\b/i, 'jon'],
+  [/\b(garf-?ula|dracula|vampire)\b/i, 'garfula'],
+  [/\b(himbo|buff|swole|muscular|jacked)\b/i, 'himbo'],
+  [/\bgarfield\b/i, 'garfield'],
+];
+
+/** Lets `.garfield make it odie` pick Odie instead of rolling a random character. */
+export function variantFromDirection(direction?: string): CharacterVariant | undefined {
+  if (!direction) return undefined;
+  return DIRECTION_VARIANTS.find(([pattern]) => pattern.test(direction))?.[1];
+}
+
 export function pickCaptionStyle(): CaptionStyle {
   return weightedRandom<CaptionStyle>([
     ['bitter-one-liner', 0.34],
