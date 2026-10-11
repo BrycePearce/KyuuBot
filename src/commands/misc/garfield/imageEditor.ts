@@ -1,5 +1,6 @@
 import { AttachmentBuilder } from 'discord.js';
 import sharp from 'sharp';
+import { PREMIUM_IMAGE_SETTINGS } from '../../../utils/imageModels';
 import openaiClient from '../../../utils/clients/openaiClient';
 import { withRetry } from '../../../utils/withRetry';
 import { characterifiedFilename } from './character';
@@ -39,12 +40,10 @@ export async function renderGarfieldEdit({
   const outputBuffer = await withRetry(
     async () => {
       const response = await openaiClient.images.edit({
-        model: 'gpt-image-2',
+        ...PREMIUM_IMAGE_SETTINGS,
         image: new File([buffer], inputFilename, { type: DEFAULT_IMAGE_TYPE }),
         prompt,
         size: pickEditSize(width, height),
-        output_format: 'png',
-        quality: 'high',
       });
 
       const base64Image = response.data?.[0]?.b64_json;

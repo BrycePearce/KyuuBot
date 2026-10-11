@@ -373,7 +373,8 @@ test('dialogue image prompts omit caption bars and speaker labels from rendered 
 test('GPT Image 2 edit requests omit unsupported input_fidelity', () => {
   const request = buildComicImageEditRequest({} as any, 'make a comic');
 
-  assert.equal(request.model, 'gpt-image-2');
+  assert.equal(request.model, 'gpt-image-2.5-sunburst');
+  assert.equal(request.quality, 'max');
   assert.equal('input_fidelity' in request, false);
 });
 

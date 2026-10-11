@@ -1,11 +1,15 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { readClaudeError, readClaudeResponse } from './response';
+import { buildClaudeRequest, CLAUDE_REQUEST_TIMEOUT_MS } from './request';
+import { sendClaudeFailure } from './failure';
 import { Command } from '../../../types/Command';
 import { extractMessageImageUrls, waitForMessageUnfurl } from '../../../utils/messageImages';
 import { extractReplySource } from '../../../utils/replySource';
+import { startTypingKeepalive } from '../comic/typingKeepalive';
 
 const client = new Anthropic({
   apiKey: process.env.claude,
+  timeout: CLAUDE_REQUEST_TIMEOUT_MS,
 });
 
 const command: Command = {
@@ -20,8 +24,13 @@ const command: Command = {
     if (!channel.isSendable()) return;
 
     const userPrompt = args.join(' ');
-    const role =
-      'You are a helpful assistant. Your response should be 80 words or less, unless necessary for a full answer.';
+    const stopTyping = startTypingKeepalive(
+      async () => {
+        await channel.sendTyping();
+      },
+      undefined,
+      (error) => console.warn('Failed to refresh Claude typing indicator:', error)
+    );
 
     try {
       const sourceMessage = await waitForMessageUnfurl(message);
@@ -50,22 +59,19 @@ const command: Command = {
       }
 
       if (contentBlocks.length === 0) {
-        return await channel.send('Please provide a question or image for Claude.');
+        return await sendClaudeFailure(
+          (options) => channel.send(options),
+          'Please provide a question or image for Claude.'
+        );
       }
 
-      const model = await client.messages.create({
-        model: 'claude-sonnet-4-6',
-        system: role,
-        messages: [
-          {
-            role: 'user',
-            content: contentBlocks,
-          },
-        ],
-        max_tokens: 600,
-      });
+      const model = await client.messages.create(buildClaudeRequest(contentBlocks));
 
       const response = readClaudeResponse(model);
+
+      if (model.stop_reason === 'refusal') {
+        return await sendClaudeFailure((options) => channel.send(options), response);
+      }
 
       if (!response) {
         console.warn('Claude returned no answer text:', {
@@ -75,7 +81,8 @@ const command: Command = {
           usage: model.usage,
           contentTypes: model.content.map((block) => block.type),
         });
-        return await channel.send(
+        return await sendClaudeFailure(
+          (options) => channel.send(options),
           model.stop_reason === 'max_tokens'
             ? '🙀 Claude reached its response limit before producing an answer. Please try a shorter question.'
             : '🙀 Claude returned no answer. Please try again.'
@@ -84,16 +91,13 @@ const command: Command = {
 
       // Claude's token limit can still produce more than Discord's 2,000 characters.
       for (let offset = 0; offset < response.length; offset += 2000) {
-        await channel.send(response.slice(offset, offset + 2000));
+        await channel.send({ content: response.slice(offset, offset + 2000), allowedMentions: { parse: [] } });
       }
     } catch (error) {
       console.error('Claude command error:', error);
-      // Keep failure replies independent of local emote files.
-      try {
-        return await channel.send(readClaudeError(error));
-      } catch (sendError) {
-        console.error('Unable to send Claude failure reply:', sendError);
-      }
+      await sendClaudeFailure((options) => channel.send(options), readClaudeError(error));
+    } finally {
+      stopTyping();
     }
   },
 };

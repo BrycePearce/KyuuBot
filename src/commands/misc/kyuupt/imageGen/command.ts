@@ -3,6 +3,7 @@ import got from 'got';
 import OpenAI, { toFile } from 'openai';
 import type { Command } from '../../../../types/Command';
 import { getRandomEmotePath } from '../../../../utils/files';
+import { PREMIUM_IMAGE_SETTINGS } from '../../../../utils/imageModels';
 import { waitForMessageUnfurl } from '../../../../utils/messageImages';
 import { extractReplySource } from '../../../../utils/replySource';
 import { extractImageUrls } from '../chatCompletion/extractImages';
@@ -65,7 +66,7 @@ const command: Command = {
         const file = await toFile(buffer, `input.${ext}`, { type: mimeType });
 
         response = await openai.images.edit({
-          model: 'gpt-image-2',
+          ...PREMIUM_IMAGE_SETTINGS,
           image: file,
           prompt,
           n: 1,
@@ -74,7 +75,7 @@ const command: Command = {
       } else {
         // TEXT → IMAGE MODE
         response = await openai.images.generate({
-          model: 'gpt-image-2',
+          ...PREMIUM_IMAGE_SETTINGS,
           prompt,
           n: 1,
           size: '1024x1024',

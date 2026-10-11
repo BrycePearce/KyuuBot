@@ -10,7 +10,7 @@
     "noImplicitAny": false,
     "strictNullChecks": false,
     "esModuleInterop": true,
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "lib": ["ES2021"],
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,

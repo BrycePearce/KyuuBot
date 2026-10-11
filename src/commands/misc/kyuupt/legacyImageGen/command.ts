@@ -10,8 +10,8 @@ const openai = new OpenAI({
 
 const command: Command = {
   name: 'Kyuubot GPT-Image-1',
-  description: 'Generate images via OpenAI gpt-image-1',
-  invocations: ['gpt1'],
+  description: 'Generate images using the lower-tier GPT Image 1 model.',
+  invocations: ['gpt1', 'dalle'],
   args: true,
   enabled: true,
   usage: '[invocation] [prompt]',

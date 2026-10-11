@@ -1,15 +1,16 @@
-import { Readable } from 'stream';
 import { Command } from '../../../../types/Command';
 import openaiClient from '../../../../utils/clients/openaiClient';
+import { getRandomEmotePath } from '../../../../utils/files';
 import { waitForMessageUnfurl } from '../../../../utils/messageImages';
 import { extractReplySource } from '../../../../utils/replySource';
+import { startTypingKeepalive } from '../../comic/typingKeepalive';
 import { buildContentArray } from './buildContentArray';
 import { extractImageUrls } from './extractImages';
-const discordMaxCharacterCount = 2000;
+import { readChatError, requestChatAnswer } from './request';
 
 const command: Command = {
   name: 'KyuuPT',
-  description: 'Integrates OpenAI API',
+  description: 'Answers text and image questions with OpenAI.',
   invocations: ['kyuupt', 'ask', 'askJeeves', 'chat', 'write'],
   args: true,
   enabled: true,
@@ -17,79 +18,53 @@ const command: Command = {
   async execute(message, args) {
     const channel = message.channel;
     if (!channel.isSendable()) return;
-
-    if (args.length === 0 && message.attachments.size === 0) {
-      await channel.send(
-        '🙀 To use KyuuPT, you need to add a prompt or an image to your invocation. For example: `.ask [question]` 🙀'
-      );
-      return;
-    }
-
-    const userPrompt = args.join(' ');
-
-    // load in images from user message, then supplement with any from a replied-to message
-    const sourceMessage = await waitForMessageUnfurl(message);
-    const imageUrls = extractImageUrls(sourceMessage);
-    const replySource = await extractReplySource(message);
-    for (const url of replySource?.imageUrls ?? []) {
-      if (!imageUrls.includes(url)) imageUrls.push(url);
-    }
-
-    // build the openai message object
-    const fullPrompt = replySource?.text ? `Replied-to message: "${replySource.text}"\n\n${userPrompt}` : userPrompt;
-    const contentArray = buildContentArray(fullPrompt, imageUrls);
-
+    const stopTyping = startTypingKeepalive(
+      () => channel.sendTyping(),
+      undefined,
+      (error) => console.warn('Unable to refresh OpenAI typing indicator:', error)
+    );
     try {
-      const response = await openaiClient.chat.completions.create({
-        model: 'gpt-5.6-sol',
-        messages: [
-          {
-            role: 'system',
-            content:
-              'You are a helpful assistant that can interpret both text and images. Provide concise, accurate responses.',
-          },
-          {
-            role: 'user',
-            content: contentArray,
-          },
-        ],
-        // reasoning tokens come out of max_completion_tokens, so any thinking at all can
-        // eat the whole budget and leave an empty answer. Chat Q&A doesn't need it.
-        reasoning_effort: 'none',
-        max_completion_tokens: 1500,
-      });
-
-      const completionText = response.choices?.[0]?.message?.content?.trim() ?? '';
-
-      if (!completionText) {
-        await channel.send('🙀 I got an empty response back. Try again? 🙀');
+      const userPrompt = args.join(' ');
+      const sourceMessage = await waitForMessageUnfurl(message);
+      const imageUrls = extractImageUrls(sourceMessage);
+      const replySource = await extractReplySource(message);
+      for (const url of replySource?.imageUrls ?? []) {
+        if (!imageUrls.includes(url)) imageUrls.push(url);
+      }
+      const fullPrompt = replySource?.text ? `Replied-to message: "${replySource.text}"\n\n${userPrompt}` : userPrompt;
+      const content = buildContentArray(fullPrompt, imageUrls);
+      if (!content.length) {
+        await channel.send({
+          content: 'Please provide a question or image, or reply to a message with .ask.',
+          allowedMentions: { parse: [] },
+        });
         return;
       }
-
-      if (completionText.length <= discordMaxCharacterCount) {
-        await channel.send(completionText);
-      } else {
-        // attach huge responses as a file
-        const stream = new Readable();
-        stream.push(completionText);
-        stream.push(null);
-
-        await channel.send({
-          content: "The response was too long, so I've attached it as a file:",
-          files: [
-            {
-              attachment: stream,
-              name: 'response.txt',
-            },
-          ],
-        });
+      const answer = await requestChatAnswer(openaiClient, content);
+      await channel.send(
+        answer.length <= 2000
+          ? { content: answer, allowedMentions: { parse: [] } }
+          : {
+              content: "The response was too long, so I've attached it as a file:",
+              files: [{ attachment: Buffer.from(answer, 'utf8'), name: 'response.txt' }],
+              allowedMentions: { parse: [] },
+            }
+      );
+    } catch (error) {
+      console.error('OpenAI chat command failed:', error);
+      const response = { content: readChatError(error), allowedMentions: { parse: [] as const } };
+      try {
+        await channel.send({ ...response, files: [await getRandomEmotePath()] });
+      } catch (sendError) {
+        console.error('Unable to send OpenAI error image:', sendError);
+        try {
+          await channel.send(response);
+        } catch (fallbackError) {
+          console.error('Unable to send OpenAI failure reply:', fallbackError);
+        }
       }
-    } catch (error: any) {
-      if (error?.response) {
-        await channel.send(`🙀 Error: ${error.response.status}, ${JSON.stringify(error.response.data)} 🙀`);
-      } else {
-        await channel.send(`🙀 Error: ${error.message} 🙀`);
-      }
+    } finally {
+      stopTyping();
     }
   },
 };

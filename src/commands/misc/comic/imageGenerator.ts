@@ -1,5 +1,6 @@
 import OpenAI, { toFile, type Uploadable } from 'openai';
 import sharp from 'sharp';
+import { PREMIUM_IMAGE_SETTINGS } from '../../../utils/imageModels';
 import { withRetry } from '../../../utils/withRetry';
 import { buildImagePrompt } from './prompts';
 import { ComicPlan, ComicScript, ComicThemeDefinition, STRIP_HEIGHT, STRIP_WIDTH } from './types';
@@ -22,10 +23,9 @@ export async function generateComicStrip(
       const response = referenceImage
         ? await imageClient.images.edit(buildComicImageEditRequest(referenceImage, prompt))
         : await imageClient.images.generate({
-            model: 'gpt-image-2',
+            ...PREMIUM_IMAGE_SETTINGS,
             prompt,
             n: 1,
-            output_format: 'png',
             size: `${STRIP_WIDTH}x${STRIP_HEIGHT}` as any,
           });
 
@@ -47,11 +47,10 @@ export async function generateComicStrip(
 
 export function buildComicImageEditRequest(image: Uploadable, prompt: string) {
   return {
-    model: 'gpt-image-2',
+    ...PREMIUM_IMAGE_SETTINGS,
     image,
     prompt,
     n: 1,
-    output_format: 'png' as const,
     size: `${STRIP_WIDTH}x${STRIP_HEIGHT}` as '1024x1024',
   };
 }
