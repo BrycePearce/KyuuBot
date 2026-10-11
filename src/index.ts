@@ -1,11 +1,9 @@
 import { ChannelType, Client, GatewayIntentBits } from 'discord.js';
-import { loginPersonal } from 'mangadex-full-api';
-import { initComix } from './comixPreloader';
 import { initCommands } from './commands';
 import BindDatabase from './database';
 import { findOrCreateUser } from './database/api/userApi';
+import { loginMangadex } from './utils/clients/mangadexClient';
 import { CommandRegistry } from './utils/commandUtils';
-import { supportedComixIds } from './utils/constants';
 
 const dotenv = require('dotenv');
 dotenv.config();
@@ -22,18 +20,10 @@ export const client = new Client({
 async function init() {
   await BindDatabase();
   await initCommands();
-  await initComix(supportedComixIds);
 
   // Login to external services after all initialization is complete
   const services = ['Mangadex'];
-  const res = await Promise.allSettled([
-    loginPersonal({
-      username: process.env.mangadexUser,
-      password: process.env.mangadexPassword,
-      clientId: process.env.mangadexClientId,
-      clientSecret: process.env.mangadexSecret,
-    }),
-  ]);
+  const res = await Promise.allSettled([loginMangadex()]);
 
   res.forEach((login, i) => {
     if (login.status === 'rejected') console.warn(`Login failed for ${services[i]}`);

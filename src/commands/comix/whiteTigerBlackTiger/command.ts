@@ -1,41 +1,15 @@
-import { ComixError } from '../../../types/Comix';
 import { Command } from '../../../types/Command';
-import { isValidChapterArgs, retrieveAndSendComic } from '../../../utils/chapterUtils';
 import { comixIds } from '../../../utils/constants';
+import { createComicHandler } from '../handler';
 
 const command: Command = {
   name: 'Retrieve White Tiger and Black Tiger Chapter',
-  description: 'Returns the the White Tiger and Black Tiger comic number specified by the user',
+  description: 'Returns a White Tiger and Black Tiger chapter: latest by default, a chapter number, or r for random.',
   invocations: ['btwt', 'tigercomic', 'tiger', 'blacktigerandwhitetiger', 'bw', 'tigers', 'b'],
   enabled: true,
   args: true,
-  usage: '[invocation] [chapterNumber]',
-  async execute(message, args) {
-    if (!isValidChapterArgs(args)) return;
-    const channel = message.channel;
-    if (!channel.isSendable()) return;
-
-    const onSuccess = (pages: string[]) => {
-      for (const page of pages) {
-        channel.send({ files: [page] });
-      }
-    };
-
-    const onFailure = (error: ComixError) => {
-      console.error(JSON.stringify(error));
-      switch (error.type) {
-        case 'chapterNotFound':
-          channel.send({ content: error.message, files: [error.emotePath] });
-          break;
-        case 'apiError':
-        default:
-          channel.send(`White Tiger and Black Tiger chapter error: ${error.message || 'An unknown error occurred'}`);
-          break;
-      }
-    };
-
-    await retrieveAndSendComic(comixIds.whiteTigerAndBlackTiger, args, onSuccess, onFailure);
-  },
+  usage: '[invocation] [chapterNumber|r] (omit for latest)',
+  execute: createComicHandler(comixIds.whiteTigerAndBlackTiger, 'White Tiger and Black Tiger'),
 };
 
 export default command;

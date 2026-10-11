@@ -1,148 +1,161 @@
 import { Chapter, Manga } from 'mangadex-full-api';
-import { retrieveComix } from '../comixPreloader';
-import { ComixError } from '../types/Comix';
-import { PromiseResolver } from '../types/PromiseResolver';
-import { writeTextOnMedia } from './ffmpeg';
-import {
-  deleteFileFromTmp,
-  getFileExtension,
-  getRandomEmotePath,
-  getTmpPathWithFilename,
-  isUrlExtensionStatic,
-  saveImageToTmp,
-} from './files';
+import { withMangadexSession } from './clients/mangadexClient';
+import { annotateComicPage, inspectComicMedia } from './comicMedia';
+import { fetchBuffer, ResponseSizeError } from './http';
 
-interface ResolvedChapter {
-  chapter: Chapter;
-  pages: string[];
+const MiB = 1024 * 1024;
+const MAX_CHAPTER_BYTES = 50 * MiB;
+const MAX_PAGES = 50;
+
+export class ComicError extends Error {
+  constructor(
+    message: string,
+    public readonly code: 'invalidArguments' | 'chapterNotFound' | 'tooLarge' | 'busy' = 'chapterNotFound'
+  ) {
+    super(message);
+    this.name = 'ComicError';
+  }
 }
 
-type SuccessCallback = (pages: string[]) => void;
-type FailureCallback = (error: ComixError) => void;
+export interface ComicPage {
+  data: Buffer;
+  name: string;
+}
+export interface ComicOptions {
+  maxAttachmentBytes?: number;
+}
+type ComicChapter = Pick<Chapter, 'id' | 'chapter' | 'volume' | 'getReadablePages'>;
+type Aggregate = Awaited<ReturnType<typeof Manga.getAggregate>>;
 
-export async function retrieveAndSendComic(
-  mangaId: string,
-  args: string[],
-  onSuccess: SuccessCallback,
-  onFailure: FailureCallback,
-  onFileCleanup?: (deletedFilePaths: string[]) => void
-) {
-  let createdEntities: string[] = [];
+export interface ComicDependencies {
+  latest: (mangaId: string) => Promise<ComicChapter[]>;
+  aggregate: (mangaId: string) => Promise<Aggregate>;
+  search: (mangaId: string, chapter: string) => Promise<ComicChapter[]>;
+  download: typeof fetchBuffer;
+  inspect: (data: Buffer) => Promise<{ animated: boolean }>;
+  annotate: typeof annotateComicPage;
+  random: () => number;
+}
 
-  try {
-    const manga = retrieveComix(mangaId);
-    const requestedChapter = await getRequestedChapter(manga, args);
-    const chapterList = await manga.getFeed({
-      translatedLanguage: ['en'],
-      offset: Math.max(Number(requestedChapter) - 5, 0),
-      limit: 25,
-      order: { chapter: 'asc', volume: 'asc' },
-    } as any);
-    const matchingChapters = chapterList.filter((chapter) => chapter.chapter === requestedChapter);
-    if (matchingChapters.length === 0) {
-      onFailure({ message: 'No chapter was found', type: 'chapterNotFound', emotePath: await getRandomEmotePath() });
-      return;
-    }
+export const isValidChapterArgs = (args: string[]): boolean =>
+  args.length === 0 || (args.length === 1 && /^(?:\d+(?:\.\d+)?|r)$/i.test(args[0].trim()));
+const notFound = () => new ComicError('No chapter was found.', 'chapterNotFound');
+const tooLarge = () => new ComicError('That chapter is too large to upload. Please try another chapter.', 'tooLarge');
 
-    const preferredChapter = await getPreferredChapterPages(matchingChapters);
-    const outputFileName = Date.now();
-
-    let filePaths: string[] = [];
-    for (const page of preferredChapter.pages) {
-      const fileExtension = getFileExtension(page);
-      const savedMediaPath = getTmpPathWithFilename(`${outputFileName}.${fileExtension}`);
-      const mediaOutputPath = getTmpPathWithFilename(`${outputFileName}-finished.${fileExtension}`);
-      createdEntities = [savedMediaPath, mediaOutputPath];
-
-      // get and output processed page
-      const { localChapterPath } = await getChapterWithChapterInfo(
-        preferredChapter.chapter,
-        page,
-        savedMediaPath,
-        mediaOutputPath
+/** Prepare every page before uploading so processing failures never send a partial comic. */
+export function createComicRetriever(dependencies: ComicDependencies) {
+  return async (mangaId: string, args: string[], options: ComicOptions = {}): Promise<ComicPage[]> => {
+    if (!isValidChapterArgs(args)) {
+      throw new ComicError(
+        'Choose a chapter number, r for random, or no argument for the latest chapter.',
+        'invalidArguments'
       );
-      filePaths.push(localChapterPath);
     }
-
-    onSuccess(filePaths);
-  } catch (ex) {
-    onFailure({ message: ex['message'] || 'Something went really wrong!', type: 'apiError' });
-    return;
-  } finally {
-    // delete tmp files
-    for (const entity of createdEntities) {
-      const deletionResult = await deleteFileFromTmp(entity);
-      if (!deletionResult.success) {
-        console.warn(deletionResult.message);
+    const maxAttachmentBytes = options.maxAttachmentBytes ?? 10 * MiB;
+    if (!Number.isFinite(maxAttachmentBytes) || maxAttachmentBytes <= 0) throw tooLarge();
+    let requested = args[0]?.trim().replace(/^0+(?=\d)/, '');
+    if (!requested) {
+      requested = (await dependencies.latest(mangaId))[0]?.chapter;
+    } else if (requested.toLowerCase() === 'r') {
+      const aggregate = await dependencies.aggregate(mangaId);
+      // Sample numbers, not releases, so duplicate translations do not bias random selection.
+      const numbers = [
+        ...new Set(
+          Object.values(aggregate).flatMap((volume) => Object.values(volume.chapters).map((chapter) => chapter.chapter))
+        ),
+      ].filter((chapter) => /^\d+(?:\.\d+)?$/.test(chapter));
+      requested = numbers[Math.floor(dependencies.random() * numbers.length)];
+    }
+    if (!requested) throw notFound();
+    const chapters = await dependencies.search(mangaId, requested);
+    let selected: { chapter: ComicChapter; pages: Buffer[] } | undefined;
+    let downloadedBytes = 0;
+    let firstReleaseError: unknown;
+    for (const chapter of chapters) {
+      if (downloadedBytes >= 2 * MAX_CHAPTER_BYTES) break;
+      try {
+        const urls = await withMangadexSession(() => chapter.getReadablePages());
+        if (urls.length === 0) continue;
+        if (urls.length > MAX_PAGES) throw tooLarge();
+        const pages: Buffer[] = [];
+        let animated = false;
+        let chapterBytes = 0;
+        for (const url of urls) {
+          if (chapterBytes >= MAX_CHAPTER_BYTES || downloadedBytes >= 2 * MAX_CHAPTER_BYTES) throw tooLarge();
+          const maxBytes = Math.min(
+            maxAttachmentBytes,
+            MAX_CHAPTER_BYTES - chapterBytes,
+            2 * MAX_CHAPTER_BYTES - downloadedBytes
+          );
+          let data: Buffer;
+          try {
+            data = await dependencies.download(url, { maxBytes });
+          } catch (error) {
+            // Reserve the allowance for failed downloads too: repeated broken
+            // alternatives must not bypass the total request budget.
+            downloadedBytes += maxBytes;
+            if (error instanceof ResponseSizeError) throw tooLarge();
+            throw error;
+          }
+          chapterBytes += data.length;
+          downloadedBytes += data.length;
+          if (chapterBytes > MAX_CHAPTER_BYTES || downloadedBytes > 2 * MAX_CHAPTER_BYTES) throw tooLarge();
+          animated = (await dependencies.inspect(data)).animated || animated;
+          pages.push(data);
+        }
+        if (!selected || animated) selected = { chapter, pages };
+        if (animated) break;
+      } catch (error) {
+        firstReleaseError ??= error;
+        console.warn(`Skipping unreadable MangaDex release ${chapter.id}:`, error);
       }
     }
-    if (onFileCleanup) onFileCleanup(createdEntities);
-  }
+    if (!selected) throw firstReleaseError ?? notFound();
+    const label = `Vol. ${selected.chapter.volume ?? '?'} Ch. ${selected.chapter.chapter ?? requested}`;
+    const result: ComicPage[] = [];
+    let outputBytes = 0;
+    for (const [index, page] of selected.pages.entries()) {
+      const { data, extension } = await dependencies.annotate(page, label);
+      outputBytes += data.length;
+      if (data.length > maxAttachmentBytes || outputBytes > MAX_CHAPTER_BYTES) throw tooLarge();
+      result.push({ data, name: `comic-${index + 1}.${extension}` });
+    }
+    return result;
+  };
 }
 
-async function getRequestedChapter(manga: Manga, args: string[]): Promise<string> {
-  if (args[0] && args[0].toLowerCase() !== 'r') return args[0];
-
-  const latestChapter = (
-    await manga.getFeed({ translatedLanguage: ['en'], limit: 1, order: { chapter: 'desc', volume: 'desc' } })
-  )[0].chapter;
-  // if there are no arguments then fetch the latest chapter
-  if (!args[0]) {
-    return latestChapter;
-  } else {
-    // otherwise they requested a random chapter
-    const randomChapter = Math.floor(Math.random() * (Number(latestChapter) - 1 + 1)) + 1;
-    return randomChapter.toString();
-  }
-}
-
-const getChapterWithChapterInfo = async (
-  chapter: Chapter,
-  pageUrl: string,
-  rawMediaPath: string,
-  processedMediaPath: string
-): Promise<PromiseResolver & { localChapterPath?: string }> => {
-  return new Promise(async (resolve, reject) => {
-    const textToWrite = `Vol. ${chapter.volume ?? '1'} Ch. ${chapter.chapter}`;
-
-    try {
-      // download url so we can process (add text) it
-      await saveImageToTmp(pageUrl, rawMediaPath);
-      // write text to the saved file, then write the file with changes to processedMediaPath
-      await writeTextOnMedia(textToWrite, rawMediaPath, processedMediaPath);
-    } catch (ex) {
-      // todo: probably a better way to handle this, either with chained catches or typeguard
-      let errorMessage = 'There was an error fetching the chapter';
-      if (ex instanceof Error) {
-        errorMessage = ex.message;
+export const retrieveComic = createComicRetriever({
+  latest: (mangaId) =>
+    withMangadexSession(() =>
+      Manga.getFeed(mangaId, {
+        translatedLanguage: ['en'],
+        includeExternalUrl: 0,
+        limit: 1,
+        order: { chapter: 'desc', volume: 'desc' },
+      })
+    ),
+  aggregate: (mangaId) => withMangadexSession(() => Manga.getAggregate(mangaId, undefined, ['en'])),
+  search: (mangaId, chapter) =>
+    withMangadexSession(async () => {
+      const chapters: Chapter[] = [];
+      // Offsets paginate exact matches, never assume that a chapter number is a feed offset.
+      for (let offset = 0; offset < 10000; offset += 100) {
+        const batch = await Chapter.search({
+          manga: mangaId,
+          chapter,
+          translatedLanguage: ['en'],
+          includeExternalUrl: 0,
+          limit: 100,
+          offset,
+          order: { publishAt: 'desc' },
+        });
+        chapters.push(...batch);
+        if (batch.length < 100) return chapters;
       }
-      reject(new Error(errorMessage));
-    }
-
-    resolve({ success: true, localChapterPath: processedMediaPath });
-  });
-};
-
-/**
- * @param chapterList
- * @description Filters duplicate chapters, prefers gif chapters when available.
- */
-const getPreferredChapterPages = async (chapters: Chapter[]): Promise<ResolvedChapter> => {
-  let preferredChapter: ResolvedChapter;
-  for (let i = 0; i < chapters.length; i++) {
-    const chapterList = await chapters[i].getReadablePages();
-    const doPagesIncludeGif = chapterList.some((page) => !isUrlExtensionStatic(page));
-    if (doPagesIncludeGif) {
-      preferredChapter = { chapter: chapters[i], pages: chapterList };
-      break;
-    }
-    preferredChapter = { chapter: chapters[i], pages: chapterList };
-  }
-  return preferredChapter;
-};
-
-export const isValidChapterArgs = (args: string[]): boolean => {
-  if (!args[0]) return true;
-  // accepts a string integer, or the letter r case insenitive
-  return new RegExp('^[0-9]+$', 'i').test(args[0]) || args[0].trim().toLowerCase() === 'r';
-};
+      throw tooLarge();
+    }),
+  download: fetchBuffer,
+  inspect: inspectComicMedia,
+  annotate: annotateComicPage,
+  random: Math.random,
+});
