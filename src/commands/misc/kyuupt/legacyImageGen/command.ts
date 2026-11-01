@@ -12,7 +12,7 @@ const openai = new OpenAI({
 const command: Command = {
   name: 'Kyuubot Budget Images',
   description: 'Generate a high-quality image with the faster, budget image option.',
-  invocations: ['fi', 'fastimage'],
+  invocations: ['fi', 'fastimage', 'i2'],
   args: true,
   enabled: true,
   usage: '[invocation] [prompt]',
