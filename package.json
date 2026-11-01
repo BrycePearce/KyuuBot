@@ -4,6 +4,7 @@
   "description": "",
   "main": "src/index.ts",
   "scripts": {
+    "test:image": "node --test -r ts-node/register src/commands/misc/kyuupt/imageGen/command.test.ts",
     "start": "npx ts-node src/index.ts",
     "test": "node --test -r ts-node/register src/commands/misc/comic/comic.test.ts src/commands/misc/garfield/garfield.test.ts src/utils/http.test.ts src/utils/comicMedia.test.ts src/utils/chapterUtils.test.ts src/commands/comix/handler.test.ts src/commands/misc/kyuupt/chatCompletion/request.test.ts src/commands/misc/claude/response.test.ts src/commands/misc/claude/request.test.ts src/commands/misc/claude/failure.test.ts src/commands/misc/gemini/gemini.test.ts",
     "test:comix": "node --test -r ts-node/register src/utils/http.test.ts src/utils/comicMedia.test.ts src/utils/chapterUtils.test.ts src/commands/comix/handler.test.ts",

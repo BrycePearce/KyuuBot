@@ -23,9 +23,9 @@ const command: Command = {
 
     const sourceMessage = await waitForMessageUnfurl(message);
     const imageUrls = extractImageUrls(sourceMessage);
+    const replySource = await extractReplySource(message);
 
     if (imageUrls.length === 0) {
-      const replySource = await extractReplySource(message);
       imageUrls.push(...(replySource?.imageUrls ?? []));
     }
 
@@ -34,12 +34,19 @@ const command: Command = {
       return;
     }
 
-    const prompt = args.join(' ').trim();
+    const instructions = args.join(' ').trim();
+    const replyText = replySource?.text?.trim();
+    const prompt = replyText
+      ? instructions
+        ? `Source text:\n${replyText}\n\nImage instructions:\n${instructions}`
+        : replyText
+      : instructions;
     if (!prompt) {
       await channel.send(
         '🙀 You need to provide a prompt! For example:\n' +
           ' • `.image a neon cyberpunk city at night`  (new image)\n' +
-          ' • `.image add neon glow` + attach one image  (edit)'
+          ' • `.image add neon glow` + attach one image  (edit)\n' +
+          ' • Reply to a text message with `.i` to illustrate it'
       );
       return;
     }

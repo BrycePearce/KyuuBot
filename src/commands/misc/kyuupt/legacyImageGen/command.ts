@@ -3,15 +3,16 @@ import OpenAI from 'openai';
 import { AttachmentBuilder } from 'discord.js';
 import type { Command } from '../../../../types/Command';
 import { getRandomEmotePath } from '../../../../utils/files';
+import { BUDGET_IMAGE_SETTINGS } from '../../../../utils/imageModels';
 
 const openai = new OpenAI({
   apiKey: process.env.gptImageGen,
 });
 
 const command: Command = {
-  name: 'Kyuubot GPT-Image-1',
-  description: 'Generate images using the lower-tier GPT Image 1 model.',
-  invocations: ['gpt1', 'dalle'],
+  name: 'Kyuubot Budget Images',
+  description: 'Generate a high-quality image with the faster, budget image option.',
+  invocations: ['fi', 'fastimage'],
   args: true,
   enabled: true,
   usage: '[invocation] [prompt]',
@@ -20,7 +21,7 @@ const command: Command = {
     if (!channel.isSendable()) return;
 
     if (args.length === 0) {
-      channel.send('🙀 You need to provide a prompt! For example: `.gpt1 a neon cyberpunk city at night` 🙀');
+      channel.send('🙀 You need to provide a prompt! For example: `.fi a neon cyberpunk city at night` 🙀');
       return;
     }
 
@@ -28,7 +29,7 @@ const command: Command = {
 
     try {
       const response = await openai.images.generate({
-        model: 'gpt-image-1',
+        ...BUDGET_IMAGE_SETTINGS,
         prompt,
         n: 1,
         size: '1024x1024',
